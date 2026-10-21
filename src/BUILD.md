@@ -1,7 +1,7 @@
 # ビルド手順（Buzz人生シミュレーター）
 ソースは p1.html（画面とCSS）＋ p2〜p11.js（スクリプト）。この順でつなげて1枚のHTMLにする。
 
-    { cat p1.html; echo '<script>'; cat p2.js p4.js p6.js p3.js p7.js p8.js p9.js p10.js p11.js; echo '</script>'; } > nipporia.html
+    { cat p1.html; echo '<script>'; cat p2.js p4.js p6.js p3.js p7.js p8.js p9.js p10.js p11.js p12.js; echo '</script>'; } > nipporia.html
 
 - 後のファイルほど優先（同じ名前の function は後のものが使われる）
 - p2：データ・基本の出来事 / p4：国・難易度・研究・まち・実績・BGM / p6：出来事（v0.2） / p3：エンジン・画面（v0.1） / p7：v0.2の差し替え / p8：v0.3（行動の中身・請求書・経営・5タブ） / p9：設定・削除・アップデート情報（CHANGELOG） / p10：セーブ保管・過去バージョン / p11：出来事（v0.4）

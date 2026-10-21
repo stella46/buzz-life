@@ -69,6 +69,8 @@ function turn(){
   ensureV3();
   const k=S.unit==='week'?.25:1;
   const f0=totalF(),m0=S.money;
+  const reps=S.unit==='season'?3:1;
+  for(let rp=0;rp<reps;rp++){
   if(S.auto)autoPlan();
   ensurePlan();
   if(age()<6){ad('happy',1*k);ad('tal.'+pick(TALK),.9*k);ad('social',.3*k)}
@@ -82,12 +84,14 @@ function turn(){
   if(S.unit==='week'){S.wk=(S.wk||0)+1;if(S.wk<4)monthEnd=false;else S.wk=0}
   if(monthEnd)endMonth();
   if(!S.alive)return;
+  if(S.q.length)break;
+  }
   const df=totalF()-f0,dm=S.money-m0;
   if(Math.abs(df)>=1)pop((df>0?'+':'')+num(df)+'人',df>0?'f':'bad');
   if(dm>=1000)setTimeout(()=>pop('+'+yen(dm)),250);
   let ev=null;
   while(S.q.length&&!ev){const e=EV[S.q.shift()];if(e&&(!e.when||e.when()))ev=e}
-  if(!ev)ev=rollEvent(k);
+  if(!ev)ev=rollEvent(S.unit==='season'?3:k);
   save();render();
   if(ev)showEvent(ev);
 }
@@ -252,6 +256,7 @@ function endMonth(){
   if(S.m===1){S.taxBase=S.yInc;S.yInc=0}
   if(S.m===3&&age()>=18&&S.taxBase>=(S.st==='work'?200000:480000)*c){if(S.flags.taxAuto){bill('tax','所得税（確定申告）',S.taxBase*.15);log('確定申告をした。税金の請求書が届いた','life')}else S.q.push('tax')}
   monthSys();
+  if(a<18&&S.money<0){S.money=0;log('足りない分は家族が払ってくれた','life')}
   drift();
   for(const key in S.f){if(!S.open[key])continue;const posted=S.mo.posts>0&&key===S.main;S.f[key]*=posted?.993:.98}
   if(S.rival)S.rival.f=Math.round(clamp(S.rival.f*(1+R(.004,.035)*(1-S.rival.f/2e6))+R(5,150),0,2e6));
@@ -336,7 +341,7 @@ function panelPlan(){
   for(let i=0;i<n;i++)h+=`<div class="slotc"><span class="lb">枠${i+1}</span><div class="sel2"><select data-plan="${i}" id="plan${i}" ${S.auto?'disabled':''}>${actOptions(i)}</select>${optSel(i)}</div><p class="ds">${esc(optDesc(i))}</p></div>`;
   h+=`</div><div class="row"><button class="b ${S.auto?'on':''}" type="button" data-act="auto">おまかせ：${S.auto?'ON':'OFF'}</button><span class="hint">ONにすると行動を自動で決める</span></div>`;
   if(a<18&&a>=6){const opts=lessonOptions();h+=`<div class="grp"><h3>習い事</h3>${opts.length?`<select data-set="lesson" id="lessonSel"><option value="">なし</option>${opts.map(k=>`<option value="${k}" ${S.lesson===k?'selected':''}>${LESSONS[k].n}（月謝 ${num(LESSONS[k].cost*S.cty.inc)}円・家族が払う）</option>`).join('')}</select><p class="hint">行動に「習い事」を入れると素質がよく伸びる。</p>`:'<p class="hint">今の家計では月謝を払う余裕がない。</p>'}</div>`}
-  h+=`<div class="grp"><h3>時間の進み方</h3><select data-set="unit" id="unitSel"><option value="month" ${S.unit==='month'?'selected':''}>1ターン＝1か月</option><option value="week" ${S.unit==='week'?'selected':''}>1ターン＝1週間（細かく決めたいとき）</option></select><p class="hint">上の「次へ」で1ターン、▶で自動再生、「イベントまで」で次の出来事まで早送り。PCは P キーで停止／再開。</p></div>`;
+  h+=`<div class="grp"><h3>時間の進み方</h3>${unitHtml()}<p class="hint">上の「次へ」で1ターン、▶で自動再生、「イベントまで」で次の出来事まで早送り。PCは P キーで停止／再開。</p></div>`;
   return h;
 }
 function panelSns(){
@@ -359,7 +364,7 @@ function panelSns(){
   if(S.rival)h+=`<div class="card"><div class="hd"><span>ライバル：${esc(S.rival.name)}</span><span class="muted small">${esc(S.rival.trait)}・仲${Math.round(S.rival.rel)}</span></div><div class="kv"><span>相手のフォロワー</span><span>${num(S.rival.f)}人</span><span>自分のフォロワー</span><span>${num(totalF())}人</span></div><p class="hint">仲が40以上になると「コラボ」投稿ができる。</p></div>`;
   return h;
 }
-function panelMoney(){
+function panelMoneyAdult(){
   const sub=SUB.money;let h=subTabs('money',[['bills','家計',S.bills.length||''],['shop','買い物'],['bank','投資・借入']]);
   const c=Math.max(.2,S.cty.inc);
   if(sub==='bills'){

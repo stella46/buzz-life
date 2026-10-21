@@ -202,6 +202,8 @@ div.note{cursor:default}
 .big2{font-size:1rem}
 .vol{display:flex;flex-direction:column;gap:6px}
 .vol input[type=range]{width:100%;accent-color:var(--pink)}
+.card.warn{border-color:var(--red)}
+.b.danger{background:var(--red);border-color:var(--red);color:#2a0500}
 
 @media (max-width:860px){
   .cols{grid-template-columns:minmax(0,1fr);grid-template-areas:"stage" "side" "log"}
@@ -227,9 +229,10 @@ div.note{cursor:default}
       <button class="b" id="btnCont" type="button">つづきから</button>
       <button class="b" id="btnImport" type="button">セーブデータを読み込む</button>
       <button class="b" type="button" data-act="achv">実績・図鑑</button>
+      <button class="b" type="button" data-act="settings">設定（音量・セーブデータ）</button>
       <button class="b ghost" id="btnCredit" type="button">出典・クレジット</button>
     </div>
-    <p class="ver">試作版 v0.3 ／ お金の支払い・お店の経営・行動の中身・音量調整を追加</p>
+    <p class="ver">試作版 v0.3.1 ／ お金の支払い・お店の経営・行動の中身・音量調整を追加</p>
   </section>
 
   <section id="scrGame" hidden>
@@ -2780,6 +2783,34 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('input',e=>{const k=e.target.dataset&&e.target.dataset.vol;if(!k)return;VOL[k]=(+e.target.value)/100;saveVol();const lab=e.target.closest('label').querySelector('span');lab.textContent=(k==='bgm'?'BGM ':'効果音 ')+Math.round(VOL[k]*100);if(k==='bgm'&&BG.master&&AC)BG.master.gain.value=.05*VOL.bgm});
 document.addEventListener('change',e=>{const t=e.target;if(!S)return;if(t.dataset.popt!=null){S.planOpt[+t.dataset.popt]=t.value;save();renderPanel();return}if(t.dataset.plan!=null){S.planOpt[+t.dataset.plan]=null;renderPanel()}if(t.dataset.vol==='se')snd('coin')});
+// ===== v0.3.1：タイトルの設定・セーブデータの削除 =====
+function delHtml(){const hs=!!loadSaved();return `<div class="mch" id="delBox"><button class="b" type="button" data-act="delAsk" data-k="save" ${hs?'':'disabled'}>続きのセーブデータを消す${hs?'':'（セーブなし）'}</button><button class="b" type="button" data-act="delAsk" data-k="all">実績・図鑑も含めて全部消す</button></div>`}
+function soundBtns(){return `<div class="mch"><button class="b" type="button" data-act="bgm">BGM：${bgmOn?'ON':'OFF'}</button><button class="b" type="button" data-act="sound">効果音：${sndOn?'ON':'OFF'}</button></div>`}
+function showSettings(){openModal(`<div class="mcat life">設定</div><h2>設定</h2><h3>音量</h3>${volHtml()}${soundBtns()}<h3>セーブデータ</h3><p class="hint">このブラウザに保存されているデータを消す。消したデータは元に戻せない。</p>${delHtml()}<button class="b pri" type="button" data-act="close">閉じる</button>`)}
+function showMenu(){
+  if(!S||$('#scrGame').hidden)return showSettings();
+  openModal(`<div class="mcat life">メニュー</div><h2>メニュー</h2><h3>音量</h3>${volHtml()}${soundBtns()}<div class="mch">
+  <button class="b" type="button" data-act="autopayT">支払い：${S.autopay?'自動で払う':'自分で払う'}</button>
+  <button class="b" type="button" data-act="achv">実績・図鑑</button>
+  <button class="b" type="button" data-act="export">セーブデータを書き出す</button>
+  <button class="b" type="button" data-act="credit">出典・クレジット</button>
+  <button class="b" type="button" data-act="totitle">タイトルへ戻る（自動保存されています）</button></div>
+  <h3>セーブデータ</h3><p class="hint">消したデータは元に戻せない。残したいときは先に「書き出す」で控えておく。</p>${delHtml()}
+  <button class="b pri" type="button" data-act="close">閉じる</button>`);
+}
+function doDelete(k){
+  try{localStorage.removeItem(CFG.save)}catch(e){}
+  if(k==='all'){try{localStorage.removeItem('nipporia-meta-v1')}catch(e){}META={ach:{},seen:{},titles:{},lives:0,best:0,bestF:0}}
+  if(S&&!$('#scrGame').hidden){setSpeed(0);skipping=false;S=null;showScreen('title')}
+  initTitle();
+}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button');if(!t)return;const a=t.dataset.act;
+  if(a==='settings'){showSettings();return}
+  if(a==='delAsk'){const k=t.dataset.k;$('#delBox').innerHTML=`<div class="card warn"><p class="mtext">${k==='all'?'続きのセーブデータに加えて、実績・図鑑・称号・最高記録もすべて消えます。':'今遊んでいる人生の続きが消えます。実績・図鑑は残ります。'}\n本当に消しますか？</p><div class="row"><button class="b sm danger" type="button" data-act="delYes" data-k="${k}">消す</button><button class="b sm" type="button" data-act="delNo">やめる</button></div></div>`;return}
+  if(a==='delNo'){$('#delBox').outerHTML=delHtml();return}
+  if(a==='delYes'){const k=t.dataset.k;doDelete(k);openModal(`<div class="mcat life">設定</div><h2>消しました</h2><p class="mtext">${k==='all'?'セーブデータと実績・図鑑をすべて消しました。':'続きのセーブデータを消しました。'}</p><button class="b pri" type="button" data-act="close">閉じる</button>`);return}
+});
 </script>
 
 </body>

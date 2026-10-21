@@ -203,6 +203,7 @@ div.note{cursor:default}
 .vol{display:flex;flex-direction:column;gap:6px}
 .vol input[type=range]{width:100%;accent-color:var(--pink)}
 .card.warn{border-color:var(--red)}
+a.b{display:inline-block;text-decoration:none;align-self:flex-start}
 .tnews{position:relative}
 .news{display:flex;flex-direction:column;gap:10px;max-height:60vh;overflow:auto}
 .nv{background:var(--bg2);border:1px solid var(--line);padding:8px 12px}
@@ -239,6 +240,7 @@ div.note{cursor:default}
       <button class="b" type="button" data-act="settings">設定（音量）</button>
       <button class="b" type="button" data-act="delMenu">セーブデータを消す</button>
       <button class="b tnews" type="button" data-act="news">アップデート情報</button>
+      <button class="b" type="button" data-act="versions">ほかのバージョンで遊ぶ</button>
       <button class="b ghost" id="btnCredit" type="button">出典・クレジット</button>
     </div>
     <p class="ver">試作版 v0.3.2 ／ お金の支払い・お店の経営・行動の中身・音量調整を追加</p>
@@ -2540,6 +2542,7 @@ function endMonth(){
     if(S.flags.car)bill('subs','車の維持費',20000*Math.max(.3,c));
   }
   const kidsN=S.kids.filter(k=>S.am-k.born<22*12).length;if(kidsN)bill('kids','子育て費（'+kidsN+'人）',kidsN*35000*c);
+  if(S.debt>0)S.flags.hadDebt=1;
   if(S.debt>0&&S.st!=='univ'&&a>=19){if(S.debtRate)S.debt=Math.round(S.debt*(1+S.debtRate/12));const owed=S.bills.filter(b=>b.cat==='debt').reduce((s,b)=>s+b.base,0);const p=Math.min(S.debt-owed,Math.max(Math.round(15000*c),Math.round(S.debt*.02)));if(p>0)bill('debt','借金・奨学金の返済',p)}else if(S.debt<=0)S.debtRate=0;
   if(S.inv>0)S.inv=Math.max(0,S.inv*(1+R(-.035,.045)));
   if(S.m===4&&S.st==='work')S.salary=Math.round(S.salary*1.02);
@@ -2823,6 +2826,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v0.4','2026年10月22日',['過去のバージョンを選んで遊べるように（タイトルの「ほかのバージョンで遊ぶ」）。セーブは版ごとに別々','新しい版になったとき、前のセーブを自動で保管。「更新前のセーブに戻す」で戻せる','出来事を約170個追加して500個以上に（お金・住まい・お店の経営・事務所・バイトや行動の中身・家族・学校・健康・SNS・世界・老後・ニュース）']],
   ['v0.3.3','2026年10月22日',['タイトル画面に「アップデート情報」を追加']],
   ['v0.3.2','2026年10月21日',['タイトル画面に「セーブデータを消す」ボタンを追加']],
   ['v0.3.1','2026年10月21日',['タイトル画面に「設定」を追加（BGM・効果音の音量とON/OFF）','セーブデータを消せるように（続きだけ／実績・図鑑も含めて全部）']],
@@ -2836,6 +2840,237 @@ function markVer(){try{localStorage.setItem('nipporia-ver-seen',CUR_VER)}catch(e
 function showNews(){openModal(`<div class="mcat life">アップデート情報</div><h2>これまでのアップデート</h2><div class="news">${CHANGELOG.map(([v,d,items],i)=>`<section class="nv ${i===0?'cur':''}"><div class="hd"><b>${esc(v)}</b><span class="muted small">${esc(d)}</span>${i===0?'<span class="chip up">最新</span>':''}</div><ul>${items.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></section>`).join('')}</div><button class="b pri" type="button" data-act="close">閉じる</button>`);markVer()}
 document.addEventListener('click',e=>{const t=e.target.closest('button');if(t&&t.dataset.act==='news')showNews()});
 (function(){const b=document.querySelector('[data-act="news"]');if(b&&!verSeen()){const s=document.createElement('span');s.className='badge';s.textContent='NEW';b.appendChild(s)}const v=document.querySelector('#scrTitle .ver');if(v)v.textContent='試作版 '+CUR_VER+' ／ 遊び方や変更点は「アップデート情報」へ'})();
+// ===== v0.4：セーブの自動保管・過去のバージョン =====
+const BK_KEY='nipporia-save-backup';
+(function(){try{const last=localStorage.getItem('nipporia-ver-last');const sv=localStorage.getItem(CFG.save);
+  if(last!==CUR_VER){if(sv)localStorage.setItem(BK_KEY,JSON.stringify({ver:last||'v0.3.3以前',at:Date.now(),data:sv}));localStorage.setItem('nipporia-ver-last',CUR_VER)}}catch(e){}})();
+function backupInfo(){try{const o=JSON.parse(localStorage.getItem(BK_KEY)||'null');if(!o||!o.data)return null;const d=JSON.parse(o.data);return {ver:o.ver,at:o.at,name:d.name,age:Math.floor((d.am||0)/12),raw:o.data}}catch(e){return null}}
+function backupHtml(){const b=backupInfo();if(!b)return '<p class="hint">更新前のセーブの控えはまだない（新しい版が出たときに自動で取られる）。</p>';const dt=new Date(b.at);return `<div class="mch" id="bkBox"><button class="b" type="button" data-act="bkAsk">更新前のセーブに戻す（${esc(b.ver)}・${esc(b.name||'')} ${b.age}歳・${dt.getMonth()+1}/${dt.getDate()}に保管）</button></div>`}
+function delHtml(){const hs=!!loadSaved();return `<div class="mch" id="delBox"><button class="b" type="button" data-act="delAsk" data-k="save" ${hs?'':'disabled'}>続きのセーブデータを消す${hs?'':'（セーブなし）'}</button><button class="b" type="button" data-act="delAsk" data-k="all">実績・図鑑も含めて全部消す</button></div><h3>更新前のセーブ</h3>${backupHtml()}`}
+
+const OLD_VERS=[
+  ['v0.3','versions/v0.3/','5つのタブ・請求書の支払い・お店の経営・行動の中身が入った版（タイトルの設定や削除ボタンはまだない）'],
+  ['v0.2','versions/v0.2/','世界の国・世代交代・まち・会社・研究・実績が入った版（請求書やお店の経営はまだない。タブは8つ）'],
+  ['v0.1',null,'最初の試作版。公開の仕組みを作る前の版なので、残っていない']
+];
+function showVersions(){
+  const web=/^https?:$/.test(location.protocol)&&!/claude/.test(location.hostname);
+  openModal(`<div class="mcat life">バージョン</div><h2>ほかのバージョンで遊ぶ</h2><p class="hint">昔の版をそのまま遊べる。セーブデータは版ごとに別々に保存されるので、今のデータには影響しない。${web?'':'\n※この機能はWeb版（stella46.github.io/buzz-life）でだけ使える。'}</p>
+  <div class="news"><section class="nv cur"><div class="hd"><b>${esc(CUR_VER)}</b><span class="chip up">いま遊んでいる版</span></div><p class="small">最新版</p></section>
+  ${OLD_VERS.map(([v,u,d])=>`<section class="nv"><div class="hd"><b>${esc(v)}</b></div><p class="small">${esc(d)}</p>${u&&web?`<a class="b sm" href="${u}">${esc(v)}で遊ぶ</a>`:''}</section>`).join('')}</div>
+  <button class="b pri" type="button" data-act="close">閉じる</button>`);
+}
+document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;const a=t.dataset.act;
+  if(a==='versions'){showVersions();return}
+  if(a==='bkAsk'){$('#bkBox').innerHTML=`<div class="card warn"><p class="mtext">今の続きのセーブが、更新前に取っておいたセーブに置き換わります。\n今の続きを残したいときは、先に「セーブデータを書き出す」で控えておく。\n戻しますか？</p><div class="row"><button class="b sm danger" type="button" data-act="bkYes">戻す</button><button class="b sm" type="button" data-act="bkNo">やめる</button></div></div>`;return}
+  if(a==='bkNo'){$('#bkBox').outerHTML=backupHtml();return}
+  if(a==='bkYes'){const b=backupInfo();if(b){try{localStorage.setItem(CFG.save,b.raw)}catch(e){}if(S&&!$('#scrGame').hidden){setSpeed(0);S=null;showScreen('title')}initTitle();openModal(`<div class="mcat life">セーブデータ</div><h2>戻しました</h2><p class="mtext">更新前のセーブ（${esc(b.name||'')} ${b.age}歳）に戻した。「つづきから」で遊べる。</p><button class="b pri" type="button" data-act="close">閉じる</button>`)}return}
+});
+// ===== v0.4：出来事の追加（約170個） =====
+const anyShop=()=>S.town&&S.town.tiles.some(t=>SHOP[t.t]);
+const pickShop=()=>{const l=S.town.tiles.filter(t=>SHOP[t.t]);return l.length?pick(l):null};
+const shopName=()=>{const t=S.tmpShop||(S.tmpShop=pickShop());return t?BLD[t.t].n:'お店'};
+const shopFx=(st,boostM)=>()=>{const t=S.tmpShop||pickShop();S.tmpShop=null;if(t){initShop(t);t.stars=clamp(t.stars+st,1,5);if(boostM){t.boost=1;t.boostEnd=S.am+boostM}}return {}};
+const planC=(act,opt)=>()=>S.plan&&S.plan.some((a,i)=>a===act&&(!opt||S.planOpt[i]===opt));
+const billsC=()=>S.bills&&S.bills.length>0;
+const lateC=()=>S.bills&&S.bills.some(b=>b.late);
+const homeC=n=>()=>S.indep&&S.home>=n;
+const subC=k=>()=>S.subs&&!!S.subs[k];
+const debtC=()=>S.debt>0;
+const invC=()=>S.inv>0;
+const creditLow=()=>S.credit<40;
+const or=(...fs)=>()=>fs.some(f=>f());
+const notC=f=>()=>!f();
+const richC=n=>()=>S.money>=n*S.cty.inc;
+const talOne=()=>S.office&&S.office.talents.length?pick(S.office.talents):null;
+
+// --- お金・暮らし ---
+X('x_bill_heavy','お金','請求書の山',and(ag(18),()=>S.bills&&S.bills.length>=5),.15,'ポストに請求書がたまっている。見て見ぬふりをしていた。',[['今すぐ全部払う',()=>{payAll();return {mental:2}},'すっきりした。'],['自動支払いにする',()=>{S.autopay=1;payAll();return {know:1}},'次からは払い忘れない。']],{cd:12});
+X('x_credit_low','お金','カードが作れない',and(ag(20),creditLow),.06,'クレジットカードの審査に落ちた。信用スコアが低すぎるらしい。',[['支払いを見直す',{know:2,mental:-2},'毎月きちんと払うことにした。'],['現金主義でいく',{},'持っている分だけ使えばいい。']]);
+X('x_credit_good','お金','優良顧客',and(ag(25),()=>S.credit>=90),.03,'銀行から「金利を優遇します」という案内が届いた。',[['ありがたい',()=>{if(S.debtRate)S.debtRate=Math.max(0,S.debtRate-.01);return {happy:2}},'こつこつ払ってきたかいがあった。']],{once:1});
+X('x_rent_up','お金','家賃の値上げ',homeC(1),.03,'大家さんから「来月から家賃を上げさせてほしい」と連絡がきた。',[['受け入れる',()=>{S.priceIdx=(S.priceIdx||1)*1.03;return {happy:-1}},'しかたない。'],['交渉する',()=>chance(.5)?{talk:2}:{talk:1,happy:-1},'話してみるものだ。']]);
+X('x_neighbor','暮らし','隣の部屋の音',homeC(1),.03,'隣の部屋の生活音が気になって眠れない。',[['直接話す',{social:2,mental:1},'お互いに気をつけることになった。'],['耳栓で耐える',{health:-1},'慣れるしかない。'],['防音グッズを買う',{money:-20000,mental:2},'だいぶ静かになった。']]);
+X('x_tower','暮らし','タワマンの夜景',homeC(4),.04,'窓から見える夜景が、今日も宝石みたいに光っている。',[['夜景を背景に配信',{f:.02,priv:-2},'「部屋どこ？」というコメントが増えた。',snsC],['ひとりで眺める',{happy:3,mental:2},'ここまで来たんだな。']]);
+X('x_ownhouse','暮らし','庭の手入れ',homeC(5),.04,'持ち家の庭に雑草が生えてきた。',[['家庭菜園にする',{health:2,t_cook:2},'とれたてトマトがおいしい。'],['業者に頼む',{money:-30000},'プロの仕事はすごい。']]);
+X('x_moving','暮らし','引っ越しの片付け',and(ag(18),()=>S.indep&&!S.goods.furniture),.03,'引っ越してから段ボールが開けられないままだ。',[['一気に片付ける',{mental:3,plan:1},'部屋が見違えた。'],['家具を買い足す',{money:-50000,happy:3},'自分の城らしくなってきた。']]);
+X('x_sub_forget','お金','使っていないサブスク',and(ag(18),()=>S.subs&&Object.values(S.subs).filter(Boolean).length>=3),.04,'明細を見たら、ほとんど使っていないサブスクがいくつもある。',[['見直して解約する',()=>{for(const k of Object.keys(S.subs))if(chance(.5))S.subs[k]=0;return {know:2}},'毎月の出費が少し減った。'],['そのうち使う',{},'…たぶん。']],{cd:24});
+X('x_insurance_help','お金','保険に入っていてよかった',and(subC('insurance'),ag(25)),.02,'急な入院で手術が必要になった。',[['保険を使う',{health:-8,money:-30000},'保険のおかげで自己負担は少なくて済んだ。']]);
+X('x_noinsurance','お金','急な医療費',and(ag(30),notC(subC('insurance'))),.012,'急な入院で、思った以上に医療費がかかった。',[['払う',{health:-8,money:-150000},'保険のことを考え始めた。']]);
+X('x_inv_up','お金','投資が好調',invC,.03,'投資の値段がぐんと上がっている。',[['一部を利益にする',()=>{const v=Math.round(S.inv*.2);S.inv-=v;inc('invout',v);return {happy:2}},'利益を確定させた。'],['そのまま持ち続ける',()=>{S.inv*=1.05;return {}},'長い目で見ることにした。']]);
+X('x_inv_down','お金','暴落',invC,.02,'世界的な株安で、投資の残高が大きく減った。',[['じっと耐える',()=>{S.inv*=.8;return {mental:-3}},'いずれ戻ると信じる。'],['怖くて全部売る',()=>{S.inv*=.8;inc('invout',Math.round(S.inv));S.inv=0;return {mental:-2}},'損を確定させてしまった。']]);
+X('x_debt_call','お金','返済の相談',and(debtC,lateC),.05,'借金の返済が遅れていて、貸した会社から電話がきた。',[['返済計画を相談する',{know:2,mental:-2},'無理のない計画に組み直してもらえた。'],['電話に出ない',()=>{S.credit=clamp(S.credit-5);return {mental:-4}},'着信履歴が増えていく。']]);
+X('x_debt_free','お金','完済の日',and(ag(22),()=>S.debt<=0&&S.salSum>0&&!S.flags.debtFreeDone&&S.flags.hadDebt),.3,'ついに借金を返し終えた。',[['自分にごほうび',{happy:6,money:-10000,flag:{debtFreeDone:1}},'肩の荷が下りた。']]);
+X('x_saving','お金','貯金の習慣',and(ag(20),richC(1000000)),.02,'通帳の数字を眺めていたら、なんだか楽しくなってきた。',[['積み立てを始める',()=>{const v=Math.round(S.money*.1);S.money-=v;S.inv+=v;return {know:1}},'お金が育つ仕組みを作った。'],['たまにはぱっと使う',{happy:3,money:-30000},'使うのも大事。']]);
+X('x_cashless','お金','ポイントがたまっていた',ag(18),.02,'キャッシュレス決済のポイントがいつの間にかたまっていた。',[['日用品に使う',{money:5000},'ちょっと得した気分。']],{cd:24});
+X('x_furusato','お金','ふるさと納税',and(jpC,ag(25),richC(500000)),.03,'ふるさと納税で地方を応援しつつ、返礼品がもらえるらしい。',[['やってみる',{money:-50000,happy:3,t_cook:1},'届いたカニがおいしかった。']],{cd:12});
+X('x_bank_mistake','お金','振込のミス',ag(20),.01,'振込先を一桁まちがえてしまった！',[['すぐ銀行に連絡',{mental:-3,know:2},'組戻しの手続きで、なんとかお金は戻った。']],{once:1});
+
+// --- お店の経営 ---
+X('x_sh_review','まち','口コミで話題',anyShop,.04,()=>`「${shopName()}がおいしい」と口コミサイトで話題になっている。`,[['常連さんを大事にする',shopFx(.4),'評価が上がった。'],['勢いで値上げする',()=>{const t=S.tmpShop||pickShop();S.tmpShop=null;if(t){initShop(t);t.price=3}return {money:50000}},'売上は伸びたが、少し反感も買った。']]);
+X('x_sh_complain','まち','クレーム',anyShop,.04,()=>`${shopName()}にお客さんから強いクレームが入った。`,[['店に駆けつけて謝る',shopFx(.2),'誠実な対応で、お客さんは常連になってくれた。'],['店員に任せる',shopFx(-.4),'店の雰囲気が少し悪くなった。']]);
+X('x_sh_staffquit','まち','店員の退職',anyShop,.03,()=>`${shopName()}の店員が辞めたいと言っている。`,[['時給を上げる',()=>{S.tmpShop=null;return {money:-50000}},'残ってくれることになった。'],['送り出す',()=>{const t=S.tmpShop||pickShop();S.tmpShop=null;if(t&&t.staff>1)t.staff--;return {}},'店員が1人減った。']]);
+X('x_sh_rival','まち','近くに競合店',anyShop,.03,()=>`${shopName()}のすぐ近くに、そっくりなお店ができた。`,[['値下げで対抗',()=>{const t=S.tmpShop||pickShop();S.tmpShop=null;if(t){initShop(t);t.price=1}return {}},'価格を「安い」に変えた。'],['質で勝負',shopFx(.3),'こだわりを貫いた。']]);
+X('x_sh_tv','まち','テレビの取材',anyShop,.015,()=>`${shopName()}にテレビの取材が来た。`,[['全面協力する',shopFx(.5,3),'放送後、行列ができた。'],['断る',{},'静かな店でいたい。']]);
+X('x_sh_mascot','まち','看板猫',anyShop,.015,()=>`${shopName()}の前に、毎日やってくる猫がいる。`,[['看板猫にする',shopFx(.3,4),'猫目当てのお客さんが増えた。']],{once:1});
+X('x_sh_supply','まち','仕入れ値の高騰',anyShop,.03,'食材や商品の仕入れ値がどんどん上がっている。',[['値上げする',()=>{for(const t of S.town.tiles)if(SHOP[t.t]&&t.price<3)t.price++;return {}},'全店で価格を一段上げた。'],['利益を削って耐える',{money:-100000},'お客さんのために値段を守った。']]);
+X('x_sh_event','まち','まちのイベントに出店',and(anyShop,Mc(4,5,10,11)),.1,'まちのお祭りに出店しないかと誘われた。',[['出店する',shopFx(.3),'たくさんの人にお店を知ってもらえた。'],['今回は見送る',{},'']],{cd:11});
+X('x_sh_collab','まち','お店のコラボ商品',and(anyShop,snsC,Fc(5000)),.03,'自分の配信とお店のコラボ商品を作らないかと提案された。',[['作る',shopFx(.4,3),'ファンがお店にも来てくれるようになった。']]);
+X('x_sh_health','まち','衛生検査',anyShop,.025,()=>`${shopName()}に保健所の検査が入る。`,[['事前にしっかり掃除',shopFx(.2),'問題なしと言われた。'],['いつも通り',()=>chance(.7)?{}:shopFx(-.8)(),'…ちょっと注意を受けた。']]);
+X('x_sh_long','まち','行列のクレーム',and(anyShop,()=>S.town.tiles.some(t=>SHOP[t.t]&&t.r&&t.staff<t.r.need)),.05,'人手が足りず、お客さんを長く待たせてしまっている。',[['店員を増やす',()=>{for(const t of S.town.tiles)if(SHOP[t.t]&&t.r&&t.staff<t.r.need)t.staff=t.r.need;return {}},'必要な人数まで店員を増やした。'],['このまま頑張る',shopFx(-.3),'評価が少し下がった。']]);
+X('x_sh_franchise','まち','フランチャイズの話',and(anyShop,()=>S.town.tiles.some(t=>SHOP[t.t]&&t.stars>=4.5)),.02,'評判のいいお店を、ほかの街にも出さないかと持ちかけられた。',[['のれん分けする',{money:2000000,rep:3,tl:'お店をのれん分けした'},'加盟金が入った。'],['この店だけで十分',{rep:1},'目の届く範囲でやる。']],{once:1});
+X('x_sh_award','まち','まちのグルメ大賞',and(or(bldC('cafe'),bldC('restaurant')),()=>S.town.tiles.some(t=>SHOP[t.t]&&t.stars>=4)),.02,'お店がまちのグルメ大賞に選ばれた！',[['記念メニューを出す',shopFx(.3,6),'お祝いのお客さんでいっぱいになった。']],{once:1});
+X('x_sh_gym','まち','ジムの体験会',bldC('gym'),.03,'ジムで無料体験会を開こうか。',[['開く',shopFx(.3),'入会者が増えた。']]);
+X('x_sh_apparel','まち','新作コレクション',bldC('apparel'),.03,'アパレルの新作をどう発表する？',[['配信で発表',()=>{const r=shopFx(.4,2)();return Object.assign(r,{f:.01})},'配信の同時接続が過去最高になった。'],['店頭だけで',shopFx(.1),'常連さんが喜んだ。']]);
+X('x_sh_game','まち','ゲームの開発会議',bldC('gamedev'),.03,'次回作の方向性で、開発チームの意見が割れている。',[['挑戦的な新作',()=>chance(.4)?{money:3000000,rp:5}:{money:-1000000},'結果はやってみないとわからない。'],['人気作の続編',{money:800000},'手堅く売れた。']]);
+X('x_sh_studio','まち','スタジオの予約殺到',bldC('studio'),.03,'配信スタジオの予約が埋まりっぱなしだ。',[['料金を上げる',()=>{const t=S.town.tiles.find(x=>x.t==='studio');if(t)t.price=3;return {}},'利益が増えた。'],['若手に安く貸す',{rep:3,social:2},'若いクリエイターに慕われるようになった。']]);
+X('x_sh_night','まち','深夜営業の相談',anyShop,.02,'店員から「夜も開けたら売れるのでは」と提案された。',[['営業時間を長くする',()=>{const t=pickShop();if(t){initShop(t);t.hours=3}return {}},'営業時間を「長め」にした。'],['今のままで',{},'無理はさせない。']]);
+X('x_sh_stall','まち','屋台の常連',bldC('stall'),.04,'屋台に毎日来てくれるおじいさんがいる。',[['おまけする',{happy:3,social:2},'まちの人とのつながりが増えた。']]);
+
+// --- 事務所・タレント ---
+X('x_tal_debut','会社','タレントのデビュー配信',talC,.03,()=>`所属タレントの${(S.tmpT=talOne()).name}が、大事な配信を控えて緊張している。`,[['励ます',()=>{if(S.tmpT)S.tmpT.f=Math.round(S.tmpT.f*1.1);return {social:2}},'配信は大成功した。'],['厳しく指導する',()=>{if(S.tmpT)S.tmpT.f=Math.round(S.tmpT.f*(chance(.5)?1.2:.95));return {}},'結果はまちまちだった。']]);
+X('x_tal_rest','会社','タレントの休養',talC,.025,()=>`${(S.tmpT=talOne()).name}が「少し休みたい」と相談してきた。`,[['休ませる',()=>{if(S.tmpT){S.tmpT.pol='bal';S.tmpT.f=Math.round(S.tmpT.f*.97)}return {rep:2}},'元気になって戻ってきた。'],['今は踏ん張らせる',()=>{if(S.tmpT)S.tmpT.f=Math.round(S.tmpT.f*1.05);return {rep:-2}},'少し表情が暗い。']]);
+X('x_tal_rivalry','会社','タレント同士のケンカ',()=>S.office&&S.office.talents.length>=2,.02,'所属タレント同士が配信でケンカを始めてしまった。',[['間に入る',{social:2,mental:-2},'仲直りして、むしろコンビとして人気が出た。'],['話題になるから放置',{f:.01,rep:-3},'炎上ぎりぎりの話題になった。']]);
+X('x_tal_scout2','会社','逸材の噂',and(ofc(1),Hc('scout')),.02,'「すごい新人がいる」という噂を聞いた。',[['会いに行く',()=>{if(S.office.talents.length<OFFICE[S.office.lv].tal){S.office.talents.push({name:pick(TAL_NAMES),genre:pick(TALK),f:RI(20000,80000)});return {money:-500000}}return {}},'契約にこぎつけた！'],['今は余裕がない',{},'']]);
+X('x_office_party','会社','事務所の忘年会',and(ofc(1),Mc(12)),.3,'事務所の忘年会をどうする？',[['盛大に',{money:-300000,social:4,rep:2},'みんなの笑顔が見られた。'],['質素に',{money:-50000,social:2},'あたたかい会になった。']],{cd:11});
+X('x_office_bonus','会社','スタッフへのボーナス',and(ofc(1),Mc(6,12),()=>staffTotal()>0),.2,'スタッフにボーナスを出す時期だ。',[['しっかり出す',()=>({money:-staffTotal()*200000,rep:3})],['出さない',{rep:-3},'スタッフの目が少し冷たい。']],{cd:5});
+X('x_office_move','会社','オフィスの手狭さ',()=>S.office&&S.office.lv>=1&&staffTotal()>=OFFICE[S.office.lv].staff,.03,'スタッフでオフィスがぎゅうぎゅうだ。',[['移転を考える',{plan:2},'「事業」→「事務所」から移転できる。']]);
+X('x_office_leak','会社','情報漏えい',and(ofc(1),()=>staffTotal()>=3),.008,'スタッフのミスで、企画の情報が外に漏れてしまった。',[['すぐに公表して謝る',{rep:-3,mental:-3},'誠実な対応が評価された。'],['隠す',()=>chance(.5)?{}:{rep:-12,flame:1},'バレないことを祈る。']],{once:1});
+X('x_editor_great','会社','編集者の腕',()=>stN('editor')>0,.03,'編集者が仕上げた動画のクオリティが、明らかに上がっている。',[['ほめる',{edit:2,f:.01},'チームの士気が上がった。']]);
+X('x_manager_deal','会社','大型案件',and(()=>stN('manager')>0,Fc(50000)),.03,'マネージャーが大手企業の大型案件を取ってきた。',[['受ける',()=>({money:Math.round(totalF()*3*Math.max(.2,S.cty.inc)),rep:-1})],['断る',{rep:1},'自分らしさを守った。']]);
+
+// --- バイト・副業・行動の中身 ---
+X('x_pt_conv','仕事','コンビニの夜勤',planC('part','conv'),.04,'コンビニの夜勤中、変わったお客さんが来た。',[['丁寧に接客',{social:2,talk:1},'動画のネタになりそうな話を聞けた。']]);
+X('x_pt_food','仕事','まかない',planC('part','food'),.05,'飲食店のまかないが絶品だ。',[['作り方を教わる',{t_cook:3},'家でも作れるようになった。']]);
+X('x_pt_deliv','仕事','配達中の雨',planC('part','deliv'),.05,'配達中にどしゃぶりの雨。',[['気をつけて走る',{health:-2,money:5000},'雨の日手当がついた。'],['今日は休む',{},'']]);
+X('x_pt_tutor','仕事','教え子の合格',planC('part','tutor'),.04,'家庭教師で教えていた子が、第一志望に合格した！',[['一緒に喜ぶ',{happy:6,rep:2,talk:1},'教えることの楽しさを知った。']]);
+X('x_pt_event','仕事','有名人の現場',planC('part','event'),.04,'イベントスタッフとして入った現場に、有名人がいた。',[['仕事に集中',{rep:1,social:1},'裏方の大変さを知った。'],['こっそり話しかける',()=>chance(.3)?{social:4,f:200}:{rep:-2},'…怒られた。']]);
+X('x_pt_manager','仕事','バイトリーダー',and(planC('part'),ag(18,30)),.02,'バイト先で「リーダーをやってほしい」と言われた。',[['引き受ける',{social:3,plan:2,mental:-2},'時給が少し上がった。']],{once:1});
+X('x_side_client','仕事','副業の依頼主',planC('side'),.04,'副業の依頼主から無茶な修正依頼がきた。',[['きちんと対応',{edit:2,mental:-3,money:20000},'次も指名してもらえた。'],['契約通りと伝える',{talk:2},'線引きも大事だ。']]);
+X('x_side_big','仕事','副業がバズった',and(planC('side'),snsC),.02,'副業で作ったものがSNSで話題になった。',[['本業でも紹介',{f:.02,money:50000},'思わぬ相乗効果。']]);
+X('x_study_license','学校','資格試験',planC('study','license'),.05,'資格試験の日がやってきた。',[['全力で挑む',()=>chance(clamp(S.p.know/90,.2,.9))?{know:4,rp:4,happy:4,tl:'資格試験に合格した'}:{mental:-3},'結果は…'],['今回は受けない',{},'']],{cd:12});
+X('x_study_lang','学校','外国人の友達',planC('study','lang'),.04,'語学の勉強で知り合った外国人と仲良くなった。',[['一緒に動画を撮る',{social:3,f:.01},'海外のファンが増えた。',snsC],['言葉を教え合う',{know:2,social:2},'世界が広がった。']]);
+X('x_ex_marathon','健康','マラソン大会',planC('exercise','run'),.03,'市民マラソン大会に出てみる？',[['出る',{health:4,happy:4,mental:2},'完走した！'],['応援に回る',{social:1},'']],{cd:12});
+X('x_ex_yoga','健康','心が静まる',planC('exercise','yoga'),.04,'ヨガを続けていたら、夜よく眠れるようになった。',[['続ける',{mental:4,health:2},'']]);
+X('x_ex_team','健康','草野球チーム',planC('exercise','sports'),.03,'近所の草野球チームに誘われた。',[['入る',{social:4,health:2},'週末の楽しみができた。']],{once:1});
+X('x_play_art','成長','絵のコンクール',and(planC('play','art'),ag(6,15)),.05,'描いた絵がコンクールで入賞した。',[['飾ってもらう',{happy:5,t_vlog:3},'家族が額縁に入れてくれた。']],{once:1});
+X('x_play_music','成長','合唱コンクール',and(planC('play','music'),ag(6,17)),.05,'合唱コンクールでソロを任された。',[['堂々と歌う',{t_music:5,social:2},'拍手が鳴りやまなかった。']],{once:1});
+X('x_play_game','成長','ゲーム大会',and(planC('play','game'),ag(8,17)),.04,'子ども向けのゲーム大会に出てみる？',[['出る',()=>chance(S.tal.game/80)?{t_game:5,happy:6,tl:'ゲーム大会で優勝した'}:{t_game:2,mental:-2},'結果は…']],{once:1});
+X('x_play_joke','成長','お笑いの才能',and(planC('play','joke'),ag(6,17)),.04,'友達を笑わせていたら、「芸人になれば？」と言われた。',[['ネタ帳をつくる',{t_comedy:4,plan:1},'毎日ネタを書きためた。']],{once:1});
+X('x_friend_video','友達','友達との動画',planC('friends','video'),.04,'友達と撮った動画が思ったより伸びた。',[['シリーズにする',{f:.02,friend:5},'ふたりの掛け合いが人気になった。']]);
+X('x_rest_hobby','人生','新しい趣味',planC('rest','hobby'),.03,'趣味の時間に始めたことが、思った以上に楽しい。',[['のめりこむ',{mental:4,happy:3},'生活に張りが出た。']],{cd:24});
+X('x_post_big','SNS','大型企画の準備',planC('post','big'),.04,'大型企画の撮影準備が思うように進まない。',[['予算を追加する',{money:-30000,plan:2},'なんとか間に合った。'],['規模を縮小する',{mental:1},'身の丈に合った企画に変えた。']]);
+X('x_post_live','SNS','ライブの事故',planC('post','live'),.04,'ライブ配信中にネットが切れた。',[['すぐにつなぎ直す',{mental:-2,talk:1},'「おかえり」のコメントがうれしい。']]);
+X('x_post_live2','SNS','深夜ライブの常連',planC('post','live'),.03,'深夜のライブ配信に毎回来てくれる常連さんがいる。',[['名前を呼んで感謝する',{social:2,happy:2,f:.005},'コメント欄があたたかい。']]);
+X('x_post_short','SNS','ショート動画の中毒',planC('post','short'),.03,'ショート動画を作るうちに、自分も見るのがやめられなくなった。',[['見る時間を決める',{mental:2,know:1},'']]);
+X('x_post_collab','SNS','コラボ相手の失言',planC('post','collab'),.025,'コラボ相手が配信中に失言した。',[['その場でフォローする',{talk:2,rep:2},'大人な対応だと評価された。'],['黙っておく',{rep:-3},'一緒に批判されてしまった。']]);
+
+// --- 恋愛・家族・友達 ---
+X('x_love_cook','恋愛','手料理',lovC,.03,'恋人が手料理を作ってくれた。',[['全部食べる',{lover:5,happy:3},'少ししょっぱかったけど、最高の味だった。']]);
+X('x_love_snsfight','恋愛','SNSでの写真',and(lovC,snsC),.03,'恋人に「SNSにふたりの写真を載せないで」と言われた。',[['尊重する',{lover:4,priv:3},'ふたりだけの時間を大事にする。'],['載せたい',{lover:-6,f:.01},'少し気まずくなった。']]);
+X('x_love_parents','恋愛','恋人の両親',and(()=>!!S.partner,ag(22)),.04,'恋人の両親に会うことになった。',[['きちんとあいさつ',{lover:6,social:2,mental:-2},'気に入ってもらえた。'],['緊張でかみまくる',{lover:2,t_comedy:2},'笑われたが、和んだ。']],{once:1});
+X('x_love_distance','恋愛','遠距離',lovC,.01,'恋人が仕事の都合で遠くへ引っ越すことになった。',[['遠距離でも続ける',{lover:-4,mental:-2},'毎晩電話するようになった。'],['自分もついていく',{lover:10,social:-6,tl:'恋人について引っ越した'},'新しい土地で一からやり直す。']],{once:1});
+X('x_spouse_job','家族','配偶者の転職',()=>!!S.spouse,.015,'配偶者が「転職したい」と相談してきた。',[['応援する',()=>{if(S.spouse)S.spouse.inc=Math.round((S.spouse.inc||200000)*R(.9,1.3));return {lover:5}},'新しい職場で生き生きしている。'],['今は安定を',{lover:-3},'少し不満そうだ。']]);
+X('x_spouse_sick','家族','配偶者の看病',()=>!!S.spouse,.012,'配偶者が体調をくずして寝こんでしまった。',[['付きっきりで看病',{lover:8,mental:-3},'「ありがとう」と手を握られた。']]);
+X('x_kid_first','家族','子どものはじめて',kidAge(0,2),.1,'子どもが初めて立った！',[['動画に残す',{happy:6},'何度見返しても泣ける。']],{once:1});
+X('x_kid_school','家族','子どもの入学式',kidAge(6,6),.3,'子どもの入学式。ランドセルが大きく見える。',[['写真をたくさん撮る',{happy:5},'自分の入学式を思い出した。']],{once:1});
+X('x_kid_friend','家族','子どもの友達',kidAge(7,12),.03,'子どもが友達を家に連れてきた。',[['おやつを出す',{happy:2,social:1},'にぎやかな午後になった。']]);
+X('x_kid_grade','家族','子どもの成績',kidAge(10,17),.03,'子どもの成績が下がっている。',[['一緒に勉強する',{know:1,mental:-1},'少しずつ成績が戻った。'],['塾に通わせる',{money:-100000},'']]);
+X('x_kid_away','家族','子どもの巣立ち',kidAge(18,22),.05,'子どもが家を出て、一人暮らしを始める。',[['送り出す',{happy:-3,mental:2,tl:'子どもが巣立った'},'がらんとした部屋で、少し泣いた。']],{once:1});
+X('x_kid_wed','家族','子どもの結婚',kidAge(25,40),.02,'子どもが結婚相手を連れてきた。',[['祝福する',{happy:8,money:-500000},'立派になったな。']],{once:1});
+X('x_parent_tech','家族','親のスマホ',and(anyParentAlive,ag(25)),.03,'親から「スマホの使い方を教えて」と電話がきた。',[['丁寧に教える',{relP:4,mental:-1},'何度も同じことを聞かれたが、うれしそうだった。']]);
+X('x_parent_video','家族','親が動画を見ていた',and(anyParentAlive,Fc(5000)),.03,'親がこっそり自分の動画を全部見ていたらしい。',[['照れる',{relP:5,happy:3},'「がんばってるね」と言われた。']],{once:1});
+X('x_parent_gift','家族','親からの荷物',and(anyParentAlive,()=>S.indep),.04,'実家から食べ物がたくさん入った荷物が届いた。',[['お礼の電話をする',{relP:4,health:1},'電話の声が元気そうでよかった。']]);
+X('x_sib_help','家族','きょうだいの頼み',and(()=>S.sibs.length>0,ag(20)),.02,'きょうだいから「お金を貸してほしい」と頼まれた。',[['貸す',{money:-100000,relP:2},'ちゃんと返ってくるといいけど。'],['断る',{},'']],{once:1});
+X('x_friend_baby','友達','友達の出産',ag(25,45),.02,'友達に赤ちゃんが生まれた。',[['お祝いを贈る',{money:-10000,social:3},'']]);
+X('x_friend_move','友達','友達の引っ越し',and(ag(18),()=>S.friends.length>0),.015,()=>`${pn(S.friends[0])}が遠くへ引っ越すことになった。`,[['送別会を開く',{social:3,money:-10000,friend:5},'「またね」と笑って別れた。']],{once:1});
+X('x_friend_reunion','友達','久しぶりの連絡',and(ag(30),()=>S.friends.length>0),.02,()=>`しばらく会っていなかった${pn(pick(S.friends))}から連絡がきた。`,[['会いに行く',{friend:8,happy:3},'昔と何も変わっていなかった。']]);
+X('x_lonely','人生','さみしい夜',and(ag(20),()=>S.p.social<25),.04,'誰とも話さない日が続いている。',[['誰かに連絡してみる',{social:4,mental:2},'思い切って送ったメッセージに、すぐ返事がきた。'],['ひとりで過ごす',{mental:-2},'']]);
+
+// --- 学校 ---
+X('x_sc_trip2','学校','林間学校',ag(10,12),.2,'林間学校でキャンプファイヤーを囲んだ。',[['出し物をする',{t_comedy:2,social:3},'クラスの人気者になった。']],{once:1});
+X('x_sc_pe','学校','苦手な体育',ag(6,15),.03,'今日の体育は苦手な跳び箱だ。',[['思い切って跳ぶ',()=>chance(S.p.health/110)?{happy:3}:{health:-2,t_comedy:1},'']]);
+X('x_sc_art','学校','美術の課題',ag(10,17),.03,'美術の課題で、自由に作品を作ることになった。',[['動画作品を作る',{edit:3,t_vlog:2},'先生が「これは新しい」と驚いた。'],['絵を描く',{t_beauty:2},'']]);
+X('x_sc_council','学校','生徒会選挙',ag(13,17),.04,'生徒会選挙に立候補してみる？',[['立候補する',()=>chance((S.p.social+S.sk.talk)/150)?{social:4,talk:3,tl:'生徒会長になった'}:{mental:-3},'結果は…'],['応援演説をする',{talk:2},'']],{once:1});
+X('x_sc_phone','学校','授業中のスマホ',and(ag(13,17),snsC),.03,'授業中に通知が鳴ってしまった。',[['すぐに謝る',{rep:1},'']]);
+X('x_sc_teacher_fan','学校','先生がファン',and(ag(13,17),Fc(3000)),.03,'担任の先生が、実は自分のチャンネルのファンだった。',[['照れる',{happy:3,social:2},'']],{once:1});
+X('x_sc_cram','学校','一夜漬け',ag(12,22),.03,'明日はテストなのに、何も勉強していない。',[['一夜漬けする',{know:2,health:-3},'ぎりぎり乗り切った。'],['あきらめて寝る',{health:2,know:-1},'']]);
+X('x_sc_lostitem','学校','落とし物',ag(6,15),.02,'帰り道に財布を拾った。',[['交番に届ける',{rep:2,happy:2},'持ち主からお礼の手紙が届いた。']],{once:1});
+X('x_uni_research','大学','卒業研究',STc('univ'),.05,'卒業研究のテーマを決める。',[['SNSの研究',{know:3,rp:4},'自分の活動が研究対象になった。'],['まちづくりの研究',{know:3,dev:1},'']],{once:1});
+X('x_uni_startup','大学','学生起業',STc('univ'),.02,'友達に「一緒に起業しよう」と誘われた。',[['やってみる',()=>chance(.3)?{money:500000,plan:4,tl:'学生起業に成功した'}:{money:-100000,plan:2},''],['卒業してから',{},'']],{once:1});
+
+// --- 健康 ---
+X('x_h_stiff','健康','肩こり',and(ag(20),planC('post')),.03,'編集のしすぎで肩がガチガチだ。',[['マッサージに行く',{health:3,money:-6000},'生き返った。'],['ストレッチ',{health:1},'']]);
+X('x_h_allergy','健康','アレルギー検査',ag(10),.01,'急に体がかゆくなった。',[['病院で調べる',{money:-5000,health:2},'原因がわかって安心した。']],{once:1});
+X('x_h_burnout2','健康','休みのない日々',and(ag(18),()=>S.p.mental<40,()=>S.plan&&!S.plan.includes('rest')),.05,'気づけば何週間も休んでいない。',[['予定に休みを入れる',()=>{const i=S.plan.length-1;S.plan[i]='rest';S.auto=0;return {mental:5}},'行動の枠を1つ「休む」にした。'],['まだいける',{mental:-3,health:-2},'']]);
+X('x_h_vaccine','健康','予防接種',ag(1),.02,'予防接種の時期がきた。',[['受ける',{health:2},'']],{cd:24});
+X('x_h_dental2','健康','歯の定期検診',ag(18),.02,'歯医者から定期検診のハガキが届いた。',[['行く',{health:1,money:-3000},'虫歯は見つからなかった。']],{cd:24});
+X('x_h_weight','健康','体重計',ag(25),.02,'久しぶりに体重計に乗ったら、数字に驚いた。',[['運動を増やす',{health:2,looks:1},''],['見なかったことに',{},'']],{cd:24});
+X('x_h_eye2','健康','老眼',ag(45),.04,'スマホの文字が見えにくくなってきた。',[['老眼鏡を買う',{money:-10000,looks:-1},'よく見えるようになった。']],{once:1});
+X('x_h_sleepapp','健康','睡眠の記録',ag(18),.02,'睡眠を記録するアプリを入れてみた。',[['生活を見直す',{health:3,mental:2},'']],{once:1});
+
+// --- SNS ---
+X('x_s_algo2','SNS','急におすすめに',Fc(500),.03,'昔の動画が急におすすめに載って再生され始めた。',[['関連動画を出す',{f:.02,mental:-1},'波に乗れた。']]);
+X('x_s_comment','SNS','神コメント',Fc(1000),.03,'コメント欄に、動画より面白いと言われる名コメントがついた。',[['固定して感謝',{social:2,f:.005},'コメント欄が盛り上がった。']]);
+X('x_s_quiet','SNS','伸びない日',Fc(100),.03,'渾身の動画が、まったく再生されない。',[['分析して次に生かす',{plan:3,mental:-1},''],['気分転換する',{mental:2},'']]);
+X('x_s_thumb','SNS','サムネイルの研究',snsC,.03,'サムネイルを変えると再生数が変わるらしい。',[['いろいろ試す',{edit:2,plan:2},'クリック率が上がった。']]);
+X('x_s_privacy2','SNS','映りこんだ住所',and(Fc(2000),()=>S.p.priv<80),.02,'動画に郵便物の住所が一瞬映っていた。',[['すぐに差し替える',{priv:5,edit:1},'ぎりぎりセーフだった。']],{once:1});
+X('x_s_impersonate2','SNS','偽のプレゼント企画',Fc(10000),.02,'自分の名前を使った偽のプレゼント企画が出回っている。',[['注意を呼びかける',{rep:3},'ファンが被害を防いでくれた。']],{once:1});
+X('x_s_anniv','SNS','活動記念日',and(snsC,()=>S.snsAm!=null&&(S.am-S.snsAm)%12===0&&S.am>S.snsAm),.5,'今日は活動を始めて〇周年の記念日だ。',[['記念配信をする',{happy:4,f:.01},'たくさんのお祝いが届いた。']],{cd:11});
+X('x_s_drama','SNS','配信者界隈の騒動',Fc(5000),.02,'有名配信者同士の騒動が話題になっている。',[['触れない',{rep:1},'巻き込まれずに済んだ。'],['意見を言う',()=>chance(.4)?{f:.02,rep:1}:{flame:1},'']]);
+X('x_s_trend_dance','SNS','流行りのダンス',snsC,.03,'流行りのダンスを踊る動画が大流行している。',[['乗っかる',{f:.01,looks:1},''],['見るだけ',{},'']]);
+X('x_s_meetfan','SNS','街で声をかけられた',Fc(30000),.03,'街を歩いていたら「いつも見てます！」と声をかけられた。',[['笑顔で握手',{happy:4,rep:1},'うれしくて一日中にやけていた。']]);
+X('x_s_hate2','SNS','心ない言葉',and(Fc(2000),()=>S.p.mental<50),.03,'見たくないコメントが目に入ってしまった。',[['コメント欄を閉じる日を作る',{mental:4},''],['気にしないふりをする',{mental:-3},'']]);
+X('x_s_money_q','SNS','「いくら稼いでるの？」',Fc(10000),.03,'視聴者から「月にいくら稼いでるの？」と聞かれた。',[['ぼかす',{},''],['ネタにする',{t_comedy:2,f:.005},'']]);
+X('x_s_platform_rule','SNS','規約の変更',snsC,.015,()=>`${SNS[S.main].n}の規約が変わり、子どもが映る動画に新しいルールができた。`,[['ルールを確認する',{know:2,rep:1},'']],{once:1});
+X('x_s_old_video','SNS','黒歴史の動画',and(Fc(3000),ag(20)),.02,'デビュー当時の動画を見返して、顔から火が出た。',[['非公開にする',{mental:1},''],['あえて残す',{rep:1,t_comedy:1},'「成長がわかる」と言われた。']],{once:1});
+X('x_s_ai_tool','SNS','AI編集ツール',and(snsC,ag(15)),.02,'AIで動画を自動編集できるツールが出た。',[['使ってみる',{edit:2,plan:-1},'作業が早くなった。'],['手作業にこだわる',{edit:1,rep:1},'']],{once:1});
+X('x_s_live_gift','SNS','高額の投げ銭',and(Fc(20000),ag(18)),.02,'ライブ中に、とんでもない額の投げ銭が飛んできた。',[['お礼を言う',()=>({money:Math.round(R(50000,300000)),happy:3})],['「無理しないで」と伝える',{rep:3},'']]);
+
+// --- 世界・国 ---
+X('x_w_holiday','暮らし','国の祝日',notJP,.03,()=>`${ctry()}の大きな祝日。街中がお祭り騒ぎだ。`,[['家族と過ごす',{relP:3,happy:3},''],['祝日の様子を配信',{f:.01},'',snsC]],{cd:12});
+X('x_w_market','暮らし','市場の値段',poorC,.04,'市場の物の値段が、また上がっている。',[['節約する',{happy:-2,plan:1},''],['家族で分け合う',{relP:2},'']]);
+X('x_w_school_far','学校','遠い学校',and(poorC,STc('school')),.04,'学校まで歩いて1時間以上かかる。',[['毎日がんばって通う',{health:2,know:1,mental:-1},'']]);
+X('x_w_remit','お金','海外からの仕送り',and(poorC,ag(10,25)),.02,'海外で働く親戚から仕送りが届いた。',[['学費に使う',{know:3,money:5000},'']],{once:1});
+X('x_w_global_fan','SNS','言葉の壁をこえて',and(notJP,Fc(5000)),.02,'言葉が通じない国の人からも、応援コメントが届いた。',[['翻訳して返事',{social:2,f:.01},'']]);
+X('x_w_rich_country','暮らし','豊かな暮らし',()=>S.cty.inc>=1.2&&age()>=10,.02,'この国では、ほとんどの子どもがスマホを持っている。',[['当たり前に感謝する',{happy:1,know:1},'']],{once:1});
+X('x_w_island','暮らし','台風の島',()=>S.ctyId==='midori',.03,'島に台風が近づいている。',[['みんなで備える',{social:3,money:-10000},'']]);
+X('x_w_desert','暮らし','砂嵐',()=>S.ctyId==='grand',.04,'激しい砂嵐で、外に出られない日が続く。',[['家で過ごす',{relP:2,mental:-1},'']]);
+X('x_w_kingdom','暮らし','王様の演説',()=>S.ctyId==='sorano',.03,'王様が「若者の挑戦を応援する」と演説した。',[['勇気をもらう',{happy:2,plan:1},'']],{once:1});
+X('x_w_hexa2','SNS','フォロワー数の国民番号',()=>S.ctyId==='hexa'&&S.snsOpen,.03,'この国では、名刺にフォロワー数が書かれている。',[['負けていられない',{plan:2,mental:-1},'']],{once:1});
+
+// --- 老後 ---
+X('x_o_grandvisit','家族','孫が遊びに来た',and(ag(55),()=>S.tl.some(t=>t[1]==='孫が生まれた')),.05,'孫が遊びに来た。',[['一緒に遊ぶ',{happy:5,health:1},'']]);
+X('x_o_reunion','人生','同窓会の幹事',ag(60),.02,'古い友人から同窓会の幹事を頼まれた。',[['引き受ける',{social:4,mental:-1},'懐かしい顔ぶれがそろった。']],{once:1});
+X('x_o_garden','人生','盆栽',ag(65),.02,'盆栽を始めてみた。',[['毎日手入れする',{mental:4,happy:2},'']],{once:1});
+X('x_o_mentor','人生','若者の相談',and(ag(60),Fc(10000)),.03,'若い配信者から「人生相談に乗ってほしい」と連絡がきた。',[['会って話す',{happy:4,rep:2},'']]);
+X('x_o_walk','健康','朝の散歩',ag(65),.03,'朝の散歩が日課になった。',[['続ける',{health:3,mental:2},'']],{once:1});
+X('x_o_will2','人生','形見分け',and(ag(75),()=>S.kids.length>0),.02,'思い出の品を子どもたちに分けておこうか。',[['ひとつずつ渡す',{happy:3,mental:3},'']],{once:1});
+X('x_o_digital','人生','デジタル終活',and(ag(70),snsC),.03,'もしものとき、アカウントをどうするか決めておこうか。',[['家族に託す',{mental:3,know:1},'']],{once:1});
+X('x_o_young','人生','若返った気分',ag(70),.02,'孫と一緒に流行りの曲を覚えた。',[['披露する',{happy:4,t_music:2},'']],{once:1});
+
+// --- ニュース（風刺） ---
+X('x_n_bills','ニュース','ニュース',ag(18),.01,'「固定費の見直しで年間10万円の節約」——特集が話題に。',[['自分も見直す',()=>{for(const k of Object.keys(S.subs||{}))if(chance(.3))S.subs[k]=0;return {know:2}},'']],{once:1});
+X('x_n_shop','ニュース','ニュース',ag(18),.01,'「個人店の閉店相次ぐ、人手不足が原因」',[['考えさせられる',{know:1},()=>anyShop()?'自分のお店の店員のことを考えた。':'']],{once:1});
+X('x_n_tower','ニュース','ニュース',ag(18),.01,'「タワマンに住む配信者、背景で住所特定される」',[['気をつけよう',{priv:3},'']],{once:1});
+X('x_n_credit','ニュース','ニュース',ag(18),.01,'「信用スコア社会、どこまで進む？」',[['うーん',{know:1},'']],{once:1});
+X('x_n_greedy','ニュース','ニュース',ag(15),.01,'「投げ銭のしすぎで借金、若者に広がる」',[['考えさせられる',{know:1},'']],{once:1});
+X('x_n_vtuber','ニュース','ニュース',ag(12),.01,'「アバター配信者の年収ランキング発表」',[['研究する',{rp:3},'']],{once:1});
+X('x_n_kidscam','ニュース','ニュース',ag(10),.01,'「家族チャンネルで育った若者の本音」というドキュメンタリーが話題に。',[['見る',{know:1,mental:-1},()=>S.kc.was?'他人事とは思えなかった。':'']],{once:1});
+X('x_n_ai_actor','ニュース','ニュース',ag(15),.01,'「AIの俳優が主演の映画がヒット」',[['人間にしかできないことを考える',{plan:2},'']],{once:1});
+X('x_n_fourday','ニュース','ニュース',ag(18),.008,'「副業を認める会社が7割に」',[['副業を考える',{plan:1},'行動の「副業」で稼げる。']],{once:1});
+X('x_n_space2','ニュース','ニュース',ag(15),.008,'「月面からの生配信、来年実施へ」',[['夢が広がる',{happy:2},'']],{once:1});
+X('x_n_quiet','ニュース','ニュース',ag(15),.008,'「SNSを1か月やめてみた結果」という記事がバズっている。',[['自分もやってみる？',{mental:3},''],['皮肉だな',{t_comedy:1},'']],{once:1});
+X('x_n_marry','ニュース','ニュース',ag(18),.008,'「結婚しない人生、選ぶ人が増加」',[['人それぞれ',{know:1},'']],{once:1});
+
+function openSns(k){S.open[k]=1;if(!S.snsOpen)S.snsAm=S.am;S.snsOpen=1}
+X('x_more1','季節','初雪',and(Mc(12,1,2),ag(3)),.05,'今年初めての雪が降った。',[['雪だるまを作る',{happy:3,health:1},''],['雪景色を撮る',{t_vlog:2,f:.005},'',snsC]],{cd:11});
+X('x_more2','暮らし','停電の夜',ag(5),.008,'台風で一晩じゅう停電した。',[['ろうそくを囲んで話す',{relP:3,mental:1},'不思議とあたたかい夜だった。']],{cd:36});
+X('x_more3','友達','誕生日の寄せ書き',and(ag(10,22),()=>S.friends.length>0),.03,'クラスのみんなから誕生日の寄せ書きをもらった。',[['大切にしまう',{happy:4,social:2},'']],{once:1});
+X('x_more4','SNS','知らない国からの依頼',and(Fc(20000),jpC),.015,'海外の企業から「自国向けのPRをしてほしい」と依頼がきた。',[['受ける',()=>({money:Math.round(totalF()*1.5),know:2})],['断る',{},'']],{once:1});
+X('x_more5','人生','人生の分かれ道',ag(30,50),.01,'ふと「このままでいいのか」と考える夜があった。',[['新しいことに挑戦する',{plan:3,happy:2,mental:-1},''],['今を大事にする',{mental:3,happy:1},'']],{cd:60});
+X('x_more6','家族','家族写真',and(ag(20),()=>S.kids.length>0||!!S.spouse),.02,'家族みんなで写真館に行った。',[['飾る',{happy:4,lover:3},'']],{cd:60});
+X('x_more7','まち','まちの清掃活動',and(ag(15),()=>S.town&&S.town.dev>=10),.02,'まちの清掃活動に参加しないかと誘われた。',[['参加する',{social:2,rep:2,dev:1},'']],{cd:24});
+X('x_more8','健康','献血の表彰',ag(30),.005,'献血を続けていたら、表彰状が届いた。',[['誇らしい',{happy:3,rep:2},'']],{once:1});
 </script>
 
 </body>

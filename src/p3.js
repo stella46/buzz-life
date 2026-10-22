@@ -223,7 +223,7 @@ let curEv=null;
 const modalOpen=()=>!$('#modal').hidden;
 function openModal(html){$('#mcard').innerHTML=html;$('#modal').hidden=false;const b=$('#mcard').querySelector('button');if(b)b.focus({preventScroll:true})}
 function closeModal(){$('#modal').hidden=true;$('#mcard').innerHTML='';curEv=null}
-function showEvent(e){
+function showEventBase(e){
   if(!e)return;
   S.seen[e.id]=1;S.cd[e.id]=S.am;if(typeof META!=='undefined')META.seen[e.id]=1;
   const text=typeof e.text==='function'?e.text():e.text;
@@ -507,7 +507,7 @@ function drawPerson(c,x,y,hgt,s){
   if(S&&S.g==='女'&&a>=3)px(c,hx-1,hy,2,head*.9,hair),px(c,hx+head-1,hy,2,head*.9,hair);
   const blink=(fr%60)<3;px(c,hx+head*.25,hy+head*.5,1*s>1?s:1,blink?1:2,'#1a1a2a');px(c,hx+head*.65,hy+head*.5,1*s>1?s:1,blink?1:2,'#1a1a2a');
 }
-function drawRoom(){
+function drawRoomClassic(){
   fr++;
   if(!S||$('#scrGame').hidden){return}
   const c=cx,e=S.eq,a=age();
@@ -551,9 +551,9 @@ function drawRoom(){
   if(S.kc.on&&a<13&&(fr>>3)%2){px(c,4,4,5,5,'#ff5a4e');c.fillStyle='#fff';c.font='7px sans-serif';c.fillText('REC',11,9)}
   if(onAir&&(fr>>3)%2){px(c,116,2,40,9,'#ff5a4e');c.fillStyle='#fff';c.font='7px sans-serif';c.fillText('ON AIR',121,9)}
 }
-function drawLogo(){const c=$('#logoCv').getContext('2d');px(c,0,0,160,80,'#20234a');for(let i=0;i<14;i++)px(c,(i*37)%160,(i*23)%60,2,2,'#454c8c');px(c,58,8,44,66,'#111');px(c,61,12,38,56,'#3fd6c9');px(c,64,16,32,22,'#ff5c8a');px(c,70,20,8,8,'#ffcf3f');px(c,80,22,12,2,'#fff');px(c,80,26,8,2,'#fff');for(let i=0;i<4;i++)px(c,66+i*8,42,6,6,i%2?'#ffcf3f':'#fff');px(c,66,52,28,3,'#191b37');px(c,66,58,20,3,'#191b37');px(c,20,40,6,6,'#ff5c8a');px(c,26,40,6,6,'#ff5c8a');px(c,20,46,12,6,'#ff5c8a');px(c,23,52,6,3,'#ff5c8a');px(c,124,30,10,2,'#ffcf3f');px(c,128,26,2,10,'#ffcf3f');px(c,134,48,8,2,'#fff');px(c,137,45,2,8,'#fff')}
-let lastT=0;function loop(t){if(t-lastT>110){lastT=t;try{drawRoom()}catch(err){}}requestAnimationFrame(loop)}
+function drawLogoClassic(){const c=$('#logoCv').getContext('2d');px(c,0,0,160,80,'#20234a');for(let i=0;i<14;i++)px(c,(i*37)%160,(i*23)%60,2,2,'#454c8c');px(c,58,8,44,66,'#111');px(c,61,12,38,56,'#3fd6c9');px(c,64,16,32,22,'#ff5c8a');px(c,70,20,8,8,'#ffcf3f');px(c,80,22,12,2,'#fff');px(c,80,26,8,2,'#fff');for(let i=0;i<4;i++)px(c,66+i*8,42,6,6,i%2?'#ffcf3f':'#fff');px(c,66,52,28,3,'#191b37');px(c,66,58,20,3,'#191b37');px(c,20,40,6,6,'#ff5c8a');px(c,26,40,6,6,'#ff5c8a');px(c,20,46,12,6,'#ff5c8a');px(c,23,52,6,3,'#ff5c8a');px(c,124,30,10,2,'#ffcf3f');px(c,128,26,2,10,'#ffcf3f');px(c,134,48,8,2,'#fff');px(c,137,45,2,8,'#fff')}
+let lastT=0;function loopClassic(t){if(t-lastT>110){lastT=t;try{drawRoom()}catch(err){}}requestAnimationFrame(loop)}
 
 function applyTitle(){document.title=CFG.title;const t=esc(CFG.title);$('#gameTitle').innerHTML=CFG.titleBreak&&t.includes(CFG.titleBreak)?t.replace(CFG.titleBreak,CFG.titleBreak+'<br>'):t}
 function initTitle(){applyTitle();const has=!!loadSaved();$('#btnCont').disabled=!has;$('#btnCont').textContent=has?'つづきから':'つづきから（セーブなし）'}
-drawLogo();initTitle();requestAnimationFrame(loop);
+initTitle();setTimeout(()=>{try{drawLogo()}catch(_){}requestAnimationFrame(loop)},0);

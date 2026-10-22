@@ -14,11 +14,12 @@ const { chromium } = require('playwright');
     speed=2;let evShown=0,yrs=0;const _show=showEvent;showEvent=function(e){evShown++;if(S&&age()<18&&curEv==null){}return _show(e)};
     for(let run=0;run<runs;run++){
       const era=eras[(run+seed0)%4];const yearIn=String(1940+Math.floor(Math.random()*160));
-      newGame({era,yearIn,stage:stages[(run+seed0)%4],diff:diffs[Math.floor(run/4+seed0)%4],endless:run%3===0?1:0});
+      GFX=['pixel','illust','phone','hybrid','classic'][run%5];applyGfx();newGame({era,yearIn,stage:stages[(run+seed0)%4],diff:diffs[Math.floor(run/4+seed0)%4],endless:run%3===0?1:0});
       const y0=S.y;let it=0,gens=0,acts={},loads=0,kidLoan=0,stuck=0;const cnt=k=>acts[k]=(acts[k]||0)+1;
       while(it<6000){it++;
         render=(it%41===0)?realRender:function(){};
         if(it%41===0){for(const [tk,subs] of [['act',[null]],['sns',[null]],['money',['bills','shop','room','bank']],['biz',['town','shop','co','office','res']],['life',['stat','goal','choice','ppl','map','album','skill','rec']]])for(const sb of subs){try{if(sb)SUB[tk]=sb;tab=tk;renderPanel()}catch(e){note('panel '+tk+':'+sb+' '+e.message)}}}
+        if(it%23===0){try{drawRoom();drawTown();const c=document.createElement('canvas');drawEvArt(c,pick(['SNS','恋愛','家族','仕事','お金','健康','学校','まち','ニュース','人生','成長','友達']));if(S.album&&S.album.length){const a=document.createElement('canvas');a.dataset.alb=0;drawAlbum(a,S.album[0].k)}}catch(e){note('draw '+e.message+' '+(e.stack||'').split('\n')[1])}}
         if(it%300===0){try{save();const raw=localStorage.getItem(CFG.save);const o=loadSaved();if(!o)note('load null');else{S=o;loads++}}catch(e){note('saveload '+e.message)}}
         if(it%37===0)scan(S,'S',0);
         if(!S.alive){ if(S.endless&&S.kids.length&&gens<2){gens++;try{continueAsChild(0,false)}catch(e){note('cont '+e.message)}continue} break;}

@@ -88,7 +88,7 @@ function kcHtml(){if(!S.kc.on||!S.kc.cont)return '';return `<div class="card"><d
 
 // ----- 「発信」タブの投稿の方針 -----
 function snsPlanHtml(){const st=STYLES[S.style]||STYLES.norm;const cp=collabNow();
-  let h=`<p class="hint">スタイル：${esc(st.d||'')}</p>`;
+  let h=postsHtml()+`<p class="hint">スタイル：${esc(st.d||'')}</p>`;
   h+=`<h3>投稿の企画</h3><div class="seg wrapseg">${POSTPLAN.map(p=>{const ok=!p.ok||p.ok();return `<button type="button" class="${postPlanNow()===p.k?'on':''}" data-pplan="${p.k}" ${ok?'':'disabled'}>${p.n}</button>`}).join('')}</div><p class="hint">${esc((POSTPLAN.find(p=>p.k===postPlanNow())||POSTPLAN[0]).d)}。「予定」で「投稿する」を入れた月に、この企画で投稿する。</p>`;
   h+=`<h3>流行</h3><p class="hint">いまの流行は「${esc(GENRES[S.trend.g].n)}」（あと約${Math.max(1,S.trend.until-S.am)}か月続く）。流行のジャンルで投稿すると伸びやすい。</p>
   <div class="row"><button class="b sm ${S.autoTrend?'on':''}" type="button" data-act="autoTrend">流行に自動で合わせる：${S.autoTrend?'ON':'OFF'}</button>${S.trend.g!==S.genre&&genreOk(S.trend.g)&&!S.autoTrend?'<button class="b sm pri" type="button" data-act="matchTrend">今すぐ流行に合わせる</button>':''}</div>`;

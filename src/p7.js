@@ -400,7 +400,7 @@ function townPanel(){
   }else h+='<p class="hint">ここには建てられない。</p>';
   return h+'</div>';
 }
-function drawTown(){
+function drawTownClassic(){
   const cv=$('#townCv');if(!cv)return;const c=cv.getContext('2d');
   S.town.tiles.forEach((t,i)=>{const x=(i%8)*16,y=Math.floor(i/8)*16;
     px(c,x,y,16,16,'#5f9e4f');px(c,x+3,y+5,1,1,'#78b866');px(c,x+11,y+10,1,1,'#78b866');
@@ -472,6 +472,7 @@ function showFree(o){
   <label class="fld"><span>性別</span><select id="frG"><option value="">ランダム</option><option>男</option><option>女</option></select></label>
   <label class="fld"><span>地域</span><select id="frReg"><option value="">ランダム</option>${regs.map((r,i)=>`<option value="${i}">${esc(r.n)}（${esc(r.type)}）</option>`).join('')}</select></label>
   <label class="fld"><span>暮らし向き</span><select id="frTier"><option value="">ランダム</option>${TIERS.map((t,i)=>`<option value="${i}">${esc(t.l)}</option>`).join('')}</select></label>
+  ${lookFieldsHtml()}
   <label class="fld"><span>得意な素質</span><select id="frTal"><option value="">ランダム</option>${TALK.map(k=>`<option value="${k}">${esc(GENRES[k].n)}</option>`).join('')}</select></label></div>
   <div class="mch"><button class="b pri" type="button" data-act="frGo">この設定で生まれる</button><button class="b ghost" type="button" data-act="setup">戻る</button></div>`);
 }
@@ -500,7 +501,7 @@ document.addEventListener('click',e=>{
     case 'setup':showSetup();break;
     case 'suRandom':{const o=readSetup();closeModal();newGame(o);break}
     case 'suFree':showFree(readSetup());break;
-    case 'frGo':{const o=FREEOPT;o.free={last:$('#frLast').value.trim().slice(0,8)||null,first:$('#frFirst').value.trim().slice(0,8)||null,g:$('#frG').value||null,region:$('#frReg').value===''?null:+$('#frReg').value,tier:$('#frTier').value===''?null:+$('#frTier').value,tal:$('#frTal').value||null};closeModal();newGame(o);break}
+    case 'frGo':{const o=FREEOPT;o.free={last:$('#frLast').value.trim().slice(0,8)||null,first:$('#frFirst').value.trim().slice(0,8)||null,g:$('#frG').value||null,region:$('#frReg').value===''?null:+$('#frReg').value,tier:$('#frTier').value===''?null:+$('#frTier').value,tal:$('#frTal').value||null,hs:$('#frHs')&&$('#frHs').value!==''?+$('#frHs').value:null,hairc:$('#frHairc')&&$('#frHairc').value!==''?+$('#frHairc').value:null,skin:$('#frSkin')&&$('#frSkin').value!==''?+$('#frSkin').value:null};closeModal();newGame(o);break}
     case 'achv':showAch();break;
     case 'bgm':bgmOn=!bgmOn;try{localStorage.setItem('nipporia-bgm',bgmOn?'1':'0')}catch(_){}bgmUser=true;bgmUpdate();if(modalOpen()&&!curEv)showMenu();if(S)renderTop();else{$('#btnBgm2')&&($('#btnBgm2').textContent='BGM：'+(bgmOn?'ON':'OFF'))}break;
     case 'buyphone':{const pr=Math.round(20000*Math.max(.25,S.cty.inc));if(S.money>=pr){outc('shop',pr);delete S.flags.noNet;tl('スマホを手に入れた');S.q.push('m13');render();const ev=EV[S.q.shift()];showEvent(ev)}break}

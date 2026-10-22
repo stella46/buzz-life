@@ -1,5 +1,5 @@
 // ===== v0.6：遊びの拡張 =====
-function ensureV6(){if(!S)return;ensureV7();ensureV8();ensureV10();
+function ensureV6(){if(!S)return;ensureV7();ensureV8();ensureV10();if(S.look&&S.look.skin==null)lookInit(null);
   if(S.fanCore==null){S.fanCore=.05;S.fanAnti=.02}
   if(!S.series)S.series={g:null,n:0,fat:0};
   if(!S.pers)S.pers={careful:0,bold:0,kind:0,compet:0};
@@ -205,7 +205,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||
 // ----- 思い出アルバム -----
 const ALB=[[/誕生$/,'birth'],[/SNSデビュー/,'debut'],[/初めてバズ/,'buzz'],[/フォロワー1万/,'f10k'],[/フォロワー10万/,'f100k'],[/フォロワー100万/,'f1m'],[/と結婚した/,'wed'],[/が生まれた$/,'baby'],[/として就職/,'job'],[/大学に進学/,'univ'],[/住み始めた|一人暮らし/,'home'],[/市長/,'mayor'],[/を建てた/,'shop'],[/を構えた/,'office'],[/受賞|大賞|優勝/,'award'],[/大炎上/,'flame'],[/孫が生まれた/,'grand'],[/主催/,'fest'],[/目標/,'goal'],[/永眠|隠居/,'end'],[/引き継いだ/,'heir']];
 function tl(t){S.tl.push([age(),t]);if(!S.album)S.album=[];for(const [re,k] of ALB)if(re.test(t)){S.album.push({age:age(),k,t,y:S.y});if(S.album.length>40)S.album.shift();break}}
-function drawAlbum(cv,k){const c=cv.getContext('2d');const bg={birth:'#ffd6e0',debut:'#3fd6c9',buzz:'#ff5c8a',f10k:'#ffcf3f',f100k:'#d8d8e8',f1m:'#ffcf3f',wed:'#fff0f5',baby:'#ffe8cc',job:'#90caf9',univ:'#c5e1a5',home:'#bcaaa4',mayor:'#7986cb',shop:'#ffcc80',office:'#9fa8da',award:'#ffd54f',flame:'#ff8a65',grand:'#f8bbd0',fest:'#4db6ac',goal:'#aed581',end:'#5c6bc0',heir:'#b39ddb'}[k]||'#888';
+function drawAlbumClassic(cv,k){const c=cv.getContext('2d');const bg={birth:'#ffd6e0',debut:'#3fd6c9',buzz:'#ff5c8a',f10k:'#ffcf3f',f100k:'#d8d8e8',f1m:'#ffcf3f',wed:'#fff0f5',baby:'#ffe8cc',job:'#90caf9',univ:'#c5e1a5',home:'#bcaaa4',mayor:'#7986cb',shop:'#ffcc80',office:'#9fa8da',award:'#ffd54f',flame:'#ff8a65',grand:'#f8bbd0',fest:'#4db6ac',goal:'#aed581',end:'#5c6bc0',heir:'#b39ddb'}[k]||'#888';
   px(c,0,0,64,48,bg);px(c,0,40,64,8,'#00000022');
   const P=(x,y,h)=>{px(c,x-3,y-h,6,6,'#f2c39d');px(c,x-3,y-h,6,2,'#2a1d16');px(c,x-3,y-h+6,6,h-8,'#ff5c8a');px(c,x-3,y-2,2,2,'#2e3360');px(c,x+1,y-2,2,2,'#2e3360')};
   if(k==='birth'||k==='baby'||k==='grand'){px(c,22,28,20,10,'#fff');px(c,28,22,8,8,'#f2c39d');P(14,40,16);if(k!=='birth')P(50,40,16)}
@@ -248,7 +248,7 @@ function legacyHook(P,N){const ts=titlesOf().slice(0,2);N.legacy=(P.legacy||[]).
 function pickBody(){const a=BODY.slice();const out=[];for(let i=0;i<2;i++)out.push(a.splice(RI(0,a.length-1),1)[0].k);return out}
 
 // ----- 生まれた直後の設定 -----
-function birthHook(o){ensureV6();S.seed=o.seed;{const _r=Math.random;Math.random=mulberry32(o.seed+7);try{S.body=pickBody()}finally{Math.random=_r}}S.goal=o.goal&&GOALS[o.goal]?o.goal:pick(Object.keys(GOALS).filter(k=>k!=='free'));S.goalDone=0;ticker(`${S.region.n}で${S.name}が生まれた（${S.y}年）`);birthHook7();applyLegacy(S,true)}
+function birthHook(o){ensureV6();S.seed=o.seed;{const _r=Math.random;Math.random=mulberry32(o.seed+7);try{S.body=pickBody()}finally{Math.random=_r}}S.goal=o.goal&&GOALS[o.goal]?o.goal:pick(Object.keys(GOALS).filter(k=>k!=='free'));S.goalDone=0;ticker(`${S.region.n}で${S.name}が生まれた（${S.y}年）`);birthHook7();applyLegacy(S,true);lookInit(o)}
 EV.birth.text=(base=>()=>base()+`\n\n生まれの番号：${seedCode(S.seed)}（同じ番号で友達も同じ生まれになれる）\n体の特徴：${S.body.map(k=>BODY.find(b=>b.k===k).n).join('・')}\n人生の目標：${GOALS[S.goal].n}`)(EV.birth.text);
 
 // ----- 人生の選択 -----

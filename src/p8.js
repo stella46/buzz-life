@@ -117,7 +117,7 @@ function doPost(k){
   nf*=Math.max(0,1-f/sn.cap);
   if(q<20)nf-=f*.003*k;
   S.f[key]=Math.max(0,S.f[key]+nf);
-  postHook(k,q,buzzed,nf);
+  postHook(k,q,buzzed,nf);try{postRecord(buzzed,views)}catch(_){}
   const money=f>=sn.mon?Math.round(views*sn.rpm*m.rpm*Math.max(.15,S.cty.inc)):0;
   if(money)inc('sns',money);
   S.mo.views+=views;S.mo.newF+=nf;S.mo.posts+=k;S.stats.views+=views;
@@ -289,7 +289,7 @@ Object.assign(INC_LBL,{loan:'借り入れ',invout:'投資の引き出し',part:'
 Object.assign(OUT_LBL,{rent:'家賃',util:'食費・光熱費',home:'実家に入れるお金',phone:'スマホ代',subs:'契約・サブスク',kids:'子育て費',debt:'返済',office:'事務所の家賃',staff:'スタッフの給料',tax:'税金',invest:'投資',donate:'寄付',send:'仕送り',move:'引っ越し',goods:'暮らしの買い物',dev:'新メニュー開発'});
 
 // ----- 音量 -----
-function snd(type){if(!sndOn||VOL.se<=0)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)()}catch(e){return}
+function sndClassic(type){if(!sndOn||VOL.se<=0)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)()}catch(e){return}
   const seq={click:[[660,.035]],coin:[[988,.06],[1319,.12]],buzz:[[523,.07],[659,.07],[784,.07],[1047,.2]],flame:[[220,.14],[165,.26]],ev:[[784,.06],[988,.1]],bad:[[330,.12],[247,.2]],end:[[523,.22],[392,.22],[330,.3],[262,.6]],buy:[[784,.05],[1175,.1]]}[type]||[];
   let t=AC.currentTime+.01;for(const [fq,d] of seq){const o=AC.createOscillator(),g=AC.createGain();o.type='square';o.frequency.value=fq;g.gain.setValueAtTime(.07*VOL.se,t);g.gain.exponentialRampToValueAtTime(.0005,t+d);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.02);t+=d*.92}}
 function saveVol(){try{localStorage.setItem('nipporia-vol',JSON.stringify(VOL))}catch(e){}}
@@ -334,6 +334,7 @@ function renderPanel(){
   if(tab==='biz'&&SUB.biz==='town')drawTown();
   if(tab==='life'&&SUB.life==='map')drawMap();
   if(tab==='life'&&SUB.life==='album')paintAlbums();
+  if(tab==='sns')try{paintThumbs()}catch(_){}
 }
 function panelPlan(){
   const a=age(),n=freeSlots();ensurePlan();let h=noticesHtml()+todoHtml()+`<h2>${S.unit==='week'?'今週':'今月'}の行動</h2>`;

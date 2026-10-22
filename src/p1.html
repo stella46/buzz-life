@@ -2,7 +2,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Zen+Maru+Gothic:wght@400;700&display=swap">
 <style>
 /* Layout: レトロな携帯ゲーム機の画面。上に情報バー、左にドット絵の部屋とできごとログ、右にタブパネル（スマホは縦積み＋下部タブ） */
 :root{
@@ -255,6 +255,53 @@ a.b{display:inline-block;text-decoration:none;align-self:flex-start}
 .todo.hot{border-color:var(--pink)}
 .todo:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .seg.wrapseg{flex-wrap:wrap}
+
+/* ===== v1.0 テーマ ===== */
+.tabicon{display:none}
+.evart{display:block;width:100%;height:auto;aspect-ratio:160/56;border:2px solid var(--line)}
+.optlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.optc{font:inherit;text-align:left;background:var(--bg2);color:var(--ink);border:2px solid var(--line);padding:8px 10px;cursor:pointer;display:flex;flex-direction:column;gap:2px}
+.optc span{font-size:12px;color:var(--muted);line-height:1.45}
+.optc.on{border-color:var(--pink);background:var(--panel2)}
+.optc:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.thumbs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.thumb{margin:0;min-width:0}.thumb canvas{width:100%;aspect-ratio:16/9;display:block;border:2px solid var(--line)}
+.thumb figcaption{font-size:12px;line-height:1.4;margin-top:3px;overflow-wrap:anywhere}.thumb figcaption span{display:block;color:var(--muted)}
+/* A 高精細ドット */
+body.th-pixel{--bg:#12142e;--bg2:#1b1d40;--panel:#22255a;--panel2:#2b2f6e;--line:#5560b0;--shadow:#07081a;--ink:#f6f3ff;--muted:#b4b0e0;--btn:#2f3480;--pink:#ff4f9a;--pink2:#ff8fbe;--cyan:#2ee6d6;--gold:#ffd34f}
+.th-pixel .panel,.th-pixel .who,.th-pixel .report{box-shadow:inset 0 0 0 2px var(--bg2),5px 5px 0 var(--shadow)}
+.th-pixel .roomwrap{border-width:4px;border-color:var(--line)}
+/* B イラスト・C スマホ（明るい） */
+body.th-illust,body.th-phone{--bg:#fff6f0;--bg2:#fdeee6;--panel:#ffffff;--panel2:#fff3ec;--line:#f0d4c8;--shadow:rgba(200,140,120,.22);--ink:#3b3046;--muted:#8a7f94;--btn:#ffe8ef;--pink:#ff6f91;--pink2:#ffa5bc;--onpink:#ffffff;--cyan:#21a89d;--oncyan:#ffffff;--gold:#e8590c;--red:#e5484d;--green:#2f9e44;--purple:#8e6cf0;--font:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;color-scheme:light}
+/* D スマホ＋ドット（ダークモード） */
+body.th-hybrid{--bg:#0f1115;--bg2:#16181f;--panel:#1c1f28;--panel2:#242834;--line:#343a4a;--shadow:rgba(0,0,0,.4);--ink:#f2f4f8;--muted:#9aa3b5;--btn:#2a2f3c;--pink:#ff4f8b;--pink2:#ff86b0;--onpink:#ffffff;--cyan:#33d1c4;--gold:#ffcc4d;--font:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;color-scheme:dark}
+:is(.th-illust,.th-phone,.th-hybrid) :is(.b,.panel,.card,.who,.report,.roomwrap,.mcard,.slotc,.shop,.note,.optc,.todo,.todos,.stab,.tab,.fixed,select,input,textarea,.seg,.seg button,.fbset,.fbc,.album figure,.evart,.thumb canvas,.stat,.ctl,.nv,.chip){border-radius:14px}
+:is(.th-illust,.th-phone,.th-hybrid) :is(.b,.panel,.who,.report,.roomwrap,.mcard){box-shadow:0 4px 16px var(--shadow)}
+:is(.th-illust,.th-phone,.th-hybrid) .b{border-width:1.5px}
+:is(.th-illust,.th-phone,.th-hybrid) :is(.panel,.card,.who,.report,.mcard,.slotc){border-width:1.5px}
+:is(.th-illust,.th-phone,.th-hybrid) .roomwrap{background:var(--panel);overflow:hidden;border-width:1.5px}
+:is(.th-illust,.th-phone,.th-hybrid) .mcard{border:2px solid var(--pink)}
+:is(.th-illust,.th-phone,.th-hybrid) .top{border-radius:0 0 18px 18px}
+:is(.th-illust,.th-phone,.th-hybrid,.th-pixel) .tabicon{display:block;width:22px;height:22px;margin:0 auto 2px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+:is(.th-illust,.th-phone,.th-hybrid,.th-pixel) .tab{display:flex;flex-direction:column;align-items:center;gap:0}
+.th-illust .title,.th-phone .title{background:radial-gradient(circle at 50% 20%,#ffe3ec,transparent 60%)}
+.th-hybrid .title{background:radial-gradient(circle at 50% 20%,#2a1f3a,transparent 60%)}
+/* スマホの枠（広い画面のとき） */
+@media (min-width:701px){
+  body.th-phone{background:linear-gradient(135deg,#ffe3ec,#e3f0ff)}
+  body.th-hybrid{background:linear-gradient(135deg,#1a1d29,#2a1f3a)}
+  :is(.th-phone,.th-hybrid) #app{max-width:440px;margin:24px auto;border:12px solid #15151b;border-radius:46px;min-height:calc(100vh - 48px);padding-left:14px;padding-right:14px;background:var(--bg);box-shadow:0 24px 60px rgba(0,0,0,.35);position:relative}
+  :is(.th-phone,.th-hybrid) #app::before{content:"";display:block;width:120px;height:22px;background:#15151b;border-radius:0 0 16px 16px;margin:0 auto 8px}
+  :is(.th-phone,.th-hybrid) .cols{grid-template-columns:minmax(0,1fr);grid-template-areas:"stage" "side" "log"}
+  :is(.th-phone,.th-hybrid) .top{position:sticky}
+  :is(.th-phone,.th-hybrid) .tabs{position:sticky;bottom:0;z-index:15;background:var(--bg2);padding:6px;border-radius:20px;box-shadow:0 -2px 12px var(--shadow)}
+  :is(.th-phone,.th-hybrid) .tab{border-radius:14px;border:none;background:transparent}
+  :is(.th-phone,.th-hybrid) .tab[aria-selected="true"],:is(.th-phone,.th-hybrid) .tab.on{background:var(--pink);color:var(--onpink)}
+}
+@media (max-width:700px){
+  :is(.th-phone,.th-hybrid) .tabs{border-radius:20px 20px 0 0;border:none;box-shadow:0 -2px 12px var(--shadow)}
+  :is(.th-phone,.th-hybrid) .tab{border:none;background:transparent;border-radius:14px}
+}
 </style>
 
 <div id="app">

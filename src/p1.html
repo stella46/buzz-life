@@ -207,6 +207,18 @@ a.b{display:inline-block;text-decoration:none;align-self:flex-start}
   .ctrl .b{flex:1 1 auto}
   .panel{min-height:0}
 }
+.ticker{overflow:hidden;white-space:nowrap;background:var(--bg2);border-bottom:2px solid var(--line);color:var(--gold);font-size:13px;padding:3px 0}
+.ticker span{display:inline-block;padding-left:100%}
+@media (prefers-reduced-motion: no-preference){.ticker span{animation:tick 38s linear infinite}@keyframes tick{to{transform:translateX(-100%)}}}
+@media (prefers-reduced-motion: reduce){.ticker span{padding-left:8px;white-space:normal}}
+.fanbar{display:flex;height:12px;border:2px solid var(--line);background:var(--bg2);margin:4px 0}
+.fanbar i{display:block;height:100%}.fanbar .c{background:var(--pink)}.fanbar .l{background:var(--cyan)}.fanbar .a{background:var(--red)}
+.album{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.album figure{margin:0;background:var(--panel2);border:2px solid var(--line);padding:6px}
+.album canvas{width:100%;image-rendering:pixelated;display:block;background:var(--bg2)}
+.album figcaption{font-size:12px;margin-top:4px;line-height:1.4}
+#relMap{width:100%;max-width:360px;display:block;margin:6px auto;border:2px solid var(--line)}
+#mvReg,#mvCty,#goalSel{max-width:100%}
 </style>
 
 <div id="app">
@@ -245,6 +257,7 @@ a.b{display:inline-block;text-decoration:none;align-self:flex-start}
         <button class="b sm ghost" type="button" id="btnMenu">メニュー</button>
       </div>
     </header>
+    <div class="ticker" id="ticker" hidden aria-live="off"><span></span></div>
     <main class="cols">
       <div class="stage">
         <div class="roomwrap"><canvas id="room" width="160" height="100" aria-label="主人公の部屋"></canvas><div id="pops"></div></div>

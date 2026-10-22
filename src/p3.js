@@ -236,7 +236,7 @@ function showEvent(e){
 const DL_LBL=k=>k in P_KEYS?P_KEYS[k]:k in SK_KEYS?SK_KEYS[k]:k==='money'?'お金':k==='f'?'フォロワー':k.startsWith('tal.')?'素質:'+GENRES[k.slice(4)].n:k.startsWith('rel:')?k.slice(4)+'との仲':k==='rp'?'研究pt':k==='dev'?'まちの発展':k;
 function chipsHtml(d){return Object.entries(d).filter(([,v])=>Math.abs(v)>=.5).map(([k,v])=>{const s=k==='money'?(v>0?'+':'-')+yen(Math.abs(v)):k==='f'?(v>0?'+':'')+num(v)+'人':(v>0?'+':'')+Math.round(v);return `<span class="chip ${v>0?'up':'dn'}">${esc(DL_LBL(k))} ${s}</span>`}).join('')}
 function choose(i){
-  if(!curEv)return;const {e,chs}=curEv;const c=chs[i];if(!c)return;
+  if(!curEv)return;const {e,chs}=curEv;const c=chs[i];if(!c)return;try{chooseHook(e,i,chs)}catch(_){}
   DL={};let res='';try{res=c[1]()||''}catch(err){console.error(err)}const d=DL;DL=null;
   log(`${e.t}：${res||c[0]}`,e.cat==='SNS'?'sns':e.cat==='人生'?'life':(Object.values(d).reduce((s,x)=>s+x,0)<0?'bad':'good'));
   save();render();
@@ -545,6 +545,7 @@ function drawRoom(){
   else if(a<3){px(c,52,82,14,6,'#e8d0f0');drawPerson(c,60,84,H)}
   else drawPerson(c,64,92-bob,H);
   // ペット
+  try{drawDeco(c)}catch(_){}
   if(S.pet){const dx=30+Math.sin(fr/20)*8;px(c,dx,86,9,5,'#c08a4a');px(c,dx+7,83,4,4,'#c08a4a');px(c,dx+9,84,1,1,'#111')}
   // REC / ON AIR
   if(S.kc.on&&a<13&&(fr>>3)%2){px(c,4,4,5,5,'#ff5a4e');c.fillStyle='#fff';c.font='7px sans-serif';c.fillText('REC',11,9)}

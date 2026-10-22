@@ -1,6 +1,6 @@
 // ===== v0.3：行動の中身・お金・支払い・経営・画面整理 =====
 CFG.ver3=1;
-function ensureV3(){if(!S)return;if(!S.planOpt)S.planOpt=[];if(!S.bills)S.bills=[];if(S.autopay==null)S.autopay=0;if(S.credit==null)S.credit=70;if(S.home==null)S.home=S.indep?2:0;if(!S.subs)S.subs={};if(!S.goods)S.goods={};if(S.debtRate==null)S.debtRate=0;if(S.indep&&!S.home)S.home=1;if(S.town)for(const t of S.town.tiles)initShop(t)}
+function ensureV3(){if(!S)return;ensureV6();if(!S.planOpt)S.planOpt=[];if(!S.bills)S.bills=[];if(S.autopay==null)S.autopay=0;if(S.credit==null)S.credit=70;if(S.home==null)S.home=S.indep?2:0;if(!S.subs)S.subs={};if(!S.goods)S.goods={};if(S.debtRate==null)S.debtRate=0;if(S.indep&&!S.home)S.home=1;if(S.town)for(const t of S.town.tiles)initShop(t)}
 
 // ----- 行動の中身 -----
 const ci=()=>Math.max(.2,S.cty.inc);
@@ -75,7 +75,7 @@ function turn(){
   ensurePlan();
   if(age()<6){ad('happy',1*k);ad('tal.'+pick(TALK),.9*k);ad('social',.3*k)}
   else S.plan.forEach((a,i)=>{const ac=ACT[a];if(!ac||!ac.ok())return;const os=ac.opts?ac.opts.filter(o=>!o.ok||o.ok()):null;const o=os&&os.length?(os.find(x=>x.k===S.planOpt[i])||os[0]):null;
-    if(a==='post'){POPT=o?o.k:'normal';doPost(k);POPT='normal'}else if(o&&o.f)o.f(k);else ac.f(k)});
+    try{actHook(a,o)}catch(_){}if(a==='post'){POPT=o?o.k:'normal';doPost(k);POPT='normal'}else if(o&&o.f)o.f(k);else ac.f(k)});
   if(S.st==='school'){ad('know',1.1*k);ad('social',.4*k)}
   else if(S.st==='univ'){ad('know',1.3*k);ad('social',.4*k)}
   else if(S.st==='work'){ad('know',.3*k);ad('mental',-.5*k)}
@@ -109,13 +109,14 @@ function doPost(k){
   const tg=S.trend.g===S.genre?1.8:1,ts=S.trend.s===key?1.4:1;
   const posts=8*k*m.posts;
   const base=f*(.06+q/500)*sn.reach;
-  let disc=(q*q/100)*18*sn.disc*tg*ts*st.disc*R(.5,1.5)*(S.algo>0?(has('analytics')?.75:.5):1)*(1+Math.min(Math.sqrt(f),700)/120)*D.disc*(S.cty.disc||1)*(key==='patto'&&has('shorts')?1.25:1)*m.disc*(1+Math.min(.3,(S.flags.lang||0)/100));
+  let disc=(q*q/100)*18*sn.disc*tg*ts*st.disc*R(.5,1.5)*(S.algo>0?(has('analytics')?.75:.5):1)*(1+Math.min(Math.sqrt(f),700)/120)*D.disc*(S.cty.disc||1)*(key==='patto'&&has('shorts')?1.25:1)*m.disc*discMul()*(1+Math.min(.3,(S.flags.lang||0)/100));
   let views=(base+disc)*posts,discV=disc*posts,buzzed=false;
   if(chance((.006+q/5000)*(tg>1?1.5:1)*(1+stN('writer')*.15*staffMul())*m.buzz*Math.min(1,k*2))){const mm=R(4,16);views+=discV*mm;discV*=mm+1;buzzed=true}
   let nf=(discV*(.005+q/15000)*sn.conv+base*posts*.0008)*m.conv;
   nf*=Math.max(0,1-f/sn.cap);
   if(q<25)nf-=f*.01*k;
   S.f[key]=Math.max(0,S.f[key]+nf);
+  postHook(k,q,buzzed,nf);
   const money=f>=sn.mon?Math.round(views*sn.rpm*m.rpm*Math.max(.15,S.cty.inc)):0;
   if(money)inc('sns',money);
   S.mo.views+=views;S.mo.newF+=nf;S.mo.posts+=k;S.stats.views+=views;
@@ -123,7 +124,7 @@ function doPost(k){
   ad('mental',-.45*k*tired);ad('health',-.15*k*tired);ad('tal.'+S.genre,.4*k);ad('edit',.35*k);
   for(const s in (GENRES[S.genre]||GENRES.talk).w)if(s!=='know')ad(s,.25*k);
   if(buzzed){S.mo.buzz++;S.stats.buzz++;log(`投稿がバズった！ ${num(views)}回再生`,'sns');pop('バズった！','f');snd('buzz');if(S.stats.buzz===1)tl('初めてバズった')}
-  const fp=(.0005+st.fl+Math.max(0,60-S.p.rep)/8000)*sn.flame*k*(f>300?1:.2)*D.flame*(S.cty.flame||1)*(POPT==='live'?1.4:1);
+  const fp=(.0005+st.fl+Math.max(0,60-S.p.rep)/8000)*sn.flame*k*(f>300?1:.2)*D.flame*(S.cty.flame||1)*(POPT==='live'?1.4:1)*flameMul();
   if(chance(fp)&&!S.q.includes('flame')&&!(S.cd.flame!=null&&S.am-S.cd.flame<6)){S.q.push('flame');S.mo.flame++}
   if(S.flags.noSide&&S.st==='work'&&chance(.03*k)&&!S.q.includes('w_fired'))S.q.push('w_fired');
 }
@@ -194,7 +195,7 @@ function initShop(t){if(SHOP[t.t]&&t.price==null){t.price=2;t.hours=2;t.adv=0;t.
 function shopCalc(i,commit){
   const t=S.town.tiles[i],s=SHOP[t.t];initShop(t);const reg={'大都市':1.15,'地方都市':1,'町村':.85}[S.region.type]||1,c=Math.max(.15,S.cty.inc);
   const base=s.fan?s.base+Math.sqrt(Math.min(totalF(),3e6))*3:s.base;
-  let cust=base*t.lv*(1+adjBonus(i))*reg*(1+S.town.dev/200)*PRICE[t.price].dem*HOURS[t.hours].c*ADV[t.adv].c*(t.stars/3)*(1+(t.boost||0)*.25)*(t.promo===S.am?1+Math.min(1,Math.sqrt(totalF())/800):1)*(1+.12*(t.help||0));
+  let cust=base*t.lv*(1+adjBonus(i))*reg*(1+S.town.dev/200)*PRICE[t.price].dem*HOURS[t.hours].c*ADV[t.adv].c*(t.stars/3)*(1+(t.boost||0)*.25)*(t.promo===S.am?1+Math.min(1,Math.sqrt(totalF())/800):1)*(1+.12*(t.help||0))*shopSegMul(i)*chainMul(t);
   const need=Math.max(1,Math.ceil(cust/s.per));
   if(t.staff<need)cust*=t.staff/need;
   if(commit)cust*=R(.88,1.12);
@@ -255,7 +256,7 @@ function endMonth(){
   if(S.m===4&&S.st==='work')S.salary=Math.round(S.salary*1.02);
   if(S.m===1){S.taxBase=S.yInc;S.yInc=0}
   if(S.m===3&&age()>=18&&S.taxBase>=(S.st==='work'?200000:480000)*c){if(S.flags.taxAuto){bill('tax','所得税（確定申告）',S.taxBase*.15);log('確定申告をした。税金の請求書が届いた','life')}else S.q.push('tax')}
-  monthSys();
+  monthSys();monthHook();
   if(a<18&&S.money<0){S.money=0;log('足りない分は家族が払ってくれた','life')}
   drift();
   for(const key in S.f){if(!S.open[key])continue;const posted=S.mo.posts>0&&key===S.main;S.f[key]*=posted?.993:.98}
@@ -308,7 +309,7 @@ function showMenu(){
 const SUB={money:'bills',biz:'town',life:'stat'};
 const TAB_HINT={act:'今月の時間の使い方を決める。「次へ」で時間が進む。',sns:'SNSのアカウント・ジャンル・投稿のスタイルを決める。',money:'請求書の支払い、買い物、投資や借り入れをする。',biz:'まちに建物を建て、お店や会社を経営し、研究を進める。',life:'能力、人物との関係、これまでの記録を見る。'};
 function subTabs(tabk,items){const cur=SUB[tabk];return `<div class="subtabs" role="tablist">${items.map(([k,n,b])=>`<button class="stab" type="button" data-sub="${tabk}:${k}" aria-pressed="${cur===k}">${n}${b?`<span class="badge">${b}</span>`:''}</button>`).join('')}</div>`}
-function render(){if(!S)return;ensureV3();renderTop();renderWho();renderPanel();renderLog();renderReport();renderCtrl();renderBadges()}
+function render(){if(!S)return;ensureV3();renderTop();renderWho();renderPanel();renderLog();renderReport();renderCtrl();renderBadges();renderTicker()}
 function researchReady(){return RES.filter(r=>!has(r.id)&&(!r.req||has(r.req))&&S.rp>=r.c).length}
 function renderBadges(){const m={money:S.bills.length?S.bills.length:'',biz:researchReady()?'!':''};document.querySelectorAll('.tab').forEach(b=>{let s=b.querySelector('.badge');const v=m[b.dataset.tab];if(v){if(!s){s=document.createElement('span');s.className='badge';b.appendChild(s)}s.textContent=v}else if(s)s.remove()})}
 function optSel(i){const ac=ACT[S.plan[i]];if(!ac||!ac.opts)return '';const os=ac.opts.filter(o=>!o.ok||o.ok());if(!os.length)return '';const cur=os.find(o=>o.k===S.planOpt[i])||os[0];return `<select data-popt="${i}" id="popt${i}" ${S.auto?'disabled':''}>${os.map(o=>`<option value="${o.k}" ${o===cur?'selected':''}>${esc(o.n)}</option>`).join('')}</select>`}
@@ -330,6 +331,8 @@ function renderPanel(){
   else if(tab==='life')h+=panelLife();
   P.innerHTML=h;
   if(tab==='biz'&&SUB.biz==='town')drawTown();
+  if(tab==='life'&&SUB.life==='map')drawMap();
+  if(tab==='life'&&SUB.life==='album')paintAlbums();
 }
 function panelPlan(){
   const a=age(),n=freeSlots();ensurePlan();let h=noticesHtml()+`<h2>${S.unit==='week'?'今週':'今月'}の行動</h2>`;
@@ -353,7 +356,7 @@ function panelSns(){
   }
   const q=postQuality();
   h+=`<h2>アカウント</h2><div class="grp">`;
-  for(const [k,s] of Object.entries(SNS)){const open=S.open[k],mon=S.f[k]>=s.mon;h+=`<div class="card ${S.main===k?'main':''}"><div class="hd"><span>${s.n}<span class="muted small">（${s.d}）</span></span>${S.trend.s===k?'<span class="chip hot">流行中</span>':''}</div>`+
+  for(const [k,s] of Object.entries(SNS)){if(s.era&&S.y<s.era)continue;const open=S.open[k],mon=S.f[k]>=s.mon;h+=`<div class="card ${S.main===k?'main':''}"><div class="hd"><span>${s.n}<span class="muted small">（${s.d}）</span></span>${S.trend.s===k?'<span class="chip hot">流行中</span>':''}</div>`+
     (open?`<div class="big">${num(S.f[k])}人</div><div class="row small"><span class="muted">${s.mon===Infinity?'広告収益なし（案件向き）':mon?'収益化済み':`収益化まであと${num(s.mon-S.f[k])}人`}</span>${S.main===k?'<span class="chip">メイン</span>':`<button class="b sm" type="button" data-main="${k}">メインにする</button>`}</div>`:`<button class="b sm" type="button" data-opensns="${k}">アカウントを作る</button>`)+`</div>`}
   h+=`</div><h2>投稿の方針</h2><div class="grp">
     <label class="slot"><span class="lb">ジャンル</span><select data-set="genre" id="genreSel">${Object.entries(GENRES).filter(([k])=>genreOk(k)).map(([k,g])=>`<option value="${k}" ${S.genre===k?'selected':''}>${g.n}（素質${Math.round(S.tal[talKey(k)]||0)}）${S.trend.g===k?' ★流行':''}</option>`).join('')}</select></label>
@@ -362,10 +365,10 @@ function panelSns(){
     <div class="grp"><h3>投稿の質 ${Math.round(q)}</h3>${bar(q,'p')}<p class="hint">スキル・素質・機材・スタッフ・研究・体調で決まる。今の流行：${SNS[S.trend.s].n}の「${GENRES[S.trend.g].n}」</p></div>`;
   if(S.last&&S.last.posts)h+=`<div class="card"><div class="hd"><span>先月の結果</span></div><div class="kv"><span>再生数</span><span>${num(S.last.views)}回</span><span>フォロワー増減</span><span>${S.last.newF>=0?'+':''}${num(S.last.newF)}人</span><span>広告・投げ銭</span><span>${yen((S.last.inc.sns||0)+(S.last.inc.tip||0))}</span></div></div>`;
   if(S.rival)h+=`<div class="card"><div class="hd"><span>ライバル：${esc(S.rival.name)}</span><span class="muted small">${esc(S.rival.trait)}・仲${Math.round(S.rival.rel)}</span></div><div class="kv"><span>相手のフォロワー</span><span>${num(S.rival.f)}人</span><span>自分のフォロワー</span><span>${num(totalF())}人</span></div><p class="hint">仲が40以上になると「コラボ」投稿ができる。</p></div>`;
-  return h;
+  return h+snsExtra();
 }
 function panelMoneyAdult(){
-  const sub=SUB.money;let h=subTabs('money',[['bills','家計',S.bills.length||''],['shop','買い物'],['bank','投資・借入']]);
+  const sub=SUB.money;let h=subTabs('money',[['bills','家計',S.bills.length||''],['shop','買い物'],['room','部屋の飾り'],['bank','投資・借入']]);
   const c=Math.max(.2,S.cty.inc);
   if(sub==='bills'){
     h+=`<div class="kv big2"><span>所持金</span><span>${yen(S.money)}</span><span>未払いの請求</span><span>${yen(billTotal())}</span></div>`;
@@ -390,6 +393,7 @@ function panelMoneyAdult(){
     for(const [k,s] of Object.entries(SUBS)){if(age()<s.age)continue;const on=!!S.subs[k];h+=`<div class="shop"><div><div>${esc(s.n)} <span class="muted small">月${yen(s.p*Math.max(.3,S.cty.inc))}</span></div><div class="muted small">${esc(s.d)}</div></div><button class="b sm ${on?'on':''}" type="button" data-sub2="${k}">${on?'契約中（解約）':'契約する'}</button></div>`}
     h+='</div>';
   }
+  else if(sub==='room')h+=decoPanel();
   else if(sub==='bank'){
     const a=age();
     h+=`<h3>投資</h3><div class="kv"><span>投資の残高</span><span>${yen(S.inv)}</span></div><p class="hint">毎月値動きする。長く持つほど増えやすいが、減ることもある。</p><div class="row"><button class="b sm" type="button" data-inv="100000" ${S.money<100000*c||a<18?'disabled':''}>${yen(100000*c)} 入れる</button><button class="b sm" type="button" data-inv="1000000" ${S.money<1000000*c||a<18?'disabled':''}>${yen(1000000*c)} 入れる</button><button class="b sm" type="button" data-inv="-1" ${S.inv<=0?'disabled':''}>全部引き出す</button></div>`;
@@ -405,7 +409,7 @@ function panelBiz(){
   const shops=S.town.tiles.filter(t=>SHOP[t.t]).length;
   let h=subTabs('biz',[['town','まちの地図'],['shop','お店の経営',shops||''],['office','事務所'],['res','研究',researchReady()?'!':'']]);
   const sub=SUB.biz;
-  if(sub==='town'){h+=townPanel();const t=S.town.tiles[S.town.sel];if(t&&SHOP[t.t])h+=`<div class="row"><button class="b sm pri" type="button" data-goto="biz:shop">このお店を経営する</button></div>`}
+  if(sub==='town'){h+=townPanel();const t=S.town.tiles[S.town.sel];if(t&&SHOP[t.t])h+=`<div class="row"><button class="b sm pri" type="button" data-goto="biz:shop">このお店を経営する</button></div>`;h+=townExtra()}
   else if(sub==='shop')h+=shopsPanel();
   else if(sub==='office')h+=officePanel();
   else h+=researchPanel();
@@ -424,6 +428,7 @@ function shopsPanel(){
     <div class="ctl"><span>営業時間</span>${seg(i,'hours',HOURS,t.hours)}</div>
     <div class="ctl"><span>広告</span>${seg(i,'adv',ADV,t.adv)}</div>
     <div class="ctl"><span>店員</span><div class="seg"><button type="button" data-shop="${i}" data-k="staffm" ${t.staff<=1?'disabled':''}>－</button><b class="cnt">${t.staff}人</b><button type="button" data-shop="${i}" data-k="staffp" ${t.staff>=20?'disabled':''}>＋</button></div><span class="muted small">必要な目安 ${est.need}人${t.staff<est.need?'（足りない）':''}</span></div>
+    ${shopExtra(i)}
     <p class="hint">今の設定の見込み：${num(est.cust)}${u}・利益 ${est.profit>=0?'+':''}${yen(est.profit)}／月</p>
     <div class="row"><button class="b sm" type="button" data-shop="${i}" data-k="menu" ${S.money<200000*c||t.boost?'disabled':''}>${t.boost?'新メニュー販売中':`新メニュー開発 ${yen(200000*c)}`}</button><button class="b sm" type="button" data-shop="${i}" data-k="promo" ${!S.snsOpen||t.promo===S.am?'disabled':''}>${t.promo===S.am?'今月は宣伝ずみ':'SNSで宣伝する'}</button><button class="b sm ghost" type="button" data-shop="${i}" data-k="goto">地図で見る</button></div></div>`}
   return h+'<p class="hint">行動の「お店に立つ」を選ぶと、評価と客数が上がる。</p>';
@@ -448,7 +453,7 @@ function researchPanel(){let h=`<h3>研究ポイント ${Math.floor(S.rp)}</h3><
   for(const r of RES){const done=has(r.id),reqOk=!r.req||has(r.req);h+=`<div class="shop"><div><div>${done?'✓ ':''}${esc(r.n)} <span class="muted small">${r.c}pt</span></div><div class="muted small">${esc(r.d)}${!reqOk?`（先に「${esc(RES.find(x=>x.id===r.req).n)}」）`:''}</div></div>${done?'<span class="chip up">完了</span>':reqOk?`<button class="b sm" type="button" data-res="${r.id}" ${S.rp<r.c?'disabled':''}>研究する</button>`:''}</div>`}
   return h+'</div>'}
 function panelLife(){
-  const sub=SUB.life,a=age();let h=subTabs('life',[['stat','能力'],['ppl','人物'],['rec','記録']]);
+  const sub=SUB.life,a=age();let h=subTabs('life',[['stat','能力'],['goal','目標・性格'],['choice','人生の選択'],['ppl','人物'],['map','相関図・弟子'],['album','アルバム'],['rec','記録']]);if(['goal','choice','map','album'].includes(sub))return h+lifeExtra(sub);
   if(sub==='stat'){
     const rows=(o,keys,cls)=>Object.entries(keys).map(([k,l])=>`<span>${l}</span>${bar(o[k],cls)}<span class="v">${Math.round(o[k])}</span>`).join('');
     h+=`<div class="bars">${rows(S.p,P_KEYS)}</div><h3>スキル</h3><div class="bars">${rows(S.sk,SK_KEYS,'g')}</div>`+topTalHtml();
@@ -460,7 +465,7 @@ function panelLife(){
     h+=`</div><div id="confirmBox"></div>`;
   }else if(sub==='ppl'){
     const list=[...parents(),...S.sibs,...S.friends,S.rival,S.partner,S.spouse].filter(Boolean);
-    h+=`<div>${list.map(n=>`<div class="ppl"><div>${esc(n.name)}<div class="r">${esc(n.role)}・${esc(n.trait)}</div></div><div>${bar(n.rel,'p')}<div class="r">仲のよさ ${Math.round(n.rel)}</div></div></div>`).join('')}
+    h+=`<div>${list.map(n=>`<div class="ppl"><div>${esc(n.name)}<div class="r">${esc(n.role)}・${esc(n.trait)}${n.news?'・'+esc(n.news):''}</div></div><div>${bar(n.rel,'p')}<div class="r">仲のよさ ${Math.round(n.rel)}</div></div></div>`).join('')}
     ${S.kids.map((c,i)=>`<div class="ppl"><div>${esc(c.name)}<div class="r">子ども・${Math.floor((S.am-c.born)/12)}歳</div></div><div>${S.endless&&a>=50?`<button class="b sm" type="button" data-act="retire" data-i="${i}">この子に託す</button>`:''}</div></div>`).join('')}${S.pet?'<div class="ppl"><div>ペット<div class="r">家族の一員</div></div><div></div></div>':''}</div>`;
     if(S.endless&&S.kids.length&&a<50)h+='<p class="hint">エンドレスでは、50歳を過ぎると「この子に託す」で子どもの人生に移れる。</p>';
     h+='<p class="hint">仲を深めるには「予定」で「友達と過ごす」「家族と過ごす」「デート」を選ぶ。</p><div id="confirmBox"></div>';

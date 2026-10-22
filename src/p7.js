@@ -163,6 +163,8 @@ function deathCheck(){const h=S.p.health;let m=h<15?5:h<30?2.5:h<50?1.4:h>85?.85
 let LASTOPT={stage:'nipporia',diff:'normal',endless:0,cty:null};
 function newGame(o){
   o=Object.assign({},LASTOPT,o||{});LASTOPT={stage:o.stage,diff:o.diff,endless:o.endless,cty:o.cty};
+  const _rnd=Math.random;o.seed=o.seed!=null?o.seed:Math.floor(_rnd()*1e6);Math.random=mulberry32(o.seed+1);
+  try{
   const cid=o.cty||pickCountry(o.stage),regs=regionsFor(cid),fr=o.free||{};
   S={cty:Object.assign({},COUNTRIES[cid]),ctyId:cid};
   const g=fr.g||(chance(.5)?'男':'女'),p=pool();
@@ -191,6 +193,8 @@ function newGame(o){
     stats:{maxF:0,maxM:0,views:0,buzz:0,flames:0,deals:0},hsum:0,hn:0,yInc:0,taxBase:0,alive:true,
     look:{hair:pick(['#2a1d16','#3b2a1e','#171717','#5a3a22']),shirt:pick(['#ff5c8a','#3fd6c9','#ffcf3f','#7bdc6b','#b49cff'])}});
   if(!S.fam.fa&&!S.fam.mo){S.fam.mo=mo;mo.alive=true}
+  }finally{Math.random=_rnd}
+  birthHook(o);
   newTrend();setSpeed(0);
   showScreen('game');setTab('act');render();
   showEvent(EV[S.q.shift()]);
@@ -221,7 +225,8 @@ function continueAsChild(i,parentAlive){
     stats:{maxF:0,maxM:0,views:0,buzz:0,flames:0,deals:0},hsum:0,hn:0,yInc:0,taxBase:0,alive:true,
     look:{hair:pick(['#2a1d16','#3b2a1e','#171717','#5a3a22']),shirt:pick(['#ff5c8a','#3fd6c9','#ffcf3f','#7bdc6b','#b49cff'])}};
   if(!N.fam.fa&&!N.fam.mo)N.fam.mo=par;
-  S=N;
+  ensureV6();legacyHook(P,N);
+  S=N;ensureV3();
   if(a>=13){S.rival={id:'rv',name:pick(RIVALS),role:'ライバル配信者',trait:'努力家',rel:30,f:RI(1000,20000)};openSns('milu');S.main='milu';if(P.flags.kidAsk==='yes')S.f.milu=Math.round(P.stats.maxF*.03);S.genre=topTal()}
   newTrend();setSpeed(0);showScreen('game');setTab('act');save();render();
   showEvent(EV[S.q.shift()]);
@@ -444,12 +449,15 @@ function showSetup(){
   <label class="fld"><span>舞台</span><select id="suStage">${so}</select></label>
   <label class="fld" id="suCtyBox"><span>国</span><select id="suCty"></select></label>
   <label class="fld"><span>難易度</span><select id="suDiff">${dd}</select></label>
-  <label class="fld"><span>人生の終わり</span><select id="suEnd"><option value="0">亡くなったら終わり</option><option value="1" ${LASTOPT.endless?'selected':''}>エンドレス（子どもに引き継いで続ける）</option></select></label></div>
+  <label class="fld"><span>人生の終わり</span><select id="suEnd"><option value="0">亡くなったら終わり</option><option value="1" ${LASTOPT.endless?'selected':''}>エンドレス（子どもに引き継いで続ける）</option></select></label>
+  <label class="fld"><span>人生の目標</span><select id="suGoal"><option value="">ランダム</option>${Object.entries(GOALS).map(([k,g])=>`<option value="${k}">${esc(g.n)}</option>`).join('')}</select></label>
+  <label class="fld"><span>生まれの番号</span><input id="suSeed" inputmode="numeric" maxlength="10" placeholder="空欄ならランダム（例 B-123456）"></label></div>
+  <p class="hint">友達と同じ「生まれの番号」と同じ舞台を選ぶと、同じ国・家庭・素質で生まれる。どちらがうまく生きられるか競える。</p>
   <div class="mch"><button class="b pri" type="button" data-act="suRandom">ランダムに生まれる</button><button class="b" type="button" data-act="suFree" ${fr?'':'disabled'}>自由に決めて生まれる${fr?'':'（1回人生を終えると解放）'}</button><button class="b ghost" type="button" data-act="close">やめる</button></div>`);
   fillCty();
 }
 function fillCty(){const st=$('#suStage').value,sel=$('#suCty'),box=$('#suCtyBox');if(st==='nipporia'||st==='japan'){box.hidden=true;sel.innerHTML='';return}box.hidden=false;const ids=Object.keys(COUNTRIES).filter(k=>st==='world'?!COUNTRIES[k].fict:(COUNTRIES[k].fict&&k!=='nipporia'));sel.innerHTML=`<option value="">ランダム${st==='world'?'（生まれる人数が多い国ほど選ばれやすい）':''}</option>`+ids.map(k=>`<option value="${k}">${COUNTRIES[k].n}</option>`).join('')}
-function readSetup(){return {stage:$('#suStage').value,cty:$('#suCty').value||null,diff:$('#suDiff').value,endless:+$('#suEnd').value}}
+function readSetup(){const g=$('#suGoal'),sd=$('#suSeed');return {stage:$('#suStage').value,cty:$('#suCty').value||null,diff:$('#suDiff').value,endless:+$('#suEnd').value,goal:g&&g.value||null,seed:sd?parseSeed(sd.value):null}}
 let FREEOPT=null;
 function showFree(o){
   o.cty=o.cty||pickCountry(o.stage);FREEOPT=o;const regs=regionsFor(o.cty),c=COUNTRIES[o.cty];

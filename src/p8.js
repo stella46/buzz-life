@@ -109,7 +109,7 @@ function doPost(k){
   const tg=S.trend.g===S.genre?1.8:1,ts=S.trend.s===key?1.4:1;
   const posts=8*k*m.posts;
   const base=f*(.06+q/500)*sn.reach;
-  let disc=(q*q/100)*18*sn.disc*tg*ts*st.disc*R(.5,1.5)*(S.algo>0?(has('analytics')?.75:.5):1)*(1+Math.min(Math.sqrt(f),700)/120)*D.disc*(S.cty.disc||1)*(key==='patto'&&has('shorts')?1.25:1)*m.disc*discMul()*(1+Math.min(.3,(S.flags.lang||0)/100));
+  let disc=(q*q/100)*18*sn.disc*tg*ts*st.disc*R(.5,1.5)*(S.algo>0?(has('analytics')?.75:.5):1)*(1+Math.min(Math.sqrt(f),700)/120)*D.disc*(S.cty.disc||1)*(key==='patto'&&has('shorts')?1.25:1)*m.disc*discMul()*snsEraMul()*(1+Math.min(.3,(S.flags.lang||0)/100));
   let views=(base+disc)*posts,discV=disc*posts,buzzed=false;
   if(chance((.006+q/5000)*(tg>1?1.5:1)*(1+stN('writer')*.15*staffMul())*m.buzz*Math.min(1,k*2))){const mm=R(4,16);views+=discV*mm;discV*=mm+1;buzzed=true}
   let nf=(discV*(.005+q/15000)*sn.conv+base*posts*.0008)*m.conv;
@@ -193,9 +193,9 @@ const WAGE=120000;
 const SHOP_UNIT={stall:'客',cafe:'客',restaurant:'客',gym:'会員',apparel:'客',studio:'件',gamedev:'本'};
 function initShop(t){if(SHOP[t.t]&&t.price==null){t.price=2;t.hours=2;t.adv=0;t.staff=1;t.stars=3;t.boost=0;t.boostEnd=0;t.r=null;t.help=0}}
 function shopCalc(i,commit){
-  const t=S.town.tiles[i],s=SHOP[t.t];initShop(t);const reg={'大都市':1.15,'地方都市':1,'町村':.85}[S.region.type]||1,c=Math.max(.15,S.cty.inc);
+  const t=S.town.tiles[i],s=SHOP[t.t];initShop(t);const reg={'大都市':1.15,'地方都市':1,'町村':.85}[S.town.rt||S.region.type]||1,c=Math.max(.15,S.cty.inc);
   const base=s.fan?s.base+Math.sqrt(Math.min(totalF(),3e6))*3:s.base;
-  let cust=base*t.lv*(1+adjBonus(i))*reg*(1+S.town.dev/200)*PRICE[t.price].dem*HOURS[t.hours].c*ADV[t.adv].c*(t.stars/3)*(1+(t.boost||0)*.25)*(t.promo===S.am?1+Math.min(1,Math.sqrt(totalF())/800):1)*(1+.12*(t.help||0))*shopSegMul(i)*chainMul(t);
+  let cust=base*t.lv*(1+adjBonus(i))*reg*(1+S.town.dev/200)*PRICE[t.price].dem*HOURS[t.hours].c*ADV[t.adv].c*(t.stars/3)*(1+(t.boost||0)*.25)*(t.promo===S.am?1+Math.min(1,Math.sqrt(totalF())/800):1)*(1+.12*(t.help||0))*shopSegMul(i)*chainMul(t)*ecoMul()*popMul();
   const need=Math.max(1,Math.ceil(cust/s.per));
   if(t.staff<need)cust*=t.staff/need;
   if(commit)cust*=R(.88,1.12);
@@ -218,7 +218,7 @@ function monthSys(){
   if(a>=10)S.rp+=.3+S.p.know*.012+S.sk.plan*.012+stN('writer')*.6*staffMul()+countB('library')*.5;
   if(S.office.lv){const o=OFFICE[S.office.lv];bill('office','事務所の家賃',o.rent*S.cty.inc);let sal=0;for(const k in STAFF)sal+=STAFF[k].sal*S.cty.inc*stN(k);if(sal)bill('staff','スタッフの給料',sal);
     let te=0;for(const t of S.office.talents){const p=TPOL[t.pol||'bal'];t.f=clamp(Math.round(t.f*(1+(R(-.02,.035)+p.g+stN('manager')*.003*staffMul())*(1-t.f/2e6))),100,2e6);te+=t.f*.6*p.r*Math.max(.15,S.cty.inc)}if(te)inc('talent',Math.round(te))}
-  let pr=0;S.town.tiles.forEach((t,i)=>{const b=BLD[t.t];if(!b)return;if(SHOP[t.t])pr+=shopCalc(i,true).profit;else pr+=Math.round(b.inc*t.lv*S.cty.inc)});
+  let pr=0;S.town.tiles.forEach((t,i)=>{const b=BLD[t.t];if(!b)return;if(SHOP[t.t])pr+=shopCalc(i,true).profit;else pr+=Math.round(b.inc*t.lv*S.cty.inc*ecoMul())});
   if(pr>0)inc('biz',pr);else if(pr<0)outc('biz',-pr);
   ad('happy',Math.min(1.5,countB('cafe')*.25+countB('park')*.15));ad('health',Math.min(1.5,countB('gym')*.3));ad('mental',Math.min(1.5,countB('park')*.25));ad('know',Math.min(1,countB('library')*.2));ad('rep',Math.min(1,countB('kids')*.3+stN('pr')*.2));
   S.town.dev=calcDev();
@@ -252,11 +252,11 @@ function endMonth(){
   const kidsN=S.kids.filter(k=>S.am-k.born<22*12).length;if(kidsN)bill('kids','子育て費（'+kidsN+'人）',kidsN*35000*c);
   if(S.debt>0)S.flags.hadDebt=1;
   if(S.debt>0&&S.st!=='univ'&&a>=19){if(S.debtRate)S.debt=Math.round(S.debt*(1+S.debtRate/12));const owed=S.bills.filter(b=>b.cat==='debt').reduce((s,b)=>s+b.base,0);const p=Math.min(S.debt-owed,Math.max(Math.round(15000*c),Math.round(S.debt*.02)));if(p>0)bill('debt','借金・奨学金の返済',p)}else if(S.debt<=0)S.debtRate=0;
-  if(S.inv>0)S.inv=Math.max(0,S.inv*(1+R(-.035,.045)));
+  if(S.inv>0)S.inv=Math.max(0,S.inv*(1+R(-.035,.045)+(ecoMul()-1)*.04));
   if(S.m===4&&S.st==='work')S.salary=Math.round(S.salary*1.02);
   if(S.m===1){S.taxBase=S.yInc;S.yInc=0}
   if(S.m===3&&age()>=18&&S.taxBase>=(S.st==='work'?200000:480000)*c){if(S.flags.taxAuto){bill('tax','所得税（確定申告）',S.taxBase*.15);log('確定申告をした。税金の請求書が届いた','life')}else S.q.push('tax')}
-  monthSys();monthHook();
+  withTown(homeTown(),()=>{monthSys();monthHook();monthHook7()});
   if(a<18&&S.money<0){S.money=0;log('足りない分は家族が払ってくれた','life')}
   drift();
   for(const key in S.f){if(!S.open[key])continue;const posted=S.mo.posts>0&&key===S.main;S.f[key]*=posted?.993:.98}
@@ -323,7 +323,7 @@ function noticesHtml(){
   return n.length?`<div class="notes">${n.join('')}</div>`:'';
 }
 function renderPanel(){
-  if(!S)return;ensureV3();const P=$('#panel');let h=`<p class="tabhint">${TAB_HINT[tab]||''}</p>`;
+  if(!S)return;ensureV3();const P=$('#panel');let h=`<p class="tabhint">${TAB_HINT[tab]||''}<button class="b sm ghost hbtn" type="button" data-guide="${TAB_GUIDE[tab]||'basic'}">？遊び方</button></p>`;
   if(tab==='act')h+=panelPlan();
   else if(tab==='sns')h+=panelSns();
   else if(tab==='money')h+=panelMoney();
@@ -350,7 +350,7 @@ function panelPlan(){
 function panelSns(){
   let h='';
   if(!S.snsOpen){
-    h+=`<h2>SNS</h2><p class="hint">${S.flags.noNet?'ネットにつながる環境がない。「お金」→「買い物」でスマホを手に入れれば始められる。':'自分のアカウントは13歳から作れる。それまでは遊びや習い事で素質を貯めよう。'}</p>`;
+    h+=`<h2>SNS</h2><p class="hint">${snsPreMsg()}</p>`;
     if(S.kc.on)h+=`<div class="card"><div class="hd"><span>家族チャンネル（${esc(S.kc.byName)}が運営）</span></div><div class="big">${num(S.kc.f)}人</div><p class="hint">登録者が増えるほど家計が潤い、おこづかいも増える。そのぶんプライバシーは減っていく。</p></div>`;
     return h+topTalHtml();
   }
@@ -407,10 +407,11 @@ function panelMoneyAdult(){
 }
 function panelBiz(){
   const shops=S.town.tiles.filter(t=>SHOP[t.t]).length;
-  let h=subTabs('biz',[['town','まちの地図'],['shop','お店の経営',shops||''],['office','事務所'],['res','研究',researchReady()?'!':'']]);
+  let h=subTabs('biz',[['town','まちの地図'],['shop','お店の経営',shops||''],['co','会社',(S.cos||[]).length||''],['office','事務所'],['res','研究',researchReady()?'!':'']]);
   const sub=SUB.biz;
-  if(sub==='town'){h+=townPanel();const t=S.town.tiles[S.town.sel];if(t&&SHOP[t.t])h+=`<div class="row"><button class="b sm pri" type="button" data-goto="biz:shop">このお店を経営する</button></div>`;h+=townExtra()}
+  if(sub==='town'){h+=townPanel();const t=S.town.tiles[S.town.sel];if(t&&SHOP[t.t])h+=`<div class="row"><button class="b sm pri" type="button" data-goto="biz:shop">このお店を経営する</button></div>`;h+=townExtra()+devHtml()}
   else if(sub==='shop')h+=shopsPanel();
+  else if(sub==='co')h+=coHtml();
   else if(sub==='office')h+=officePanel();
   else h+=researchPanel();
   return h;

@@ -1,5 +1,5 @@
 // ===== v0.6：遊びの拡張 =====
-function ensureV6(){if(!S)return;
+function ensureV6(){if(!S)return;ensureV7();
   if(S.fanCore==null){S.fanCore=.05;S.fanAnti=.02}
   if(!S.series)S.series={g:null,n:0,fat:0};
   if(!S.pers)S.pers={careful:0,bold:0,kind:0,compet:0};
@@ -77,7 +77,7 @@ GENRES.vr={n:'VR配信',w:{plan:.4,edit:.4,talk:.2},tal:'game',req:'era_vr'};
 GENRES.aico={n:'AIと共演',w:{plan:.5,talk:.3,edit:.2},tal:'comedy',req:'era_ai'};
 SNS.holo={n:'ホロミ',d:'立体映像の配信',reach:.9,disc:1.6,conv:.9,rpm:.6,flame:1,mon:5000,cap:2e6,era:2040};
 const ERAS=[[2035,'era_vr','VR配信が当たり前の時代に。新ジャンル「VR配信」が選べるようになった'],[2040,'era_holo','立体映像のSNS「ホロミ」が登場した'],[2048,'era_ai','AIと人間の共演が新しいエンタメに。新ジャンル「AIと共演」が選べるようになった']];
-function newTrend(){const gs=Object.keys(GENRES).filter(g=>genreOk(g)),ss=Object.keys(SNS).filter(x=>(!SNS[x].era||S.y>=SNS[x].era)&&(x!=='tsubu'||chance(.5)));
+function newTrend(){const gs=Object.keys(GENRES).filter(g=>genreOk(g)),ss=Object.keys(SNS).filter(x=>(!SNS[x].era||S.y>=SNS[x].era)&&(x!=='tsubu'||chance(.5)));if(!ss.length)ss.push('milu');
   if(S.rumor&&S.am>=S.rumor.at&&chance(S.rumor.acc/100)){S.trend={g:S.rumor.g,s:S.rumor.s,until:S.am+RI(4,9)};ticker(`噂どおり「${GENRES[S.rumor.g].n}」が流行し始めた`);S.rumor=null;return}
   S.rumor=null;S.trend={g:pick(gs),s:pick(ss),until:S.am+RI(4,9)}}
 
@@ -133,15 +133,15 @@ EV.flame.ch=(base=>()=>{const a=base.slice();if(persTop()==='careful')a.push(['�
 EV.l_fight.ch=(base=>()=>{const a=base.slice();if(persTop()==='kind')a.push(['相手の話を最後まで聞く（やさしい）',()=>{rel(lover(),10);return '気持ちを受け止めてもらえて、相手は泣きながら笑った。'}]);return a})(EV.l_fight.ch);
 
 // ----- ライバル企業の出来事 -----
-E('x_chain',{t:'大手チェーンの進出',cat:'まち',w:0,text:()=>`まちに大手チェーンの${BLD[S.town.chain.type].n}が出店してきた。安さと知名度で、あなたの店のお客さんを取りにきている。`,
-  ch:[['値下げで対抗する',()=>{for(const t of S.town.tiles)if(t.t===S.town.chain.type){initShop(t);t.price=1}return '価格を「安い」にして迎え撃つ。'}],['品質と雰囲気で勝負',()=>{for(const t of S.town.tiles)if(t.t===S.town.chain.type){initShop(t);t.stars=clamp(t.stars+.5,1,5)}ad('plan',2);return '常連さんを大事にする道を選んだ。'}],['正面からは戦わない',()=>'しばらくは客足が落ちそうだ。']]});
+E('x_chain',{t:'大手チェーンの進出',cat:'まち',w:0,text:()=>`まちに大手チェーンの${BLD[(homeTown().chain||{type:'cafe'}).type].n}が出店してきた。安さと知名度で、あなたの店のお客さんを取りにきている。`,
+  ch:[['値下げで対抗する',()=>{for(const t of homeTown().tiles)if(t.t===(homeTown().chain||{type:'cafe'}).type){initShop(t);t.price=1}return '価格を「安い」にして迎え撃つ。'}],['品質と雰囲気で勝負',()=>{for(const t of homeTown().tiles)if(t.t===(homeTown().chain||{type:'cafe'}).type){initShop(t);t.stars=clamp(t.stars+.5,1,5)}ad('plan',2);return '常連さんを大事にする道を選んだ。'}],['正面からは戦わない',()=>'しばらくは客足が落ちそうだ。']]});
 const chainMul=t=>S.town&&S.town.chain&&S.town.chain.type===t.t&&S.am<S.town.chain.until?.72:1;
 
 // ----- お店の内装と看板メニュー -----
 const SEGN={s:'学生',f:'家族',t:'観光客',a:'大人'};
 const SSTYLE=[{n:'ナチュラル',aff:{f:1,a:.6,s:.5,t:.6}},{n:'ポップ',aff:{s:1,t:.7,f:.6,a:.3}},{n:'高級感',aff:{a:1,t:.8,f:.3,s:.1}},{n:'レトロ',aff:{t:1,a:.7,s:.5,f:.4}}];
 const SMENU=[{n:'定番',aff:{f:.8,a:.8,s:.6,t:.5}},{n:'ボリューム',aff:{s:1,f:.6,a:.3,t:.3}},{n:'映える限定品',aff:{s:.8,t:1,a:.4,f:.4}},{n:'地元の名物',aff:{t:1,f:.6,a:.6,s:.3}}];
-function segWeights(){const base={'大都市':{s:.3,f:.2,t:.2,a:.3},'地方都市':{s:.25,f:.35,t:.1,a:.3},'町村':{s:.15,f:.45,t:.15,a:.25}}[S.region.type]||{s:.25,f:.3,t:.15,a:.3};const w=Object.assign({},base);w.t+=Math.min(.3,countB('tourism')*.08);const sum=w.s+w.f+w.t+w.a;for(const k in w)w[k]/=sum;return w}
+function segWeights(){const base={'大都市':{s:.3,f:.2,t:.2,a:.3},'地方都市':{s:.25,f:.35,t:.1,a:.3},'町村':{s:.15,f:.45,t:.15,a:.25}}[S.town.rt||S.region.type]||{s:.25,f:.3,t:.15,a:.3};const w=Object.assign({},base);w.t+=Math.min(.3,countB('tourism')*.08);const sum=w.s+w.f+w.t+w.a;for(const k in w)w[k]/=sum;return w}
 function shopSegMul(i){const t=S.town.tiles[i];if(t.style==null)return 1;const w=segWeights(),st=SSTYLE[t.style].aff,mn=SMENU[t.menuT||0].aff;let s=0;for(const k in w)s+=w[k]*(st[k]+mn[k])/2;return .7+.6*s}
 function shopExtra(i){const t=S.town.tiles[i];if(t.style==null){t.style=0;t.menuT=0}const w=segWeights();const mul=shopSegMul(i);
   const seg=(key,list,cur)=>`<div class="seg">${list.map((x,j)=>`<button class="${cur===j?'on':''}" type="button" data-shop="${i}" data-k="${key}" data-v="${j}">${x.n}</button>`).join('')}</div>`;
@@ -241,14 +241,14 @@ ACT.parenting={n:'子育て',d:'子どもと向き合う。子どもとの絆が
 const kidsU18=()=>S.kids.filter(c=>(S.am-c.born)/12<18);
 
 // ----- 家系の遺産 -----
-function legacyHook(P,N){const ts=titlesOf().slice(0,2);N.legacy=(P.legacy||[]).concat(ts).slice(-6);N.rivalRec={w:0,l:0};N.album=[];
+function legacyHook(P,N){const ts=titlesOf().slice(0,2);N.legacy=(P.legacy||[]).concat(ts).slice(-6);N.rivalRec={w:0,l:0};N.towns2=P.towns2||[];N.cos=P.cos||[];N.cfocus=P.cfocus;N.album=[];
   const c=P.kids.find(k=>k.name===N.first);if(c){for(const k of TALK)N.tal[k]=clamp(N.tal[k]+(c.talent||0)*.3+(c.bond||50)/20);N.p.mental=clamp(N.p.mental+(c.bond||50)/10);N.p.know=clamp(N.p.know+(c.know||0)*.3)}
   for(const t of ts){if(/インフルエンサー|クリエイター|配信者|人気者/.test(t)){N.sk.talk=clamp(N.sk.talk+5);N.p.rep=clamp(N.p.rep+5)}else if(/社長/.test(t))N.rp+=15;else if(/市長|国/.test(t)){N.p.rep=clamp(N.p.rep+10);if(N.town)N.town.support=clamp((N.town.support||50)+10)}else if(/億り人/.test(t))N.p.happy=clamp(N.p.happy+5);else if(/しあわせ|大往生/.test(t)){N.p.happy=clamp(N.p.happy+10);N.p.health=clamp(N.p.health+5)}else{const k=pick(TALK);N.tal[k]=clamp(N.tal[k]+5)}}
   N.seed=P.seed;N.goal=P.goal&&!P.goalDone?P.goal:'free';N.goalDone=0;N.body=pickBody();N.pers={careful:0,bold:0,kind:0,compet:0};}
 function pickBody(){const a=BODY.slice();const out=[];for(let i=0;i<2;i++)out.push(a.splice(RI(0,a.length-1),1)[0].k);return out}
 
 // ----- 生まれた直後の設定 -----
-function birthHook(o){ensureV6();S.seed=o.seed;{const _r=Math.random;Math.random=mulberry32(o.seed+7);try{S.body=pickBody()}finally{Math.random=_r}}S.goal=o.goal&&GOALS[o.goal]?o.goal:pick(Object.keys(GOALS).filter(k=>k!=='free'));S.goalDone=0;ticker(`${S.region.n}で${S.name}が生まれた`)}
+function birthHook(o){ensureV6();S.seed=o.seed;{const _r=Math.random;Math.random=mulberry32(o.seed+7);try{S.body=pickBody()}finally{Math.random=_r}}S.goal=o.goal&&GOALS[o.goal]?o.goal:pick(Object.keys(GOALS).filter(k=>k!=='free'));S.goalDone=0;ticker(`${S.region.n}で${S.name}が生まれた（${S.y}年）`);birthHook7()}
 EV.birth.text=(base=>()=>base()+`\n\n生まれの番号：${seedCode(S.seed)}（同じ番号で友達も同じ生まれになれる）\n体の特徴：${S.body.map(k=>BODY.find(b=>b.k===k).n).join('・')}\n人生の目標：${GOALS[S.goal].n}`)(EV.birth.text);
 
 // ----- 人生の選択 -----

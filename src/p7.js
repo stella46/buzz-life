@@ -149,7 +149,7 @@ function drift(){
 function birthday(a){
   if(a===6){S.st='school';S.friends=[mkNpc('友達'),mkNpc('友達')];S.q.push('m6')}
   if(a===13){S.rival={id:'rv',name:pick(RIVALS),role:'ライバル配信者',trait:pick(['負けず嫌い','人当たりがいい','毒舌','努力家']),rel:30,f:RI(200,3000)};
-    if(!S.snsOpen&&!chance(S.cty.net)){S.flags.noNet=1;S.q.push('m13n')}else if(!S.snsOpen)S.q.push('m13');
+    if(!S.snsOpen&&!snsEra()){S.flags.preNet=1}else if(!S.snsOpen&&!chance(S.cty.net)){S.flags.noNet=1;S.q.push('m13n')}else if(!S.snsOpen)S.q.push('m13');
     if(S.kc.on)S.q.push('m13k')}
   if(a===15&&S.st==='school')S.q.push('m15');
   if(a===18){if(S.st==='school')S.q.push('m18');if(S.trust>0){inc('trust',S.trust);log(`親が残してくれた${yen(S.trust)}を受け取った`,'life');S.trust=0}}
@@ -162,7 +162,7 @@ function deathCheck(){const h=S.p.health;let m=h<15?5:h<30?2.5:h<50?1.4:h>85?.85
 // ===== 新しい人生 =====
 let LASTOPT={stage:'nipporia',diff:'normal',endless:0,cty:null};
 function newGame(o){
-  o=Object.assign({},LASTOPT,o||{});LASTOPT={stage:o.stage,diff:o.diff,endless:o.endless,cty:o.cty};
+  o=Object.assign({},LASTOPT,o||{});LASTOPT={stage:o.stage,diff:o.diff,endless:o.endless,cty:o.cty,era:o.era,yearIn:o.yearIn};o.year=o.year||eraYear(o);
   const _rnd=Math.random;o.seed=o.seed!=null?o.seed:Math.floor(_rnd()*1e6);Math.random=mulberry32(o.seed+1);
   try{
   const cid=o.cty||pickCountry(o.stage),regs=regionsFor(cid),fr=o.free||{};
@@ -178,7 +178,7 @@ function newGame(o){
   const sibs=[];const ns=chance(.55)?RI(1,2):0;
   for(let i=0;i<ns;i++){const sg=chance(.5)?'男':'女',older=chance(.5);sibs.push({id:'s'+i,name:fullName(sur,givenName(sg)),role:older?(sg==='男'?'兄':'姉'):(sg==='男'?'弟':'妹'),trait:pick(NPC_TRAITS),rel:55})}
   const region=fr.region!=null?regs[fr.region]:wpick(regs),tier=fr.tier!=null?fr.tier:RI(0,4);
-  Object.assign(S,{v:2,g,first,last:sur,name:fullName(sur,first),y:CFG.start,m:RI(1,12),am:0,wk:0,unit:'month',
+  Object.assign(S,{v:2,g,first,last:sur,name:fullName(sur,first),y:o.year,m:RI(1,12),am:0,wk:0,unit:'month',
     regions:regs,region,tier,diff:o.diff||'normal',endless:o.endless?1:0,gen:1,lineage:[],
     p:{health:RI(72,92),mental:65,happy:60,know:4,social:15,rep:60,priv:92},
     sk:{talk:2,plan:2,edit:0,looks:8},tal,money:0,inv:0,debt:0,trust:0,
@@ -385,7 +385,7 @@ function renderPanel(){
   if(tab==='town')drawTown();
 }
 function townPanel(){
-  const T=S.town,a=age();let h=`<h2>まち：${esc(S.region.n)}</h2><div class="kv"><span>発展度</span><span>${T.dev}</span><span>あなたの立場</span><span>${S.role?esc(ROLES[S.role]):'住民'}</span>${S.nation?`<span>国の発展への貢献</span><span>${Math.round(S.nation)}</span>`:''}</div>`;
+  const T=S.town,a=age();let h=`${townSwitchHtml()}<h2>まち：${esc(townName(S.town))}</h2><div class="kv"><span>発展度</span><span>${T.dev}</span><span>あなたの立場</span><span>${S.role?esc(ROLES[S.role]):'住民'}</span>${S.nation?`<span>国の発展への貢献</span><span>${Math.round(S.nation)}</span>`:''}</div>`;
   h+=`<canvas id="townCv" width="128" height="96" aria-label="まちの地図"></canvas><p class="hint">マスをタップして選ぶ。空き地には建物を建てられる。となり合う組み合わせで売上が上がる。</p>`;
   const i=T.sel,t=i>=0?T.tiles[i]:null;
   if(!t){h+='<p class="hint">マスが選ばれていない。</p>';return h}
@@ -450,14 +450,16 @@ function showSetup(){
   <label class="fld" id="suCtyBox"><span>国</span><select id="suCty"></select></label>
   <label class="fld"><span>難易度</span><select id="suDiff">${dd}</select></label>
   <label class="fld"><span>人生の終わり</span><select id="suEnd"><option value="0">亡くなったら終わり</option><option value="1" ${LASTOPT.endless?'selected':''}>エンドレス（子どもに引き継いで続ける）</option></select></label>
+  <label class="fld"><span>生まれる時代</span><select id="suEra">${Object.entries(ERA_OPT).map(([k,x])=>`<option value="${k}" ${(LASTOPT.era||'now')===k?'selected':''}>${x.n}</option>`).join('')}</select></label>
+  <label class="fld" id="suYearBox" ${LASTOPT.era==='pick'?'':'hidden'}><span>生まれる年</span><input id="suYear" inputmode="numeric" maxlength="4" value="${esc(LASTOPT.yearIn||'1990')}" placeholder="1940〜2100"></label>
   <label class="fld"><span>人生の目標</span><select id="suGoal"><option value="">ランダム</option>${Object.entries(GOALS).map(([k,g])=>`<option value="${k}">${esc(g.n)}</option>`).join('')}</select></label>
   <label class="fld"><span>生まれの番号</span><input id="suSeed" inputmode="numeric" maxlength="10" placeholder="空欄ならランダム（例 B-123456）"></label></div>
-  <p class="hint">友達と同じ「生まれの番号」と同じ舞台を選ぶと、同じ国・家庭・素質で生まれる。どちらがうまく生きられるか競える。</p>
+  <p class="hint">友達と同じ「生まれの番号」と同じ舞台・時代を選ぶと、同じ国・家庭・素質で生まれる。どちらがうまく生きられるか競える。</p>
   <div class="mch"><button class="b pri" type="button" data-act="suRandom">ランダムに生まれる</button><button class="b" type="button" data-act="suFree" ${fr?'':'disabled'}>自由に決めて生まれる${fr?'':'（1回人生を終えると解放）'}</button><button class="b ghost" type="button" data-act="close">やめる</button></div>`);
   fillCty();
 }
 function fillCty(){const st=$('#suStage').value,sel=$('#suCty'),box=$('#suCtyBox');if(st==='nipporia'||st==='japan'){box.hidden=true;sel.innerHTML='';return}box.hidden=false;const ids=Object.keys(COUNTRIES).filter(k=>st==='world'?!COUNTRIES[k].fict:(COUNTRIES[k].fict&&k!=='nipporia'));sel.innerHTML=`<option value="">ランダム${st==='world'?'（生まれる人数が多い国ほど選ばれやすい）':''}</option>`+ids.map(k=>`<option value="${k}">${COUNTRIES[k].n}</option>`).join('')}
-function readSetup(){const g=$('#suGoal'),sd=$('#suSeed');return {stage:$('#suStage').value,cty:$('#suCty').value||null,diff:$('#suDiff').value,endless:+$('#suEnd').value,goal:g&&g.value||null,seed:sd?parseSeed(sd.value):null}}
+function readSetup(){const g=$('#suGoal'),sd=$('#suSeed');return {stage:$('#suStage').value,cty:$('#suCty').value||null,diff:$('#suDiff').value,endless:+$('#suEnd').value,goal:g&&g.value||null,seed:sd?parseSeed(sd.value):null,era:($('#suEra')||{}).value||'now',yearIn:($('#suYear')||{}).value||''}}
 let FREEOPT=null;
 function showFree(o){
   o.cty=o.cty||pickCountry(o.stage);FREEOPT=o;const regs=regionsFor(o.cty),c=COUNTRIES[o.cty];
@@ -508,7 +510,7 @@ document.addEventListener('click',e=>{
     case 'retireYes':retireTo(+t.dataset.i);break;
   }
 });
-document.addEventListener('change',e=>{if(e.target.id==='suStage')fillCty()});
+document.addEventListener('change',e=>{if(e.target.id==='suStage')fillCty();if(e.target.id==='suEra'){const bx=$('#suYearBox');if(bx)bx.hidden=e.target.value!=='pick'}});
 $('#btnBgm').addEventListener('click',()=>{bgmOn=!bgmOn;try{localStorage.setItem('nipporia-bgm',bgmOn?'1':'0')}catch(_){}bgmUser=true;bgmUpdate();renderTop()});
 loadMeta();
 // オフライン対応：Webサイトとして置いたときだけ動く（ファイル直開き・Claude上では何もしない）

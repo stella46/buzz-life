@@ -97,13 +97,13 @@ function homeTown(){return allTowns().find(t=>t.home)||S.town}
 function withTown(T,fn){if(!T||T===S.town)return fn();const i=S.towns2.indexOf(T);if(i<0)return fn();const cur=S.town;S.towns2[i]=cur;S.town=T;try{return fn()}finally{S.towns2[i]=T;S.town=cur}}
 function switchTown(T){const i=S.towns2.indexOf(T);if(i<0)return;S.towns2[i]=S.town;S.town=T}
 const townName=T=>T.nm||S.region.n;
-function devTown(k,nm){const d=DEVS.find(x=>x.k===k);const c=Math.round(d.cost*Math.max(.2,S.cty.inc));if(S.money<c||allTowns().length>TOWN_MAX)return;
+function devTown(k,nm){const d=DEVS.find(x=>x.k===k);const c=Math.round(d.cost*Math.max(.2,S.cty.inc)*devCostMul());if(S.money<c||allTowns().length>TOWN_MAX)return;
   outc('dev',c);const T=newTown(d.rt);T.tiles.forEach(t=>{if(t.t==='house'&&chance(.55))t.t='empty'});T.nm=(nm||'').trim().slice(0,10)||d.n;T.rt=d.rt;T.kind=k;T.bonus=(T.bonus||0)+(d.tour||0)*4;T.support=50;T.reqs=[];T.sel=-1;
   if(d.tour)for(let j=0;j<d.tour;j++){const i=T.tiles.findIndex(t=>t.t==='empty');if(i>=0)T.tiles[i]={t:'tourism',lv:1}}
   S.towns2.push(T);switchTown(T);S.town.dev=calcDev();tl(`新しいまち「${T.nm}」の開発を始めた`);ticker(`${S.name}が新しいまち「${T.nm}」の開発に着手`);ad('rep',3);snd('buy');save();render()}
 function otherTownsMonth(){const home=homeTown();let tot=0;
   for(const T of allTowns()){if(T===home)continue;withTown(T,()=>{let pr=0;S.town.tiles.forEach((t,i)=>{const b=BLD[t.t];if(!b)return;if(SHOP[t.t])pr+=shopCalc(i,true).profit;else pr+=Math.round(b.inc*t.lv*S.cty.inc*ecoMul()*popMul())});
-    S.town.dev=calcDev();S.town.support=clamp((S.town.support||50)+(50-(S.town.support||50))*.02+S.town.dev/400);tot+=pr;const d=DEVS.find(x=>x.k===S.town.kind);if(d)bill('dev','まちの管理費（'+townName(S.town)+'）',d.cost*.0025*Math.max(.2,S.cty.inc))})}
+    S.town.dev=calcDev();S.town.support=clamp((S.town.support||50)+(50-(S.town.support||50))*.02+S.town.dev/400);tot+=pr;const d=DEVS.find(x=>x.k===S.town.kind);if(d)bill('dev','まちの管理費（'+townName(S.town)+'）',d.cost*.0025*Math.max(.2,S.cty.inc)*(has('town_plan')?.7:1))})}
   if(tot>0)inc('biz',tot);else if(tot<0)outc('biz',-tot)}
 function townSwitchHtml(){const ts=allTowns();let h='';
   if(ts.length>1)h+=`<div class="ctl"><span>まち</span><div class="seg">${[homeTown(),...ts.filter(t=>!t.home)].map(T=>`<button class="${T===S.town?'on':''}" type="button" data-town="${ts.indexOf(T)}">${esc(townName(T))}${T.home?'（ふるさと）':''}</button>`).join('')}</div></div>`;
@@ -112,7 +112,7 @@ function devHtml(){const a=age();let h=`<h3>新しいまちを開発する</h3><
   if(a<25)return h+'<p class="hint">25歳から開発できる。</p>';
   if(allTowns().length>TOWN_MAX)return h+'<p class="hint">これ以上は持てない。</p>';
   h+=`<div class="row"><input id="devName" maxlength="10" placeholder="まちの名前（空欄なら自動）"></div>`;
-  h+=DEVS.map(d=>{const c=Math.round(d.cost*Math.max(.2,S.cty.inc));const lock=d.year&&S.y<d.year;return `<div class="shop"><div><div>${esc(d.n)} <span class="muted small">${yen(c)}</span></div><div class="muted small">${esc(d.d)}</div></div><button class="b sm" type="button" data-dev="${d.k}" ${lock||S.money<c?'disabled':''}>${lock?d.year+'年から':'開発する'}</button></div>`}).join('');
+  h+=DEVS.map(d=>{const c=Math.round(d.cost*Math.max(.2,S.cty.inc)*devCostMul());const lock=d.year&&S.y<d.year;return `<div class="shop"><div><div>${esc(d.n)} <span class="muted small">${yen(c)}</span></div><div class="muted small">${esc(d.d)}</div></div><button class="b sm" type="button" data-dev="${d.k}" ${lock||S.money<c?'disabled':''}>${lock?d.year+'年から':'開発する'}</button></div>`}).join('');
   return h}
 
 // ----- 会社（代表として経営する） -----
@@ -126,7 +126,7 @@ const COS={
   space:{n:'宇宙ベンチャー',c:5e8,r:.011,v:2.2,d:'2040年から。夢は大きく、リスクも大きい',year:2040}
 };
 const CO_MAX=5;
-function coProfit(c,commit){const d=COS[c.k],ci=Math.max(.2,S.cty.inc);let m=d.r*(1+(c.lv-1)*.04)*(S.cfocus===c.id?1.2:1)*ecoMul();
+function coProfit(c,commit){const d=COS[c.k],ci=Math.max(.2,S.cty.inc);let m=d.r*(1+(c.lv-1)*.04)*(S.cfocus===c.id?1.2:1)*ecoMul()*coPerk();
   if(d.fan)m*=1+Math.min(.6,Math.log10(totalF()+1)/10);if(d.town)m*=1+.08*(allTowns().length-1);if(c.k==='media')m*=.7+S.p.rep/150;
   let p=c.cap*m*ci;if(commit)p*=1+R(-d.v,d.v)*.9;return Math.round(p)}
 function cosMonth(){if(!S.cos||!S.cos.length)return;let tot=0;

@@ -157,7 +157,7 @@ function birthday(a){
   log(`${a}歳の誕生日`,'life');
   bgmUpdate();
 }
-function deathCheck(){const h=S.p.health;let m=h<15?5:h<30?2.5:h<50?1.4:h>85?.85:1;if(S.flags.cancer==='untreated')m*=6;else if(S.flags.cancer==='treat')m*=1.8;const a=S.am/12;const cm=a<5?S.cty.child:S.cty.life;return chance(Math.min(.9,qx(a,S.g)*cm*DF().mort)/12*m)}
+function deathCheck(){const h=S.p.health;let m=h<15?5:h<30?2.5:h<50?1.4:h>85?.85:1;if(S.flags.cancer==='untreated')m*=6;else if(S.flags.cancer==='treat')m*=1.8;const a=S.am/12;const cm=a<5?S.cty.child:S.cty.life;return chance(Math.min(.9,qx(a,S.g)*cm*DF().mort*mortMul())/12*m)}
 
 // ===== 新しい人生 =====
 let LASTOPT={stage:'nipporia',diff:'normal',endless:0,cty:null};
@@ -235,7 +235,7 @@ function fullNameFrom(P,first){return P.cty&&!P.cty.jp?first+' '+P.last:P.last+'
 function retireTo(i){S.cause='隠居（人生を子どもに託した）';S.alive=false;setSpeed(0);tl('隠居して人生を子どもに託した');finalizeLife();continueAsChild(i,true)}
 function finalizeLife(){
   checkAch('d');META.lives=(META.lives||0)+1;const sc=scoreOf();META.best=Math.max(META.best||0,sc);META.bestF=Math.max(META.bestF||0,S.stats.maxF);
-  for(const t of titlesOf())META.titles[t]=1;saveMeta();
+  for(const t of titlesOf())META.titles[t]=1;try{lifeEndLegacy()}catch(e){}saveMeta();
   try{localStorage.removeItem(CFG.save)}catch(e){}
 }
 function die(){
@@ -266,7 +266,7 @@ function showEnding(){
   const el=$('#scrEnd');
   el.innerHTML=`<div class="head"><p class="muted">${esc(S.y)}年${esc(S.m)}月 ／ ${esc(ctry())}${(S.gen||1)>1?` ／ ${S.gen}代目`:''}</p><h1>${esc(S.name)}の人生</h1><p>享年 ${age()}歳 ／ ${esc(S.cause)}</p><span class="ttl">${esc(ts[0])}</span><p class="muted small">${ts.slice(1).map(esc).join('・')}</p></div>
   ${S.endless?`<div class="card"><h3>家系をつなぐ</h3>${heirs.length?`<p class="hint">子どもの一人として人生を続けられる。お金・事務所・まち・研究は引き継がれる。</p><div class="row">${heirs.map((c,i)=>`<button class="b pri" type="button" data-heir="${i}">${esc(c.name)}（${Math.floor((S.am-c.born)/12)}歳）として続ける</button>`).join('')}</div>`:'<p class="hint">跡を継ぐ子どもがいないため、この家系はここで終わる。</p>'}</div>`:''}
-  <div class="egrid">
+  <div class="egrid">${S.lpGain?`<div class="card"><span>引き継ぎポイント</span><div class="big">+${S.lpGain}</div></div>`:''}
     <div class="card"><span>スコア</span><div class="big">${sc.toLocaleString()}</div></div>
     <div class="card"><span>最高フォロワー</span><div class="big">${num(st.maxF)}人</div></div>
     <div class="card"><span>最高資産</span><div class="big">${yen(st.maxM)}</div></div>
@@ -447,16 +447,18 @@ function showSetup(){
   const fr=unlocked('life1');
   openModal(`<div class="mcat life">新しい人生</div><h2>どんな人生にする？</h2><div class="form">
   <label class="fld"><span>舞台</span><select id="suStage">${so}</select></label>
+  <p class="hint pre" id="suStageDesc"></p>
   <label class="fld" id="suCtyBox"><span>国</span><select id="suCty"></select></label>
   <label class="fld"><span>難易度</span><select id="suDiff">${dd}</select></label>
   <label class="fld"><span>人生の終わり</span><select id="suEnd"><option value="0">亡くなったら終わり</option><option value="1" ${LASTOPT.endless?'selected':''}>エンドレス（子どもに引き継いで続ける）</option></select></label>
   <label class="fld"><span>生まれる時代</span><select id="suEra">${Object.entries(ERA_OPT).map(([k,x])=>`<option value="${k}" ${(LASTOPT.era||'now')===k?'selected':''}>${x.n}</option>`).join('')}</select></label>
   <label class="fld" id="suYearBox" ${LASTOPT.era==='pick'?'':'hidden'}><span>生まれる年</span><input id="suYear" inputmode="numeric" maxlength="4" value="${esc(LASTOPT.yearIn||'1990')}" placeholder="1940〜2100"></label>
+  <p class="hint" id="suEraNote" hidden></p>
   <label class="fld"><span>人生の目標</span><select id="suGoal"><option value="">ランダム</option>${Object.entries(GOALS).map(([k,g])=>`<option value="${k}">${esc(g.n)}</option>`).join('')}</select></label>
   <label class="fld"><span>生まれの番号</span><input id="suSeed" inputmode="numeric" maxlength="10" placeholder="空欄ならランダム（例 B-123456）"></label></div>
   <p class="hint">友達と同じ「生まれの番号」と同じ舞台・時代を選ぶと、同じ国・家庭・素質で生まれる。どちらがうまく生きられるか競える。</p>
   <div class="mch"><button class="b pri" type="button" data-act="suRandom">ランダムに生まれる</button><button class="b" type="button" data-act="suFree" ${fr?'':'disabled'}>自由に決めて生まれる${fr?'':'（1回人生を終えると解放）'}</button><button class="b ghost" type="button" data-act="close">やめる</button></div>`);
-  fillCty();
+  fillCty();setupNotes();
 }
 function fillCty(){const st=$('#suStage').value,sel=$('#suCty'),box=$('#suCtyBox');if(st==='nipporia'||st==='japan'){box.hidden=true;sel.innerHTML='';return}box.hidden=false;const ids=Object.keys(COUNTRIES).filter(k=>st==='world'?!COUNTRIES[k].fict:(COUNTRIES[k].fict&&k!=='nipporia'));sel.innerHTML=`<option value="">ランダム${st==='world'?'（生まれる人数が多い国ほど選ばれやすい）':''}</option>`+ids.map(k=>`<option value="${k}">${COUNTRIES[k].n}</option>`).join('')}
 function readSetup(){const g=$('#suGoal'),sd=$('#suSeed');return {stage:$('#suStage').value,cty:$('#suCty').value||null,diff:$('#suDiff').value,endless:+$('#suEnd').value,goal:g&&g.value||null,seed:sd?parseSeed(sd.value):null,era:($('#suEra')||{}).value||'now',yearIn:($('#suYear')||{}).value||''}}

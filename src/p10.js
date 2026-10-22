@@ -7,6 +7,7 @@ function backupHtml(){const b=backupInfo();if(!b)return '<p class="hint">更新�
 function delHtml(){const hs=!!loadSaved();return `<div class="mch" id="delBox"><button class="b" type="button" data-act="delAsk" data-k="save" ${hs?'':'disabled'}>続きのセーブデータを消す${hs?'':'（セーブなし）'}</button><button class="b" type="button" data-act="delAsk" data-k="all">実績・図鑑も含めて全部消す</button></div><h3>更新前のセーブ</h3>${backupHtml()}`}
 
 const OLD_VERS=[
+  ['v0.7','versions/v0.7/','時代の選択・会社・新しいまちの開発・遊び方が入った版（スキルツリーや感想フォームはまだない）'],
   ['v0.6','versions/v0.6/','人生の選択・目標・ファン層・アルバム・まちのイベントが入った版（時代の選択・会社・新しいまちの開発はまだない）'],
   ['v0.5','versions/v0.5/','子ども時代の行動・おこづかい画面が入った版（人生の選択・目標・ファン層・アルバムなどはまだない）'],
   ['v0.4','versions/v0.4/','過去のバージョン選択・セーブの自動保管・出来事504個が入った版（子ども時代の新しい行動やおこづかい画面はまだない）'],

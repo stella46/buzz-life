@@ -1,5 +1,5 @@
 // ===== v0.6：遊びの拡張 =====
-function ensureV6(){if(!S)return;ensureV7();
+function ensureV6(){if(!S)return;ensureV7();ensureV8();
   if(S.fanCore==null){S.fanCore=.05;S.fanAnti=.02}
   if(!S.series)S.series={g:null,n:0,fat:0};
   if(!S.pers)S.pers={careful:0,bold:0,kind:0,compet:0};
@@ -45,7 +45,7 @@ function actHook(a,o){const k=o&&o.k;
   if(['family','friends','chores','date','parenting'].includes(a))persAdd('kind',.25);
   if(['practice','talkp','study'].includes(a))persAdd('compet',.2);
 }
-function rel(n,v){if(!n)return;if(v>0&&persTop()==='kind')v*=1.2;n.rel=clamp(n.rel+v);if(DL){const k='rel:'+pn(n);DL[k]=(DL[k]||0)+v}}
+function rel(n,v){if(!n)return;if(v>0&&persTop()==='kind')v*=1.2;if(v>0&&sk('r1'))v*=1.2;n.rel=clamp(n.rel+v);if(DL){const k='rel:'+pn(n);DL[k]=(DL[k]||0)+v}}
 
 // ----- 心残り -----
 function chooseHook(e,i,chs){
@@ -70,7 +70,7 @@ const GOALS={
   long:{n:'90歳まで生きる',d:'健康に長生きする',chk:()=>age()>=90,prog:()=>age()/90},
   company:{n:'自社ビルを建てる',d:'会社を大きくする',chk:()=>S.office.lv>=3,prog:()=>S.office.lv/3}
 };
-E('goal_done',{t:'目標達成！',cat:'人生',w:0,text:()=>`人生の目標「${GOALS[S.goal].n}」を達成した！`,ch:[['やりきった',()=>{ad('happy',15);ad('mental',10);ad('rep',5);tl(`人生の目標「${GOALS[S.goal].n}」を達成`);META.titles['目標達成：'+GOALS[S.goal].n]=1;saveMeta();return '次は何を目指そう。「人生」→「目標」から新しい目標を選べる。'}]]});
+E('goal_done',{t:'目標達成！',cat:'人生',w:0,text:()=>`人生の目標「${GOALS[S.goal].n}」を達成した！`,ch:[['やりきった',()=>{ad('happy',15);ad('mental',10);ad('rep',5);tl(`人生の目標「${GOALS[S.goal].n}」を達成`);META.titles['目標達成：'+GOALS[S.goal].n]=1;legState();META.rec.goals=(META.rec.goals||0)+1;saveMeta();return '次は何を目指そう。「人生」→「目標」から新しい目標を選べる。'}]]});
 
 // ----- 時代の変化 -----
 GENRES.vr={n:'VR配信',w:{plan:.4,edit:.4,talk:.2},tal:'game',req:'era_vr'};
@@ -93,7 +93,7 @@ function monthHook(){
   if(S.snsOpen){S.fanAnti=clamp(S.fanAnti*.97,0,.4);S.fanCore=clamp(S.fanCore*(S.mo.posts<=0?.98:.993),.02,.5);
     if(S.fanCore>.08&&totalF()>=5000&&a>=13)inc('fanclub',Math.round(Math.min(totalF(),2e6)*S.fanCore*.5*Math.max(.15,S.cty.inc)))}
   // 噂
-  if(S.snsOpen&&!S.rumor&&chance(.12)){const gs=Object.keys(GENRES).filter(g=>genreOk(g));S.rumor={g:pick(gs),s:pick(Object.keys(SNS).filter(x=>!SNS[x].era||S.y>=SNS[x].era)),acc:RI(35,85),at:S.am+RI(1,3)};ticker(`噂：そのうち「${GENRES[S.rumor.g].n}」が来るらしい（確度${S.rumor.acc}%）`)}
+  if(S.snsOpen&&!S.rumor&&chance(.12)){const gs=Object.keys(GENRES).filter(g=>genreOk(g));S.rumor={g:pick(gs),s:pick(Object.keys(SNS).filter(x=>!SNS[x].era||S.y>=SNS[x].era)),acc:Math.min(95,RI(35,85)+(has('trend_k')?15:0)),at:S.am+RI(1,3)};ticker(`噂：そのうち「${GENRES[S.rumor.g].n}」が来るらしい（確度${S.rumor.acc}%）`)}
   // 時代
   for(const [y,id,msg] of ERAS)if(S.y>=y&&!S.res[id]){S.res[id]=1;ticker(msg);log(msg,'life');if(id==='era_holo')S.f.holo=S.f.holo||0}
   // 弟子
@@ -115,7 +115,7 @@ function monthHook(){
   if(!T.chain&&anyShop()&&chance(.004)){const types=[...new Set(T.tiles.filter(t=>SHOP[t.t]&&!['studio','gamedev'].includes(t.t)).map(t=>t.t))];if(types.length){T.chain={type:pick(types),until:S.am+RI(12,30)};S.q.push('x_chain')}}
   if(T.chain&&S.am>=T.chain.until){log(`${BLD[T.chain.type].n}の大手チェーンが撤退していった`,'good');ticker('大手チェーン店がまちから撤退');T.chain=null}
   // 部屋の飾り
-  const nd=Object.values(S.deco).filter(Boolean).length;if(nd)ad('happy',.15*nd);
+  const nd=Object.values(S.deco).filter(Boolean).length;if(nd)ad('happy',.15*nd*(has('deco_k')?2:1));
   // 目標
   if(S.goal&&S.goal!=='free'&&!S.goalDone&&GOALS[S.goal].chk()){S.goalDone=1;S.q.push('goal_done')}
   // ニュース
@@ -141,7 +141,7 @@ const chainMul=t=>S.town&&S.town.chain&&S.town.chain.type===t.t&&S.am<S.town.cha
 const SEGN={s:'学生',f:'家族',t:'観光客',a:'大人'};
 const SSTYLE=[{n:'ナチュラル',aff:{f:1,a:.6,s:.5,t:.6}},{n:'ポップ',aff:{s:1,t:.7,f:.6,a:.3}},{n:'高級感',aff:{a:1,t:.8,f:.3,s:.1}},{n:'レトロ',aff:{t:1,a:.7,s:.5,f:.4}}];
 const SMENU=[{n:'定番',aff:{f:.8,a:.8,s:.6,t:.5}},{n:'ボリューム',aff:{s:1,f:.6,a:.3,t:.3}},{n:'映える限定品',aff:{s:.8,t:1,a:.4,f:.4}},{n:'地元の名物',aff:{t:1,f:.6,a:.6,s:.3}}];
-function segWeights(){const base={'大都市':{s:.3,f:.2,t:.2,a:.3},'地方都市':{s:.25,f:.35,t:.1,a:.3},'町村':{s:.15,f:.45,t:.15,a:.25}}[S.town.rt||S.region.type]||{s:.25,f:.3,t:.15,a:.3};const w=Object.assign({},base);w.t+=Math.min(.3,countB('tourism')*.08);const sum=w.s+w.f+w.t+w.a;for(const k in w)w[k]/=sum;return w}
+function segWeights(){const base={'大都市':{s:.3,f:.2,t:.2,a:.3},'地方都市':{s:.25,f:.35,t:.1,a:.3},'町村':{s:.15,f:.45,t:.15,a:.25}}[S.town.rt||S.region.type]||{s:.25,f:.3,t:.15,a:.3};const w=Object.assign({},base);w.t+=Math.min(.3,countB('tourism')*.08)*(has('tour_k')?1.6:1)+(has('tour_k')?.05:0);const sum=w.s+w.f+w.t+w.a;for(const k in w)w[k]/=sum;return w}
 function shopSegMul(i){const t=S.town.tiles[i];if(t.style==null)return 1;const w=segWeights(),st=SSTYLE[t.style].aff,mn=SMENU[t.menuT||0].aff;let s=0;for(const k in w)s+=w[k]*(st[k]+mn[k])/2;return .7+.6*s}
 function shopExtra(i){const t=S.town.tiles[i];if(t.style==null){t.style=0;t.menuT=0}const w=segWeights();const mul=shopSegMul(i);
   const seg=(key,list,cur)=>`<div class="seg">${list.map((x,j)=>`<button class="${cur===j?'on':''}" type="button" data-shop="${i}" data-k="${key}" data-v="${j}">${x.n}</button>`).join('')}</div>`;
@@ -155,19 +155,19 @@ function townExtra(){const T=S.town,a=age();let h=`<h3>まちの支持 ${Math.ro
   if(T.chain)h+=`<div class="note bad">大手チェーンの${esc(BLD[T.chain.type].n)}が進出中（あと${T.chain.until-S.am}か月ほど）</div>`;
   h+='<h3>まちのイベントを主催する</h3>';
   if(a<18)return h+'<p class="hint">18歳から主催できる。</p>';
-  const cd=T.evAm!=null&&S.am-T.evAm<6;
-  h+=cd?`<p class="hint">次に主催できるのは${6-(S.am-T.evAm)}か月後。</p>`:'';
+  const cd=T.evAm!=null&&S.am-T.evAm<evCd();
+  h+=cd?`<p class="hint">次に主催できるのは${evCd()-(S.am-T.evAm)}か月後。</p>`:'';
   h+=TEVENTS.map(ev=>{const c=Math.round(ev.cost*Math.max(.2,S.cty.inc));return `<div class="shop"><div><div>${ev.n} <span class="muted small">${yen(c)}</span></div><div class="muted small">来場者の目安 ${num(ev.base*(1+T.dev/100))}人〜</div></div><button class="b sm" type="button" data-tev="${ev.k}" ${cd||S.money<c?'disabled':''}>主催する</button></div>`}).join('');
   return h}
 function hostEvent(k){const ev=TEVENTS.find(x=>x.k===k),T=S.town,c=Math.round(ev.cost*Math.max(.2,S.cty.inc));if(S.money<c)return;outc('build',c);
-  const vis=Math.round(ev.base*(1+T.dev/100)*(1+Math.sqrt(totalF())/300)*(T.support/60)*R(.7,1.3));const rev=Math.round(vis*R(150,450)*Math.max(.2,S.cty.inc));inc('fest',rev);
+  const vis=Math.round(ev.base*(1+T.dev/100)*(1+Math.sqrt(totalF())/300)*(T.support/60)*R(.7,1.3));const rev=Math.round(vis*R(150,450)*Math.max(.2,S.cty.inc)*(has('fest_k')?1.3:1));inc('fest',rev);
   T.evAm=S.am;T.bonus+=c/500000;T.support=clamp(T.support+5);ad('rep',2);ad('happy',3);ad('social',2);if(S.snsOpen)ad('f',Math.round(vis*.05));tl(`まちで${ev.n}を主催した（${num(vis)}人）`);ticker(`${S.region.n}の${ev.n}に${num(vis)}人が来場`);
   openModal(`<div class="mcat">まち</div><h2>${ev.n}の結果</h2><div class="kv"><span>来場者</span><span>${num(vis)}人</span><span>費用</span><span>-${yen(c)}</span><span>売上・協賛</span><span>+${yen(rev)}</span><span>差し引き</span><span class="${rev-c>=0?'up':'dn'}">${rev-c>=0?'+':''}${yen(rev-c)}</span></div><p class="mtext">まちの発展度と支持、あなたの評判が上がった。</p><button class="b pri" type="button" data-act="close">閉じる</button>`);save();render()}
-EV.r_elect.ch=[['立候補する',()=>{ad('money',-1000000);const p=clamp(.15+S.p.rep/250+S.town.dev/300+Math.log10(totalF()+1)/30+(S.town.support-50)/150,.08,.9);if(chance(p)){S.role='mayor';tl('市長に当選した');ad('happy',10);return '当選！ まちの未来を託された。'}ad('mental',-8);return '落選…。住民の声にもっと応えていこう。'}],['今は出ない',()=>'時期を待つ。']];
+EV.r_elect.ch=[['立候補する',()=>{ad('money',-1000000);const p=clamp(.15+S.p.rep/250+S.town.dev/300+Math.log10(totalF()+1)/30+(S.town.support-50)/150+(sk('b5')?.1:0),.08,.9);if(chance(p)){S.role='mayor';tl('市長に当選した');ad('happy',10);return '当選！ まちの未来を託された。'}ad('mental',-8);return '落選…。住民の声にもっと応えていこう。'}],['今は出ない',()=>'時期を待つ。']];
 
 // ----- ライバルとの名勝負 -----
 function battle(){const r=S.rival;if(!r)return;S.cd.battle=S.am;
-  const me=postQuality()+Math.sqrt(totalF())/18+R(0,35)+(persTop()==='compet'?5:0),you=42+Math.sqrt(r.f)/18+R(0,35);const win=me>=you;
+  const me=postQuality()+Math.sqrt(totalF())/18+R(0,35)+(persTop()==='compet'?5:0)+(has('battle_k')?8:0),you=42+Math.sqrt(r.f)/18+R(0,35);const win=me>=you;
   if(win){S.rivalRec.w++;const g=Math.round(Math.min(r.f,totalF()+1000)*R(.02,.06));ad('f',g);ad('happy',4);persAdd('compet',3);rel(r,r.rel>50?3:-3)}else{S.rivalRec.l++;r.f=Math.round(r.f*1.03);ad('mental',-3);ad('plan',2);persAdd('compet',4);rel(r,2)}
   tl(`ライバル「${r.name}」と勝負して${win?'勝った':'負けた'}`);
   openModal(`<div class="mcat">SNS</div><h2>名勝負：${win?'勝利！':'惜敗…'}</h2><p class="mtext">同じお題で動画を出し、どちらが伸びるか勝負した。\nあなた ${Math.round(me)} 対 ${esc(r.name)} ${Math.round(you)}\n通算 ${S.rivalRec.w}勝${S.rivalRec.l}敗</p><button class="b pri" type="button" data-act="close">閉じる</button>`);save();render()}
@@ -230,7 +230,7 @@ function drawMap(){const cv=$('#relMap');if(!cv)return;const c=cv.getContext('2d
   c.fillStyle='#ff5c8a';c.fillRect(cx-30,cy-14,60,28);c.fillStyle='#2b0915';c.fillText('あなた',cx,cy+4);c.textAlign='left'}
 
 // ----- 弟子 -----
-function takeDisciple(){if(S.disc.length>=3)return;const d={name:pick(TAL_NAMES),genre:pick(TALK),f:RI(100,1500)};S.disc.push(d);tl(`${d.name}を弟子にとった`);log(`${d.name}を弟子にとった`,'good');save();render()}
+function takeDisciple(){if(S.disc.length>=discMax())return;const d={name:pick(TAL_NAMES),genre:pick(TALK),f:RI(100,1500)};S.disc.push(d);tl(`${d.name}を弟子にとった`);log(`${d.name}を弟子にとった`,'good');save();render()}
 
 // ----- 子育て -----
 ACT.parenting={n:'子育て',d:'子どもと向き合う。子どもとの絆が深まる',ok:()=>S.kids.some(c=>(S.am-c.born)/12<18),f:k=>ACT.parenting.opts[0].f(k),opts:[
@@ -244,11 +244,11 @@ const kidsU18=()=>S.kids.filter(c=>(S.am-c.born)/12<18);
 function legacyHook(P,N){const ts=titlesOf().slice(0,2);N.legacy=(P.legacy||[]).concat(ts).slice(-6);N.rivalRec={w:0,l:0};N.towns2=P.towns2||[];N.cos=P.cos||[];N.cfocus=P.cfocus;N.album=[];
   const c=P.kids.find(k=>k.name===N.first);if(c){for(const k of TALK)N.tal[k]=clamp(N.tal[k]+(c.talent||0)*.3+(c.bond||50)/20);N.p.mental=clamp(N.p.mental+(c.bond||50)/10);N.p.know=clamp(N.p.know+(c.know||0)*.3)}
   for(const t of ts){if(/インフルエンサー|クリエイター|配信者|人気者/.test(t)){N.sk.talk=clamp(N.sk.talk+5);N.p.rep=clamp(N.p.rep+5)}else if(/社長/.test(t))N.rp+=15;else if(/市長|国/.test(t)){N.p.rep=clamp(N.p.rep+10);if(N.town)N.town.support=clamp((N.town.support||50)+10)}else if(/億り人/.test(t))N.p.happy=clamp(N.p.happy+5);else if(/しあわせ|大往生/.test(t)){N.p.happy=clamp(N.p.happy+10);N.p.health=clamp(N.p.health+5)}else{const k=pick(TALK);N.tal[k]=clamp(N.tal[k]+5)}}
-  N.seed=P.seed;N.goal=P.goal&&!P.goalDone?P.goal:'free';N.goalDone=0;N.body=pickBody();N.pers={careful:0,bold:0,kind:0,compet:0};}
+  N.seed=P.seed;N.goal=P.goal&&!P.goalDone?P.goal:'free';N.goalDone=0;N.body=pickBody();N.pers={careful:0,bold:0,kind:0,compet:0};applyLegacy(N,false);}
 function pickBody(){const a=BODY.slice();const out=[];for(let i=0;i<2;i++)out.push(a.splice(RI(0,a.length-1),1)[0].k);return out}
 
 // ----- 生まれた直後の設定 -----
-function birthHook(o){ensureV6();S.seed=o.seed;{const _r=Math.random;Math.random=mulberry32(o.seed+7);try{S.body=pickBody()}finally{Math.random=_r}}S.goal=o.goal&&GOALS[o.goal]?o.goal:pick(Object.keys(GOALS).filter(k=>k!=='free'));S.goalDone=0;ticker(`${S.region.n}で${S.name}が生まれた（${S.y}年）`);birthHook7()}
+function birthHook(o){ensureV6();S.seed=o.seed;{const _r=Math.random;Math.random=mulberry32(o.seed+7);try{S.body=pickBody()}finally{Math.random=_r}}S.goal=o.goal&&GOALS[o.goal]?o.goal:pick(Object.keys(GOALS).filter(k=>k!=='free'));S.goalDone=0;ticker(`${S.region.n}で${S.name}が生まれた（${S.y}年）`);birthHook7();applyLegacy(S,true)}
 EV.birth.text=(base=>()=>base()+`\n\n生まれの番号：${seedCode(S.seed)}（同じ番号で友達も同じ生まれになれる）\n体の特徴：${S.body.map(k=>BODY.find(b=>b.k===k).n).join('・')}\n人生の目標：${GOALS[S.goal].n}`)(EV.birth.text);
 
 // ----- 人生の選択 -----
@@ -269,7 +269,7 @@ function choicePanel(){const a=age();let h='<p class="hint">人生を大きく�
   if(a>=20){h+=`<select id="mvCty">${Object.keys(COUNTRIES).filter(k=>k!==S.ctyId).map(k=>`<option value="${k}">${esc(COUNTRIES[k].n)}</option>`).join('')}</select>`+btn('cAsk','海外へ移住する（100万円）',S.money<1000000,'data-c="abroad"')}
   if(a<18)h+='<span class="hint">18歳から選べる。</span>';
   return h+'</div><p class="hint">ほかの国へ移住すると、その国の物価や収入で暮らすことになる。ふるさとのまちや会社はそのまま残る。</p>'}
-function seekLover(m){if(S.cd.seek!=null&&S.am-S.cd.seek<3)return;S.cd.seek=S.am;const base={intro:.35,circle:.3,app:.4}[m]+(S.sk.looks+S.p.social)/250+(persTop()==='bold'?.08:0)-(S.body.includes('shy')?.1:0);
+function seekLover(m){if(S.cd.seek!=null&&S.am-S.cd.seek<3)return;S.cd.seek=S.am;const base={intro:.35,circle:.3,app:.4}[m]+(S.sk.looks+S.p.social)/250+(persTop()==='bold'?.08:0)+(sk('r3')?.15:0)-(S.body.includes('shy')?.1:0);
   if(m==='app'){ad('priv',-2);outc('date',Math.round(3000*Math.max(.2,S.cty.inc)))}
   if(chance(clamp(base,.1,.85))){S.partner=mkNpc('恋人');S.partner.rel=45;tl(S.partner.name+'と付き合い始めた');ad('happy',6);openModal(`<div class="mcat">恋愛</div><h2>出会い</h2><p class="mtext">${{intro:'友達の紹介で',circle:'趣味のサークルで',app:'マッチングアプリで'}[m]}${esc(S.partner.name)}（${esc(S.partner.trait)}）と出会い、付き合うことになった！\n「予定」で「デート」を選ぶと仲が深まる。</p><button class="b pri" type="button" data-act="close">閉じる</button>`)}
   else{ad('mental',-2);openModal(`<div class="mcat">恋愛</div><h2>今回はご縁がなかった</h2><p class="mtext">何人かと会ってみたが、ピンとくる人はいなかった。\n見た目や人間関係を磨くと、出会いやすくなる。</p><button class="b pri" type="button" data-act="close">閉じる</button>`)}save();render()}
@@ -296,6 +296,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||
 
 // ----- 人生タブの追加画面 -----
 function lifeExtra(sub){
+  if(sub==='skill')return lifeSkillHtml();
   if(sub==='choice')return choicePanel();
   if(sub==='goal'){const g=GOALS[S.goal||'free'];const p=g.prog?clamp(g.prog()*100):0;const can=!S.goalSetAm||S.am-S.goalSetAm>=120||S.goalDone;
     let h=`<h2>人生の目標</h2><div class="card"><div class="hd"><span>${esc(g.n)}</span>${S.goalDone?'<span class="chip up">達成！</span>':''}</div>${g.d?`<p class="hint">${esc(g.d)}</p>`:''}${g.prog?`${bar(p,'g')}<p class="hint">達成度 ${Math.round(p)}%</p>`:''}</div>`;
@@ -309,7 +310,7 @@ function lifeExtra(sub){
   if(sub==='map'){let h=`<canvas id="relMap" width="360" height="360"></canvas><p class="hint">線の色：緑＝仲がいい・灰＝ふつう・赤＝仲が悪い。太いほど仲がいい。</p>`;
     const known=[...S.friends,S.rival,...S.sibs].filter(n=>n&&n.news);if(known.length)h+=`<h3>知り合いの近況</h3><ul class="small">${known.map(n=>`<li>${esc(pn(n))}：${esc(n.news)}</li>`).join('')}</ul>`;
     h+='<h3>弟子</h3>';if(S.disc.length)h+=S.disc.map(d=>`<div class="shop"><div><div>${esc(d.name)}</div><div class="muted small">${esc(GENRES[d.genre].n)}・フォロワー${num(d.f)}人</div></div></div>`).join('');
-    const ok=age()>=35&&totalF()>=10000&&S.disc.length<3;h+=`<div class="row"><button class="b sm" type="button" data-act="takeDisc" ${ok?'':'disabled'}>弟子をとる</button><span class="hint">${S.disc.length>=3?'弟子は3人まで':'35歳以上・フォロワー1万人以上でとれる。あなたの話術・企画・編集が高いほど弟子が育つ'}</span></div>`;
+    const ok=age()>=35&&totalF()>=10000&&S.disc.length<discMax();h+=`<div class="row"><button class="b sm" type="button" data-act="takeDisc" ${ok?'':'disabled'}>弟子をとる</button><span class="hint">${S.disc.length>=discMax()?'弟子は'+discMax()+'人まで':'35歳以上・フォロワー1万人以上でとれる。あなたの話術・企画・編集が高いほど弟子が育つ'}</span></div>`;
     if(S.kids.length)h+=`<h3>子どもとの絆</h3><div class="bars">${S.kids.map(c=>`<span>${esc(c.name)}</span>${bar(c.bond,'p')}<span class="v">${Math.round(c.bond)}</span>`).join('')}</div><p class="hint">「予定」で「子育て」を選ぶと深まる。エンドレスでは、絆が強い子ほど力を受け継ぐ。</p>`;
     return h}
   if(sub==='album')return `<h2>思い出アルバム</h2>${albumHtml(S.album)}`;

@@ -2892,6 +2892,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v0.9.1','2026年10月22日',['感想・不具合を「送る」と、共有の画面を出さずに開発者へ直接届くように（アカウントは不要）']],
   ['v0.9','2026年10月22日',['倍速で進めているあいだ、画面上の速さボタンの下に「10年で約○分／この人生のこり約○分」の推定プレイ時間を表示','感想フォームをチェック＋自由記入にした。全部書かなくてOK、チェックだけでも送れる。バグは「どの画面で」もチェックで選べる','感想は開発者の表に直接届くように（設定後）。送り直すと前の内容が置きかわる。電波がないときは、つながったときに自動で送る','バージョンまわりを整理：「ほかのバージョンで遊ぶ」は「アップデート情報」の中の「昔の版で遊ぶ（おまけ）」に。ふだんは何もしなくてOKと説明を追加','「更新前のセーブに戻す」は「設定」→「もしものとき」に移し、いつ使うものかを説明']],
   ['v0.8','2026年10月22日',['研究を20個から44個に増やし、分野ごとのツリー表示に。研究ポイントが余ったら「ずっと続けられる研究」（発信・経営・暮らし）を何段でも重ねられる','「人生」→「スキル」：この人生のスキルツリー（発信・ビジネス・暮らし・人間関係の4つの枝）。スキルポイントは4年ごとと人生の節目でもらえる','引き継ぎスキル：人生を終えるともらえるポイントで覚え、これからのすべての人生で有効。解放には「90歳まで生きる」「フォロワー100万人」などの条件が必要（タイトルからも見られる）','遊び方に「プレイ時間の目安」「舞台の特徴」「研究とスキルツリー」を追加。はじめからの画面に舞台の説明と、SNSがない時代を選んだときの注意を表示','感想・不具合を送るフォーム（タイトル・メニュー）。送ったあとで直して送り直せる','たくさんの自動テストプレイで不具合がないか確認']],
   ['v0.7','2026年10月22日',['生まれる時代を選べるように：今（2026年）・過去（1950〜2005年）・未来（2030〜2080年）・自分で年を決める（1940〜2100年）','過去〜今は実際にあった出来事がニュースで流れ、景気（お店・会社・投資）に影響する。SNSは時代に合わせて登場（動画SNSは2005年ごろ）。未来の出来事は想像のもの','会社：代表として最大5社を設立（飲食・アパレル・ゲーム・IT・不動産・メディア・宇宙）。出資で大きくし、力を入れる会社を選び、上場・売却もできる','新しいまちの開発：ふるさとのほかに4つまで、新しいまちを持てる（ニュータウン・温泉郷・リゾート・新都心・未来都市）','ファン層のバランスを調整（新しく来た人の多くはライト層に。ガチ勢はシリーズとライブで育つ）','遊び方の説明を追加（タイトル・メニュー・各タブの「？遊び方」）']],
@@ -4075,7 +4076,8 @@ function renderCtrl(){document.querySelectorAll('[data-spd]').forEach(b=>b.class
 
 // ----- 感想フォーム（チェック＋自由記入） -----
 // 送り先：Googleスプレッドシートに置いたスクリプトのURL（開発者が設定）。未設定のときは共有で送る
-const FB_URL='';
+const FB_URL='https://docs.google.com/forms/d/e/1FAIpQLSfCFVQwBY7CEsMfQyLuIdXJfXM8r9F1pJ4iUgp_3NAi2Cjfig/formResponse';
+const FB_ENTRY={id:'entry.1115949559',name:'entry.2110061592',body:'entry.1464775717'};
 const FBQ2=[
  {k:'good',q:'よかったところ・楽しかったところ',c:['BGM・音','ドット絵・見た目','SNSで伸ばすのが楽しい','お店・会社の経営','まちづくり','恋愛・家族','出来事（イベント）','時代・世代交代','研究・スキル']},
  {k:'bad',q:'わかりにくい・つまらない・不満なところ',c:['操作がわかりにくい','説明が足りない','字やボタンが小さい','テンポが遅い','お金のバランス','同じ出来事が多い','何をすればいいかわからない','バージョンの切り替え']},
@@ -4085,7 +4087,7 @@ const FBQ2=[
 const FBQ_KEY='buzz-feedback-q';
 function fbQueue(){try{return JSON.parse(localStorage.getItem(FBQ_KEY)||'[]')}catch(_){return []}}
 function fbSetQueue(a){try{localStorage.setItem(FBQ_KEY,JSON.stringify(a.slice(-30)))}catch(_){}}
-async function fbPost(data){await fetch(FB_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)})}
+async function fbPost(d){const fd=new URLSearchParams();fd.append(FB_ENTRY.id,String(d.id)+(d.rev?`（訂正${d.rev}）`:''));fd.append(FB_ENTRY.name,d.name||'');fd.append(FB_ENTRY.body,d.text||'');await fetch(FB_URL,{method:'POST',mode:'no-cors',body:fd})}
 async function fbFlush(){if(!FB_URL||!navigator.onLine)return;const q=fbQueue();if(!q.length)return;const rest=[];for(const d of q){try{await fbPost(d)}catch(_){rest.push(d)}}fbSetQueue(rest)}
 setTimeout(()=>{fbFlush()},3000);window.addEventListener('online',()=>fbFlush());
 function fbForm(item){FB_EDIT=item?item.id:null;FB_STAR=item?item.star:0;const v=item||{};let nm='';try{nm=localStorage.getItem(FB_KEY+'-name')||''}catch(_){}

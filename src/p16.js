@@ -12,7 +12,8 @@ function renderCtrl(){document.querySelectorAll('[data-spd]').forEach(b=>b.class
 
 // ----- 感想フォーム（チェック＋自由記入） -----
 // 送り先：Googleスプレッドシートに置いたスクリプトのURL（開発者が設定）。未設定のときは共有で送る
-const FB_URL='';
+const FB_URL='https://docs.google.com/forms/d/e/1FAIpQLSfCFVQwBY7CEsMfQyLuIdXJfXM8r9F1pJ4iUgp_3NAi2Cjfig/formResponse';
+const FB_ENTRY={id:'entry.1115949559',name:'entry.2110061592',body:'entry.1464775717'};
 const FBQ2=[
  {k:'good',q:'よかったところ・楽しかったところ',c:['BGM・音','ドット絵・見た目','SNSで伸ばすのが楽しい','お店・会社の経営','まちづくり','恋愛・家族','出来事（イベント）','時代・世代交代','研究・スキル']},
  {k:'bad',q:'わかりにくい・つまらない・不満なところ',c:['操作がわかりにくい','説明が足りない','字やボタンが小さい','テンポが遅い','お金のバランス','同じ出来事が多い','何をすればいいかわからない','バージョンの切り替え']},
@@ -22,7 +23,7 @@ const FBQ2=[
 const FBQ_KEY='buzz-feedback-q';
 function fbQueue(){try{return JSON.parse(localStorage.getItem(FBQ_KEY)||'[]')}catch(_){return []}}
 function fbSetQueue(a){try{localStorage.setItem(FBQ_KEY,JSON.stringify(a.slice(-30)))}catch(_){}}
-async function fbPost(data){await fetch(FB_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)})}
+async function fbPost(d){const fd=new URLSearchParams();fd.append(FB_ENTRY.id,String(d.id)+(d.rev?`（訂正${d.rev}）`:''));fd.append(FB_ENTRY.name,d.name||'');fd.append(FB_ENTRY.body,d.text||'');await fetch(FB_URL,{method:'POST',mode:'no-cors',body:fd})}
 async function fbFlush(){if(!FB_URL||!navigator.onLine)return;const q=fbQueue();if(!q.length)return;const rest=[];for(const d of q){try{await fbPost(d)}catch(_){rest.push(d)}}fbSetQueue(rest)}
 setTimeout(()=>{fbFlush()},3000);window.addEventListener('online',()=>fbFlush());
 function fbForm(item){FB_EDIT=item?item.id:null;FB_STAR=item?item.star:0;const v=item||{};let nm='';try{nm=localStorage.getItem(FB_KEY+'-name')||''}catch(_){}

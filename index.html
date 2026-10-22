@@ -259,6 +259,10 @@ a.b{display:inline-block;text-decoration:none;align-self:flex-start}
 .fbc{display:inline-flex;align-items:center;gap:4px;border:2px solid var(--line);background:var(--panel2);padding:4px 8px;font-size:13px;cursor:pointer}
 .fbc input{accent-color:var(--pink);margin:0}.fbc:has(input:checked){border-color:var(--pink);background:#4a2140}
 .fbset textarea{width:100%;box-sizing:border-box;font:inherit;background:var(--bg2);color:var(--ink);border:2px solid var(--line);padding:6px}
+.mcard.fixedsize{height:min(86vh,720px);max-height:calc(100% - 0px)}
+.mcard.fixedsize .fbody{flex:1 1 auto;min-height:0;overflow:auto;padding-right:4px;display:flex;flex-direction:column;gap:10px}
+.mcard.fixedsize .subtabs{flex:0 0 auto}
+.mcard.fixedsize{overflow:hidden}
 </style>
 
 <div id="app">
@@ -2892,6 +2896,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v0.9.3','2026年10月22日',['「遊び方」と「アップデート情報」で項目を切りかえても、画面の大きさが変わらないように（中身だけスクロール）']],
   ['v0.9.2','2026年10月22日',['感想フォームの「一緒に送る」のチェック欄が崩れて表示されていたのを直した']],
   ['v0.9.1','2026年10月22日',['感想・不具合を「送る」と、共有の画面を出さずに開発者へ直接届くように（アカウントは不要）']],
   ['v0.9','2026年10月22日',['倍速で進めているあいだ、画面上の速さボタンの下に「10年で約○分／この人生のこり約○分」の推定プレイ時間を表示','感想フォームをチェック＋自由記入にした。全部書かなくてOK、チェックだけでも送れる。バグは「どの画面で」もチェックで選べる','感想は開発者の表に直接届くように（設定後）。送り直すと前の内容が置きかわる。電波がないときは、つながったときに自動で送る','バージョンまわりを整理：「ほかのバージョンで遊ぶ」は「アップデート情報」の中の「昔の版で遊ぶ（おまけ）」に。ふだんは何もしなくてOKと説明を追加','「更新前のセーブに戻す」は「設定」→「もしものとき」に移し、いつ使うものかを説明']],
@@ -4149,4 +4154,22 @@ GUIDE.forEach(g=>{if(g[0]==='save')g[2]=`・自動で保存される。「メニ
 ・タイトルの「アップデート情報」で、新しくなったことが見られる。「昔の版で遊ぶ（おまけ）」は、昔のゲームを遊んでみたいときだけ使う（いまのセーブとは別）。
 ・新しい版になってからセーブがおかしくなったときだけ、「設定」→「もしものとき」から、アップデート前のデータに戻せる。
 ・音量・BGM・効果音は「設定」や「メニュー」で変えられる。`;if(g[0]==='fb')g[2]='タイトルやメニューの「感想・不具合を送る」から送れる。全部書かなくてOK。チェックを入れるだけでも送れる。送ったあとで直したくなったら「送ったもの」から直して送り直せる（前の内容が置きかわる）。'});
+
+// ----- 遊び方・アップデート情報：タブを押しても画面の大きさが変わらないように -----
+function openModal(html){const m=$('#mcard');m.classList.remove('fixedsize');m.dataset.kind='';m.innerHTML=html;$('#modal').hidden=false;const b=m.querySelector('button');if(b)b.focus({preventScroll:true})}
+function tabbedModal(kind,cat,title,tabs,cur,body,foot){const m=$('#mcard');
+  const tabsHtml=tabs.map(([k,n,attr])=>`<button class="stab" type="button" ${attr}="${k}" aria-pressed="${k===cur}">${esc(n)}</button>`).join('');
+  if(!$('#modal').hidden&&m.dataset.kind===kind){m.querySelectorAll('.stab').forEach(b=>b.setAttribute('aria-pressed',String(b.getAttribute(tabs[0][2])===cur)));const g=m.querySelector('.fbody');g.innerHTML=body;g.scrollTop=0;return}
+  openModal(`<div class="mcat life">${esc(cat)}</div><h2>${esc(title)}</h2><div class="subtabs">${tabsHtml}</div><div class="fbody">${body}</div>${foot||''}<button class="b pri" type="button" data-act="close">閉じる</button>`);
+  m.classList.add('fixedsize');m.dataset.kind=kind}
+function showGuide(k){const cur=GUIDE.find(g=>g[0]===k)||GUIDE[0];
+  const body=`<h3>${esc(cur[1])}</h3>${cur[0]==='time'?timeHtml():`<p class="mtext guide">${esc(cur[2])}</p>`}${cur[0]==='fb'?'<div class="row"><button class="b" type="button" data-act="fb">感想・不具合を送る</button></div>':''}`;
+  tabbedModal('guide','遊び方','遊び方',GUIDE.map(g=>[g[0],g[1],'data-guide']),cur[0],body)}
+function showNews(tabk){const t=tabk||'new';const web=/^https?:$/.test(location.protocol)&&!/claude/.test(location.hostname);let body='';
+  if(t==='new')body=`<p class="hint">いま遊んでいるのは最新の ${esc(CUR_VER)}。新しい版が出ると自動で入れかわる（何もしなくてOK）。</p><div class="news">${CHANGELOG.map(([v,d,items],i)=>`<section class="nv ${i===0?'cur':''}"><div class="hd"><b>${esc(v)}</b><span class="muted small">${esc(d)}</span>${i===0?'<span class="chip up">いまの版</span>':''}</div><ul>${items.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></section>`).join('')}</div>`;
+  else body=`<div class="card"><p class="mtext">ふだんは使わなくて大丈夫。いつも最新版で遊べばOK。
+「昔はどんなゲームだったのか」を遊んでみたいときだけのおまけ。
+・昔の版のセーブは、いまのセーブとは別。いまのデータは消えない。
+・昔の版から戻るときは、画面のいちばん上の黄色い帯の「最新版に戻る」を押す。</p></div>${web?'':'<p class="hint">※この機能はWeb版（stella46.github.io/buzz-life）でだけ使える。</p>'}<div class="news">${OLD_VERS.map(([v,u,d])=>`<section class="nv"><div class="hd"><b>${esc(v)}</b></div><p class="small">${esc(d)}</p>${u&&web?`<a class="b sm" href="${u}">${esc(v)}で遊んでみる</a>`:''}</section>`).join('')}</div>`;
+  tabbedModal('news','アップデート','アップデート情報',[['new','新しくなったこと','data-news'],['old','昔の版で遊ぶ（おまけ）','data-news']],t,body);markVer()}
 </script>

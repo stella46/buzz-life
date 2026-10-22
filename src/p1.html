@@ -243,6 +243,10 @@ a.b{display:inline-block;text-decoration:none;align-self:flex-start}
 .fbc{display:inline-flex;align-items:center;gap:4px;border:2px solid var(--line);background:var(--panel2);padding:4px 8px;font-size:13px;cursor:pointer}
 .fbc input{accent-color:var(--pink);margin:0}.fbc:has(input:checked){border-color:var(--pink);background:#4a2140}
 .fbset textarea{width:100%;box-sizing:border-box;font:inherit;background:var(--bg2);color:var(--ink);border:2px solid var(--line);padding:6px}
+.mcard.fixedsize{height:min(86vh,720px);max-height:calc(100% - 0px)}
+.mcard.fixedsize .fbody{flex:1 1 auto;min-height:0;overflow:auto;padding-right:4px;display:flex;flex-direction:column;gap:10px}
+.mcard.fixedsize .subtabs{flex:0 0 auto}
+.mcard.fixedsize{overflow:hidden}
 </style>
 
 <div id="app">

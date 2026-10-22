@@ -84,3 +84,21 @@ GUIDE.forEach(g=>{if(g[0]==='save')g[2]=`・自動で保存される。「メニ
 ・タイトルの「アップデート情報」で、新しくなったことが見られる。「昔の版で遊ぶ（おまけ）」は、昔のゲームを遊んでみたいときだけ使う（いまのセーブとは別）。
 ・新しい版になってからセーブがおかしくなったときだけ、「設定」→「もしものとき」から、アップデート前のデータに戻せる。
 ・音量・BGM・効果音は「設定」や「メニュー」で変えられる。`;if(g[0]==='fb')g[2]='タイトルやメニューの「感想・不具合を送る」から送れる。全部書かなくてOK。チェックを入れるだけでも送れる。送ったあとで直したくなったら「送ったもの」から直して送り直せる（前の内容が置きかわる）。'});
+
+// ----- 遊び方・アップデート情報：タブを押しても画面の大きさが変わらないように -----
+function openModal(html){const m=$('#mcard');m.classList.remove('fixedsize');m.dataset.kind='';m.innerHTML=html;$('#modal').hidden=false;const b=m.querySelector('button');if(b)b.focus({preventScroll:true})}
+function tabbedModal(kind,cat,title,tabs,cur,body,foot){const m=$('#mcard');
+  const tabsHtml=tabs.map(([k,n,attr])=>`<button class="stab" type="button" ${attr}="${k}" aria-pressed="${k===cur}">${esc(n)}</button>`).join('');
+  if(!$('#modal').hidden&&m.dataset.kind===kind){m.querySelectorAll('.stab').forEach(b=>b.setAttribute('aria-pressed',String(b.getAttribute(tabs[0][2])===cur)));const g=m.querySelector('.fbody');g.innerHTML=body;g.scrollTop=0;return}
+  openModal(`<div class="mcat life">${esc(cat)}</div><h2>${esc(title)}</h2><div class="subtabs">${tabsHtml}</div><div class="fbody">${body}</div>${foot||''}<button class="b pri" type="button" data-act="close">閉じる</button>`);
+  m.classList.add('fixedsize');m.dataset.kind=kind}
+function showGuide(k){const cur=GUIDE.find(g=>g[0]===k)||GUIDE[0];
+  const body=`<h3>${esc(cur[1])}</h3>${cur[0]==='time'?timeHtml():`<p class="mtext guide">${esc(cur[2])}</p>`}${cur[0]==='fb'?'<div class="row"><button class="b" type="button" data-act="fb">感想・不具合を送る</button></div>':''}`;
+  tabbedModal('guide','遊び方','遊び方',GUIDE.map(g=>[g[0],g[1],'data-guide']),cur[0],body)}
+function showNews(tabk){const t=tabk||'new';const web=/^https?:$/.test(location.protocol)&&!/claude/.test(location.hostname);let body='';
+  if(t==='new')body=`<p class="hint">いま遊んでいるのは最新の ${esc(CUR_VER)}。新しい版が出ると自動で入れかわる（何もしなくてOK）。</p><div class="news">${CHANGELOG.map(([v,d,items],i)=>`<section class="nv ${i===0?'cur':''}"><div class="hd"><b>${esc(v)}</b><span class="muted small">${esc(d)}</span>${i===0?'<span class="chip up">いまの版</span>':''}</div><ul>${items.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></section>`).join('')}</div>`;
+  else body=`<div class="card"><p class="mtext">ふだんは使わなくて大丈夫。いつも最新版で遊べばOK。
+「昔はどんなゲームだったのか」を遊んでみたいときだけのおまけ。
+・昔の版のセーブは、いまのセーブとは別。いまのデータは消えない。
+・昔の版から戻るときは、画面のいちばん上の黄色い帯の「最新版に戻る」を押す。</p></div>${web?'':'<p class="hint">※この機能はWeb版（stella46.github.io/buzz-life）でだけ使える。</p>'}<div class="news">${OLD_VERS.map(([v,u,d])=>`<section class="nv"><div class="hd"><b>${esc(v)}</b></div><p class="small">${esc(d)}</p>${u&&web?`<a class="b sm" href="${u}">${esc(v)}で遊んでみる</a>`:''}</section>`).join('')}</div>`;
+  tabbedModal('news','アップデート','アップデート情報',[['new','新しくなったこと','data-news'],['old','昔の版で遊ぶ（おまけ）','data-news']],t,body);markVer()}

@@ -309,6 +309,16 @@ body.th-hybrid{--bg:#0f1115;--bg2:#16181f;--panel:#1c1f28;--panel2:#242834;--lin
 @media (min-width:701px){#scrollBtns{bottom:24px}}
 .sbtn{width:40px;height:40px;border-radius:50%;border:2px solid var(--line);background:var(--panel);color:var(--ink);font-size:16px;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.25);opacity:.88}
 .sbtn:hover{opacity:1}.sbtn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+#dimmer{position:fixed;inset:0;pointer-events:none;z-index:200}
+/* 通常（明るい） */
+body.mode-light:is(.th-classic,.th-pixel){--bg:#f4f1ff;--bg2:#e9e5fb;--panel:#ffffff;--panel2:#f1eefc;--line:#b8b0e0;--shadow:#cfc8ec;--ink:#2a2550;--muted:#6a6690;--btn:#e3dffa;--pink:#d6336c;--pink2:#e8668f;--onpink:#ffffff;--cyan:#0f8a80;--oncyan:#ffffff;--gold:#a86400;--red:#c92a2a;--green:#2b8a3e;--purple:#6f4fd0;color-scheme:light}
+body.mode-light.th-hybrid{--bg:#fff6f0;--bg2:#fdeee6;--panel:#ffffff;--panel2:#fff3ec;--line:#f0d4c8;--shadow:rgba(200,140,120,.22);--ink:#3b3046;--muted:#8a7f94;--btn:#ffe8ef;--pink:#ff6f91;--pink2:#ffa5bc;--onpink:#ffffff;--cyan:#21a89d;--oncyan:#ffffff;--gold:#e8590c;--red:#e5484d;--green:#2f9e44;--purple:#8e6cf0;color-scheme:light}
+/* ダーク */
+body.mode-dark:is(.th-illust,.th-phone){--bg:#0f1115;--bg2:#16181f;--panel:#1c1f28;--panel2:#242834;--line:#343a4a;--shadow:rgba(0,0,0,.4);--ink:#f2f4f8;--muted:#9aa3b5;--btn:#2a2f3c;--pink:#ff4f8b;--pink2:#ff86b0;--onpink:#ffffff;--cyan:#33d1c4;--oncyan:#08221f;--gold:#ffcc4d;--red:#ff6b6b;--green:#7bdc6b;--purple:#b49cff;color-scheme:dark}
+body.mode-dark.th-classic{--bg:#0d0e1f;--bg2:#14162e;--panel:#1a1c3c;--panel2:#22254a}
+body.mode-dark.th-pixel{--bg:#0a0b1c;--bg2:#12142e;--panel:#181a42;--panel2:#20235a}
+@media (min-width:701px){body.mode-dark.th-phone{background:linear-gradient(135deg,#1a1d29,#2a1f3a)}body.mode-light.th-hybrid{background:linear-gradient(135deg,#ffe3ec,#e3f0ff)}}
 </style>
 
 <div id="app">

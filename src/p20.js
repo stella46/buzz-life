@@ -5,7 +5,7 @@ function applyGfx(){const b=document.body;Object.keys(GFX_OPT).forEach(k=>b.clas
 function setGfx(v){if(!GFX_OPT[v])return;GFX=v;try{localStorage.setItem('buzz-gfx',v)}catch(_){}applyGfx()}
 function setMus(v){if(!MUS_OPT[v])return;MUS=v;try{localStorage.setItem('buzz-music',v)}catch(_){}bgmUser=true;bgmStop();bgmUpdate()}
 function optSeg(attr,opts,cur){return `<div class="optlist">${Object.entries(opts).map(([k,o])=>`<button type="button" class="optc ${cur===k?'on':''}" ${attr}="${k}" aria-pressed="${cur===k}"><b>${esc(o.n)}</b><span>${esc(o.d)}</span></button>`).join('')}</div>`}
-function soundBtns(){return `<div class="mch"><button class="b" type="button" data-act="bgm">BGM：${bgmOn?'ON':'OFF'}</button><button class="b" type="button" data-act="sound">効果音：${sndOn?'ON':'OFF'}</button></div>
+function soundBtns(){return `<h3>画面</h3>${screenHtml()}<div class="mch"><button class="b" type="button" data-act="bgm">BGM：${bgmOn?'ON':'OFF'}</button><button class="b" type="button" data-act="sound">効果音：${sndOn?'ON':'OFF'}</button></div>
   <h3>見た目</h3>${optSeg('data-gfx',GFX_OPT,GFX)}
   <h3>音楽</h3>${optSeg('data-mus',MUS_OPT,MUS)}
   <h3>効果音・環境音</h3><div class="mch"><button class="b" type="button" data-act="sek">効果音の種類：${SEK==='classic'?'クラシック':'新しい'}</button><button class="b" type="button" data-act="amb">環境音（雨・街・外の音）：${AMB?'ON':'OFF'}</button></div>`}
@@ -51,10 +51,21 @@ function openModal(html){const m=$('#mcard');m.classList.remove('fixedsize');m.d
   m.innerHTML=(closable?'<button class="b sm xclose" type="button" data-act="close" aria-label="閉じる">✕ 閉じる</button>':'')+html;
   $('#modal').hidden=false;m.scrollTop=0;const b=m.querySelector('button:not(.xclose)')||m.querySelector('button');if(b)b.focus({preventScroll:true});updScrollBtns()}
 (function(){const box=document.createElement('div');box.id='scrollBtns';box.innerHTML='<button type="button" class="sbtn" data-scr="top" aria-label="いちばん上へ">▲</button><button type="button" class="sbtn" data-scr="bottom" aria-label="いちばん下へ">▼</button>';document.body.appendChild(box)})();
-function scrollTarget(){if(!$('#modal').hidden){const m=$('#mcard');const fb=m.querySelector('.fbody');return fb&&fb.scrollHeight>fb.clientHeight+4?fb:m}return null}
+function scrollTarget(){if($('#modal').hidden)return null;const m=$('#mcard');let best=m,range=m.scrollHeight-m.clientHeight;for(const el of m.querySelectorAll('*')){const r=el.scrollHeight-el.clientHeight;if(r>range+4){const oy=getComputedStyle(el).overflowY;if(oy==='auto'||oy==='scroll'){best=el;range=r}}}return best}
 function updScrollBtns(){const box=$('#scrollBtns');if(!box)return;const t=scrollTarget();let can;
   if(t)can=t.scrollHeight>t.clientHeight+40;else can=document.documentElement.scrollHeight>innerHeight+80;
   box.hidden=!can;box.classList.toggle('inmodal',!!t)}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-scr]');if(!b)return;const t=scrollTarget(),top=b.dataset.scr==='top';const beh=matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth';
   if(t)t.scrollTo({top:top?0:t.scrollHeight,behavior:beh});else window.scrollTo({top:top?0:document.documentElement.scrollHeight,behavior:beh})});
 setInterval(updScrollBtns,600);addEventListener('resize',updScrollBtns);
+
+// ===== v1.0.2：画面の明るさ・ダークモード／通常 =====
+var BRIGHT=100,CMODE='theme';try{BRIGHT=+(localStorage.getItem('buzz-bright')||100)||100;CMODE=localStorage.getItem('buzz-cmode')||'theme'}catch(_){}
+const CMODE_OPT={theme:{n:'見た目のまま',d:'選んだ見た目の色のまま'},light:{n:'通常（明るい）',d:'白っぽい明るい画面'},dark:{n:'ダーク',d:'目にやさしい暗い画面'}};
+(function(){const d=document.createElement('div');d.id='dimmer';d.setAttribute('aria-hidden','true');document.body.appendChild(d)})();
+function applyScreen(){const b=document.body;b.classList.remove('mode-light','mode-dark');if(CMODE!=='theme')b.classList.add('mode-'+CMODE);
+  const d=$('#dimmer');const v=clamp(BRIGHT,50,150);if(v<100){d.style.background=`rgba(0,0,0,${((100-v)/100*.9).toFixed(3)})`;d.style.mixBlendMode='normal'}else if(v>100){d.style.background=`rgba(255,255,255,${((v-100)/100*.45).toFixed(3)})`;d.style.mixBlendMode='soft-light'}else d.style.background='transparent'}
+function screenHtml(){return `<div class="vol"><label class="fld"><span>明るさ ${BRIGHT}%</span><input type="range" min="50" max="150" step="5" value="${BRIGHT}" id="brightIn" data-bright="1"></label></div>${optSeg('data-cmode',CMODE_OPT,CMODE)}`}
+document.addEventListener('input',e=>{if(e.target.dataset&&e.target.dataset.bright){BRIGHT=+e.target.value;try{localStorage.setItem('buzz-bright',String(BRIGHT))}catch(_){}applyScreen();const l=e.target.closest('label');if(l)l.querySelector('span').textContent=`明るさ ${BRIGHT}%`}});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-cmode]');if(!b)return;CMODE=b.dataset.cmode;try{localStorage.setItem('buzz-cmode',CMODE)}catch(_){}applyScreen();reopenSettings()});
+applyScreen();

@@ -325,6 +325,16 @@ body.th-hybrid{--bg:#0f1115;--bg2:#16181f;--panel:#1c1f28;--panel2:#242834;--lin
 @media (min-width:701px){#scrollBtns{bottom:24px}}
 .sbtn{width:40px;height:40px;border-radius:50%;border:2px solid var(--line);background:var(--panel);color:var(--ink);font-size:16px;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.25);opacity:.88}
 .sbtn:hover{opacity:1}.sbtn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+#dimmer{position:fixed;inset:0;pointer-events:none;z-index:200}
+/* 通常（明るい） */
+body.mode-light:is(.th-classic,.th-pixel){--bg:#f4f1ff;--bg2:#e9e5fb;--panel:#ffffff;--panel2:#f1eefc;--line:#b8b0e0;--shadow:#cfc8ec;--ink:#2a2550;--muted:#6a6690;--btn:#e3dffa;--pink:#d6336c;--pink2:#e8668f;--onpink:#ffffff;--cyan:#0f8a80;--oncyan:#ffffff;--gold:#a86400;--red:#c92a2a;--green:#2b8a3e;--purple:#6f4fd0;color-scheme:light}
+body.mode-light.th-hybrid{--bg:#fff6f0;--bg2:#fdeee6;--panel:#ffffff;--panel2:#fff3ec;--line:#f0d4c8;--shadow:rgba(200,140,120,.22);--ink:#3b3046;--muted:#8a7f94;--btn:#ffe8ef;--pink:#ff6f91;--pink2:#ffa5bc;--onpink:#ffffff;--cyan:#21a89d;--oncyan:#ffffff;--gold:#e8590c;--red:#e5484d;--green:#2f9e44;--purple:#8e6cf0;color-scheme:light}
+/* ダーク */
+body.mode-dark:is(.th-illust,.th-phone){--bg:#0f1115;--bg2:#16181f;--panel:#1c1f28;--panel2:#242834;--line:#343a4a;--shadow:rgba(0,0,0,.4);--ink:#f2f4f8;--muted:#9aa3b5;--btn:#2a2f3c;--pink:#ff4f8b;--pink2:#ff86b0;--onpink:#ffffff;--cyan:#33d1c4;--oncyan:#08221f;--gold:#ffcc4d;--red:#ff6b6b;--green:#7bdc6b;--purple:#b49cff;color-scheme:dark}
+body.mode-dark.th-classic{--bg:#0d0e1f;--bg2:#14162e;--panel:#1a1c3c;--panel2:#22254a}
+body.mode-dark.th-pixel{--bg:#0a0b1c;--bg2:#12142e;--panel:#181a42;--panel2:#20235a}
+@media (min-width:701px){body.mode-dark.th-phone{background:linear-gradient(135deg,#1a1d29,#2a1f3a)}body.mode-light.th-hybrid{background:linear-gradient(135deg,#ffe3ec,#e3f0ff)}}
 </style>
 
 <div id="app">
@@ -2961,6 +2971,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v1.0.2','2026年10月22日',['「アップデート情報」などの、画面の中の一部だけがスクロールする画面でも「▲」「▼」が使えるように','「設定」に画面の明るさ（50〜150%）を追加','画面の色を「見た目のまま／通常（明るい）／ダーク」から選べるように。どの見た目でも使える']],
   ['v1.0.1','2026年10月22日',['設定やメニューなどの画面の上に「✕ 閉じる」ボタンを追加。下まで行かなくても閉じられる','画面の右下に「▲」「▼」ボタンを追加。押すと、いちばん上・いちばん下へ一気に移動する（開いている画面の中でも使える）']],
   ['v1.0','2026年10月22日',['【見た目】設定で5つから選べるように：クラシック／A 高精細ドット／B イラスト／C スマホ画面／D スマホ＋ドット','主人公の見た目が、性別・年齢・肌・髪・服（制服・スーツ・パーカー・エプロンなど）・体調・気分・持ち物・結婚指輪・お金持ちかどうかで変わる。自由に生まれるモードでは髪型・髪の色・肌の色を選べる','場面が行動で変わる（配信・勉強・学校・職場・カフェでデート・公園・家族の食卓・お店・キッチン・秘密基地・寝室など）。昼と夜、季節、天気（雨・雪・桜・紅葉）も変わる','部屋が住まいや時代で変わる（昭和のブラウン管から未来のホログラムまで）。機材・飾り・ペット・記念の楯も部屋に出る。バズ・炎上・誕生日の演出つき','まちの地図、出来事のさし絵、思い出アルバム、タイトル画面、最近の投稿のサムネイルも新しい絵に','【音】音楽を5つから選べるように：クラシック／1 本格チップチューン／2 時代で変わる（昭和は歌謡曲風・平成はJ-POP風・令和はlo-fi・未来はシンセウェーブ）／3 場面で変わる／2＋3 時代×場面','効果音を一新（クラシックにも戻せる）。雨・街・外の環境音（ON/OFF）','投稿の企画（ふつう・ショート・大型企画・ライブ・コラボ）は「発信」タブで決めるように。「予定」は「投稿する」を入れるだけ','流行はジャンルだけに（SNSの流行はなくした）。1〜2年ほど続く。「流行に自動で合わせる」と、流行が変わったら止める設定を追加','倍速のとき、よくある出来事は自動で選んで進むように（大事な出来事だけ止まる）。一生のプレイ時間が短くなった','コラボを申し込めるように。ほかの配信者から誘われることも','スタイルを5つ追加（ゆるく癒し・ガチ解説・バラエティ・エモい物語・流行に全乗り）','フォロワーが減りにくく、伸びやすく。ライバルが伸びすぎないように','機材や暮らしの買い物は、買い足すほど効果が小さくなるように','恋人からのプロポーズ、配偶者からの「子どもがほしい」も起こるように','家族チャンネルを13歳以降もそのまま続けられるように','事務所は研究なしで20歳から作れるように。研究やスキルの「○○を先に」を減らし、まだ解放できないものには、あと何ポイント・何か月かかるかを表示','「予定」タブのいちばん上に「いまできること」を表示。押すとその画面に移る']],
   ['v0.9.3','2026年10月22日',['「遊び方」と「アップデート情報」で項目を切りかえても、画面の大きさが変わらないように（中身だけスクロール）']],
@@ -4898,7 +4909,7 @@ function applyGfx(){const b=document.body;Object.keys(GFX_OPT).forEach(k=>b.clas
 function setGfx(v){if(!GFX_OPT[v])return;GFX=v;try{localStorage.setItem('buzz-gfx',v)}catch(_){}applyGfx()}
 function setMus(v){if(!MUS_OPT[v])return;MUS=v;try{localStorage.setItem('buzz-music',v)}catch(_){}bgmUser=true;bgmStop();bgmUpdate()}
 function optSeg(attr,opts,cur){return `<div class="optlist">${Object.entries(opts).map(([k,o])=>`<button type="button" class="optc ${cur===k?'on':''}" ${attr}="${k}" aria-pressed="${cur===k}"><b>${esc(o.n)}</b><span>${esc(o.d)}</span></button>`).join('')}</div>`}
-function soundBtns(){return `<div class="mch"><button class="b" type="button" data-act="bgm">BGM：${bgmOn?'ON':'OFF'}</button><button class="b" type="button" data-act="sound">効果音：${sndOn?'ON':'OFF'}</button></div>
+function soundBtns(){return `<h3>画面</h3>${screenHtml()}<div class="mch"><button class="b" type="button" data-act="bgm">BGM：${bgmOn?'ON':'OFF'}</button><button class="b" type="button" data-act="sound">効果音：${sndOn?'ON':'OFF'}</button></div>
   <h3>見た目</h3>${optSeg('data-gfx',GFX_OPT,GFX)}
   <h3>音楽</h3>${optSeg('data-mus',MUS_OPT,MUS)}
   <h3>効果音・環境音</h3><div class="mch"><button class="b" type="button" data-act="sek">効果音の種類：${SEK==='classic'?'クラシック':'新しい'}</button><button class="b" type="button" data-act="amb">環境音（雨・街・外の音）：${AMB?'ON':'OFF'}</button></div>`}
@@ -4944,11 +4955,22 @@ function openModal(html){const m=$('#mcard');m.classList.remove('fixedsize');m.d
   m.innerHTML=(closable?'<button class="b sm xclose" type="button" data-act="close" aria-label="閉じる">✕ 閉じる</button>':'')+html;
   $('#modal').hidden=false;m.scrollTop=0;const b=m.querySelector('button:not(.xclose)')||m.querySelector('button');if(b)b.focus({preventScroll:true});updScrollBtns()}
 (function(){const box=document.createElement('div');box.id='scrollBtns';box.innerHTML='<button type="button" class="sbtn" data-scr="top" aria-label="いちばん上へ">▲</button><button type="button" class="sbtn" data-scr="bottom" aria-label="いちばん下へ">▼</button>';document.body.appendChild(box)})();
-function scrollTarget(){if(!$('#modal').hidden){const m=$('#mcard');const fb=m.querySelector('.fbody');return fb&&fb.scrollHeight>fb.clientHeight+4?fb:m}return null}
+function scrollTarget(){if($('#modal').hidden)return null;const m=$('#mcard');let best=m,range=m.scrollHeight-m.clientHeight;for(const el of m.querySelectorAll('*')){const r=el.scrollHeight-el.clientHeight;if(r>range+4){const oy=getComputedStyle(el).overflowY;if(oy==='auto'||oy==='scroll'){best=el;range=r}}}return best}
 function updScrollBtns(){const box=$('#scrollBtns');if(!box)return;const t=scrollTarget();let can;
   if(t)can=t.scrollHeight>t.clientHeight+40;else can=document.documentElement.scrollHeight>innerHeight+80;
   box.hidden=!can;box.classList.toggle('inmodal',!!t)}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-scr]');if(!b)return;const t=scrollTarget(),top=b.dataset.scr==='top';const beh=matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth';
   if(t)t.scrollTo({top:top?0:t.scrollHeight,behavior:beh});else window.scrollTo({top:top?0:document.documentElement.scrollHeight,behavior:beh})});
 setInterval(updScrollBtns,600);addEventListener('resize',updScrollBtns);
+
+// ===== v1.0.2：画面の明るさ・ダークモード／通常 =====
+var BRIGHT=100,CMODE='theme';try{BRIGHT=+(localStorage.getItem('buzz-bright')||100)||100;CMODE=localStorage.getItem('buzz-cmode')||'theme'}catch(_){}
+const CMODE_OPT={theme:{n:'見た目のまま',d:'選んだ見た目の色のまま'},light:{n:'通常（明るい）',d:'白っぽい明るい画面'},dark:{n:'ダーク',d:'目にやさしい暗い画面'}};
+(function(){const d=document.createElement('div');d.id='dimmer';d.setAttribute('aria-hidden','true');document.body.appendChild(d)})();
+function applyScreen(){const b=document.body;b.classList.remove('mode-light','mode-dark');if(CMODE!=='theme')b.classList.add('mode-'+CMODE);
+  const d=$('#dimmer');const v=clamp(BRIGHT,50,150);if(v<100){d.style.background=`rgba(0,0,0,${((100-v)/100*.9).toFixed(3)})`;d.style.mixBlendMode='normal'}else if(v>100){d.style.background=`rgba(255,255,255,${((v-100)/100*.45).toFixed(3)})`;d.style.mixBlendMode='soft-light'}else d.style.background='transparent'}
+function screenHtml(){return `<div class="vol"><label class="fld"><span>明るさ ${BRIGHT}%</span><input type="range" min="50" max="150" step="5" value="${BRIGHT}" id="brightIn" data-bright="1"></label></div>${optSeg('data-cmode',CMODE_OPT,CMODE)}`}
+document.addEventListener('input',e=>{if(e.target.dataset&&e.target.dataset.bright){BRIGHT=+e.target.value;try{localStorage.setItem('buzz-bright',String(BRIGHT))}catch(_){}applyScreen();const l=e.target.closest('label');if(l)l.querySelector('span').textContent=`明るさ ${BRIGHT}%`}});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-cmode]');if(!b)return;CMODE=b.dataset.cmode;try{localStorage.setItem('buzz-cmode',CMODE)}catch(_){}applyScreen();reopenSettings()});
+applyScreen();
 </script>

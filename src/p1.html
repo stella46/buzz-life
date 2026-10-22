@@ -302,6 +302,13 @@ body.th-hybrid{--bg:#0f1115;--bg2:#16181f;--panel:#1c1f28;--panel2:#242834;--lin
   :is(.th-phone,.th-hybrid) .tabs{border-radius:20px 20px 0 0;border:none;box-shadow:0 -2px 12px var(--shadow)}
   :is(.th-phone,.th-hybrid) .tab{border:none;background:transparent;border-radius:14px}
 }
+.xclose{position:sticky;top:-20px;align-self:flex-end;z-index:3;margin:-8px -8px 0 0;flex:0 0 auto}
+.mcard.fixedsize .xclose{position:static}
+#scrollBtns{position:fixed;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:45;display:flex;flex-direction:column;gap:8px}
+#scrollBtns.inmodal{z-index:70}
+@media (min-width:701px){#scrollBtns{bottom:24px}}
+.sbtn{width:40px;height:40px;border-radius:50%;border:2px solid var(--line);background:var(--panel);color:var(--ink);font-size:16px;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.25);opacity:.88}
+.sbtn:hover{opacity:1}.sbtn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 </style>
 
 <div id="app">

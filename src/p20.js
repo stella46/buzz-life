@@ -44,3 +44,17 @@ function lookFieldsHtml(){return `<label class="fld"><span>髪型</span><select 
 applyGfx();
 // 最初の1回だけ、見た目と音が変わったことを知らせる
 try{if(!localStorage.getItem('buzz-v1-notice')){localStorage.setItem('buzz-v1-notice','1');setTimeout(()=>{if(!S)openModal(`<div class="mcat life">v1.0</div><h2>見た目と音が新しくなりました</h2><p class="mtext">いまは「D スマホ＋ドット」と「2＋3 時代×場面」の音楽になっています。\n「設定」から、見た目（5種類）・音楽（5種類）・効果音・環境音を自由に切りかえられます。今までの見た目と音は「クラシック」で選べます。</p><div class="mch"><button class="b pri" type="button" data-act="settings">設定を開く</button><button class="b" type="button" data-act="close">このまま遊ぶ</button></div>`)},600)}}catch(_){}
+
+// ===== v1.0.1：画面の上の「閉じる」と、上・下へ一気に移動するボタン =====
+function openModal(html){const m=$('#mcard');m.classList.remove('fixedsize');m.dataset.kind='';
+  const closable=/data-act="close"/.test(html);
+  m.innerHTML=(closable?'<button class="b sm xclose" type="button" data-act="close" aria-label="閉じる">✕ 閉じる</button>':'')+html;
+  $('#modal').hidden=false;m.scrollTop=0;const b=m.querySelector('button:not(.xclose)')||m.querySelector('button');if(b)b.focus({preventScroll:true});updScrollBtns()}
+(function(){const box=document.createElement('div');box.id='scrollBtns';box.innerHTML='<button type="button" class="sbtn" data-scr="top" aria-label="いちばん上へ">▲</button><button type="button" class="sbtn" data-scr="bottom" aria-label="いちばん下へ">▼</button>';document.body.appendChild(box)})();
+function scrollTarget(){if(!$('#modal').hidden){const m=$('#mcard');const fb=m.querySelector('.fbody');return fb&&fb.scrollHeight>fb.clientHeight+4?fb:m}return null}
+function updScrollBtns(){const box=$('#scrollBtns');if(!box)return;const t=scrollTarget();let can;
+  if(t)can=t.scrollHeight>t.clientHeight+40;else can=document.documentElement.scrollHeight>innerHeight+80;
+  box.hidden=!can;box.classList.toggle('inmodal',!!t)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-scr]');if(!b)return;const t=scrollTarget(),top=b.dataset.scr==='top';const beh=matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth';
+  if(t)t.scrollTo({top:top?0:t.scrollHeight,behavior:beh});else window.scrollTo({top:top?0:document.documentElement.scrollHeight,behavior:beh})});
+setInterval(updScrollBtns,600);addEventListener('resize',updScrollBtns);

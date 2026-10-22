@@ -396,7 +396,7 @@ function townPanel(){
   else if(t.t==='empty'){
     if(a<18)h+='<p class="hint">建物を建てられるのは18歳から。</p>';
     else{h+='<div>';for(const [k,b] of Object.entries(BLD)){const ok=!b.req||has(b.req);const cost=Math.round(b.cost*(b.pub&&S.role==='mayor'?.7:1));
-      h+=`<div class="shop"><div><div>${esc(b.n)} <span class="muted small">${yen(cost)}</span></div><div class="muted small">${ok?(b.fan?'売上はフォロワー数しだい':`月${b.inc>=0?'+':''}${yen(b.inc*S.cty.inc)}〜`)+(b.eff?'・'+esc(b.eff):''):'研究「'+esc(BLD_REQN(b.req))+'」で解放'}</div></div>${ok?`<button class="b sm" type="button" data-build="${k}" ${S.money<cost?'disabled':''}>建てる</button>`:''}</div>`}h+='</div>'}
+      h+=`<div class="shop"><div><div>${esc(b.n)} <span class="muted small">${yen(cost)}</span></div><div class="muted small">${ok?(b.fan?'売上はフォロワー数しだい':`月${b.inc>=0?'+':''}${yen(b.inc*S.cty.inc)}〜`)+(b.eff?'・'+esc(b.eff):''):'研究「'+esc(BLD_REQN(b.req))+'」で解放'+resHint(b.req)}</div></div>${ok?`<button class="b sm" type="button" data-build="${k}" ${S.money<cost?'disabled':''}>建てる</button>`:''}</div>`}h+='</div>'}
   }else h+='<p class="hint">ここには建てられない。</p>';
   return h+'</div>';
 }

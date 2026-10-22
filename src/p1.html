@@ -247,6 +247,14 @@ a.b{display:inline-block;text-decoration:none;align-self:flex-start}
 .mcard.fixedsize .fbody{flex:1 1 auto;min-height:0;overflow:auto;padding-right:4px;display:flex;flex-direction:column;gap:10px}
 .mcard.fixedsize .subtabs{flex:0 0 auto}
 .mcard.fixedsize{overflow:hidden}
+.todos{border:2px solid var(--cyan);padding:10px;margin-bottom:12px;background:var(--panel2)}
+.todos h3{margin:0 0 8px}
+.todogrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.todo{font:inherit;text-align:left;background:var(--panel);color:var(--ink);border:2px solid var(--line);padding:6px 8px;cursor:pointer;display:flex;flex-direction:column;gap:2px}
+.todo span{font-size:12px;color:var(--muted)}
+.todo.hot{border-color:var(--pink)}
+.todo:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.seg.wrapseg{flex-wrap:wrap}
 </style>
 
 <div id="app">

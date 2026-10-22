@@ -348,7 +348,7 @@ E('s_collab',{t:'コラボの誘い',cat:'SNS',w:.03,cd:8,when:()=>S.rival&&S.sn
   text:()=>`ライバル配信者「${S.rival.name}」（フォロワー${num(S.rival.f)}人）からコラボの誘いがきた。`,
   ch:[['コラボする',()=>{const g=Math.round(Math.min(S.rival.f,totalF()*3)*R(.02,.08)*(has('collab')?1.5:1));ad('f',g);ad('social',3);rel(S.rival,10);S.rival.f+=Math.round(totalF()*.04);return `お互いのファンが行き来して、フォロワーが${num(g)}人増えた。`}],['断る',()=>{rel(S.rival,-5);return '「また今度ね」と返した。'}]]});
 E('s_trend',{t:'流行の波',cat:'SNS',w:.035,cd:6,when:()=>S.snsOpen&&S.trend.g!==S.genre,
-  text:()=>`今、${SNS[S.trend.s].n}では「${GENRES[S.trend.g].n}」が大流行している。`,
+  text:()=>`今、SNSでは「${GENRES[S.trend.g].n}」が大流行している。`,
   ch:[['ジャンルを乗り換える',()=>{S.genre=S.trend.g;ad('rep',-1);return `「${GENRES[S.genre].n}」に挑戦する。素質が低いと投稿の質は下がるので注意。`}],['今のジャンルを貫く',()=>{ad('rep',2);ad('mental',1);return 'ブレない姿勢を評価する声もある。'}]]});
 E('s_algo',{t:'おすすめの仕組みが変わった',cat:'SNS',w:.02,cd:18,when:()=>totalF()>=1000,
   text:()=>`${SNS[S.main].n}のおすすめの仕組みが変わったらしい。再生数が急に落ちた。`,
@@ -462,7 +462,7 @@ E('n_ai',{t:'ニュース',cat:'ニュース',w:.01,once:1,when:()=>age()>=10,te
 E('n_kidrule',{t:'ニュース',cat:'ニュース',w:.01,once:1,when:()=>age()>=5,text:()=>`「${ctry()}政府、子どもの動画出演と収益の扱いについてルール作りを検討」`,ch:[['考えさせられる',()=>{ad('know',1);return S.kc.on||S.kc.was?'自分の子ども時代の動画のことを思い出した。':'ニュースを見ながら家族と話した。'}]]});
 E('n_price',{t:'物価上昇',cat:'ニュース',w:.008,cd:36,when:()=>age()>=18,text:()=>'物価の上昇が止まらない。スーパーの値札がまた変わった。',ch:[['節約する',()=>{S.priceIdx=(S.priceIdx||1)*1.04;ad('happy',-1);return '生活費が少し上がった。'}]]});
 E('n_rank',{t:'ニュース',cat:'ニュース',w:.008,once:1,when:()=>age()>=10,text:()=>'「小学生のなりたい職業ランキング、今年も1位は配信者」',ch:[['だよね',()=>{ad('happy',1);return '時代は変わった。'}]]});
-E('n_newsns',{t:'新しい流行',cat:'ニュース',w:.01,cd:48,when:()=>age()>=13,text:()=>'若者の間で、また新しい楽しみ方が流行り始めたらしい。',ch:[['気にとめておく',()=>{newTrend();return `流行が「${SNS[S.trend.s].n}の${GENRES[S.trend.g].n}」に移り始めた。`}]]});
+E('n_newsns',{t:'新しい流行',cat:'ニュース',w:.01,cd:48,when:()=>age()>=13,text:()=>'若者の間で、また新しい楽しみ方が流行り始めたらしい。',ch:[['気にとめておく',()=>{newTrend();return `流行が「${GENRES[S.trend.g].n}」に移り始めた。`}]]});
 E('n_hate',{t:'ニュース',cat:'ニュース',w:.008,once:1,when:()=>age()>=15,text:()=>'「ネットの誹謗中傷、書きこんだ人の特定がしやすく」——法律の改正が話題になっている。',ch:[['少しほっとする',()=>{ad('mental',2);return 'アンチへの向き合い方が変わるかもしれない。'}]]});
 
 // --- 老後 ---

@@ -75,7 +75,7 @@ function turn(){
   ensurePlan();
   if(age()<6){ad('happy',1*k);ad('tal.'+pick(TALK),.9*k);ad('social',.3*k)}
   else S.plan.forEach((a,i)=>{const ac=ACT[a];if(!ac||!ac.ok())return;const os=ac.opts?ac.opts.filter(o=>!o.ok||o.ok()):null;const o=os&&os.length?(os.find(x=>x.k===S.planOpt[i])||os[0]):null;
-    try{actHook(a,o)}catch(_){}if(a==='post'){POPT=o?o.k:'normal';doPost(k);POPT='normal'}else if(o&&o.f)o.f(k);else ac.f(k)});
+    try{actHook(a,o)}catch(_){}if(a==='post'){POPT=postPlanNow();doPost(k);POPT='normal'}else if(o&&o.f)o.f(k);else ac.f(k)});
   if(S.st==='school'){ad('know',1.1*k);ad('social',.4*k)}
   else if(S.st==='univ'){ad('know',1.3*k);ad('social',.4*k)}
   else if(S.st==='work'){ad('know',.3*k);ad('mental',-.5*k)}
@@ -91,7 +91,8 @@ function turn(){
   if(dm>=1000)setTimeout(()=>pop('+'+yen(dm)),250);
   let ev=null;
   while(S.q.length&&!ev){const e=EV[S.q.shift()];if(e&&(!e.when||e.when()))ev=e}
-  if(!ev)ev=rollEvent(S.unit==='season'?3:k);
+  let rolled=false;if(!ev){ev=rollEvent(S.unit==='season'?3:k);rolled=!!ev}
+  if(ev&&rolled&&autoEvOk(ev)){autoChoose(ev);ev=null}
   save();render();
   if(ev)showEvent(ev);
 }
@@ -104,9 +105,9 @@ function doPost(k){
   if(POPT==='short'){m.q=-8;m.disc=1.4*(key==='patto'?1.2:1);m.posts=1.5;m.rpm=.4}
   if(POPT==='big'){const c=Math.round(50000*k*ci());if(S.money>=c){outc('shop',c);m.q=12;m.posts=.5;m.buzz=2.2;m.tired=1.3}}
   if(POPT==='live'){m.posts=.5;m.conv=.8;m.tired=1.2;const tip=Math.round(totalF()*R(.02,.08)*(has('live')?2:1)*ci()*k);if(tip>0)inc('tip',tip);ad('social',.6*k);for(const n of S.friends)rel(n,.2*k)}
-  if(POPT==='collab'){m.disc=1.3;m.conv=1.2;if(S.rival&&S.rival.rel>=40){S.f[key]+=Math.round(Math.min(S.rival.f,totalF()*3+1000)*.002*k);rel(S.rival,2*k)}}
-  const q=clamp(postQuality()+m.q+(S.subs&&S.subs.editsoft?2:0)+(has('ai_edit')?4:0),1,100);
-  const tg=S.trend.g===S.genre?1.8:1,ts=S.trend.s===key?1.4:1;
+  if(POPT==='collab'){m.disc=1.3;m.conv=1.2;collabGain(key,k)}
+  const q=clamp(postQuality()+m.q+(S.subs&&S.subs.editsoft?2:0)+(has('ai_edit')?4:0)+styleQ(),1,100);
+  const tg=S.trend.g===S.genre?1.8:1,ts=1;
   const posts=8*k*m.posts;
   const base=f*(.06+q/500)*sn.reach;
   let disc=(q*q/100)*18*sn.disc*tg*ts*st.disc*R(.5,1.5)*(S.algo>0?(has('analytics')?.75:.5):1)*(1+Math.min(Math.sqrt(f),700)/120)*D.disc*(S.cty.disc||1)*(key==='patto'&&has('shorts')?1.25:1)*m.disc*discMul()*snsEraMul()*(1+Math.min(.3,(S.flags.lang||0)/100));
@@ -114,7 +115,7 @@ function doPost(k){
   if(chance((.006+q/5000)*(tg>1?1.5:1)*(1+stN('writer')*.15*staffMul())*m.buzz*buzzPerk()*Math.min(1,k*2))){const mm=R(4,16);views+=discV*mm;discV*=mm+1;buzzed=true}
   let nf=(discV*(.005+q/15000)*sn.conv+base*posts*.0008)*m.conv;
   nf*=Math.max(0,1-f/sn.cap);
-  if(q<25)nf-=f*.01*k;
+  if(q<20)nf-=f*.003*k;
   S.f[key]=Math.max(0,S.f[key]+nf);
   postHook(k,q,buzzed,nf);
   const money=f>=sn.mon?Math.round(views*sn.rpm*m.rpm*Math.max(.15,S.cty.inc)):0;
@@ -256,11 +257,11 @@ function endMonth(){
   if(S.m===4&&S.st==='work')S.salary=Math.round(S.salary*1.02);
   if(S.m===1){S.taxBase=S.yInc;S.yInc=0}
   if(S.m===3&&age()>=18&&S.taxBase>=(S.st==='work'?200000:480000)*c){if(S.flags.taxAuto){bill('tax','所得税（確定申告）',S.taxBase*.15*(has('tax_k')?.85:1));log('確定申告をした。税金の請求書が届いた','life')}else S.q.push('tax')}
-  withTown(homeTown(),()=>{monthSys();monthHook();monthHook7();monthHook8()});
+  withTown(homeTown(),()=>{monthSys();monthHook();monthHook7();monthHook8();monthHook10()});
   if(a<18&&S.money<0){S.money=0;log('足りない分は家族が払ってくれた','life')}
   drift();
-  for(const key in S.f){if(!S.open[key])continue;const posted=S.mo.posts>0&&key===S.main;S.f[key]*=posted?.993:.98}
-  if(S.rival)S.rival.f=Math.round(clamp(S.rival.f*(1+R(.004,.035)*(1-S.rival.f/2e6))+R(5,150),0,2e6));
+  for(const key in S.f){if(!S.open[key])continue;const posted=S.mo.posts>0&&key===S.main;S.f[key]*=posted?.996:.99}
+  if(S.rival)S.rival.f=Math.round(clamp(S.rival.f*(1+R(-.004,.02)*(1-S.rival.f/2e6)*(S.rival.f>totalF()*2.5+3000?.15:1))+R(3,60),0,2e6));
   for(const key in S.f)S.f[key]=Math.min(S.f[key],SNS[key].cap);
   if(S.am>=S.trend.until)newTrend();
   if(S.algo>0)S.algo--;
@@ -335,7 +336,7 @@ function renderPanel(){
   if(tab==='life'&&SUB.life==='album')paintAlbums();
 }
 function panelPlan(){
-  const a=age(),n=freeSlots();ensurePlan();let h=noticesHtml()+`<h2>${S.unit==='week'?'今週':'今月'}の行動</h2>`;
+  const a=age(),n=freeSlots();ensurePlan();let h=noticesHtml()+todoHtml()+`<h2>${S.unit==='week'?'今週':'今月'}の行動</h2>`;
   if(a<6)return h+`<p class="hint">6歳までは自動で育っていく。気になる出来事が起きると止まる。</p><button class="b pri" type="button" data-act="grow">小学生になるまで見守る</button>`;
   const fixed={school:'学校（自動）',univ:'大学（自動）',work:`仕事：${S.job}（自動）`}[S.st];
   if(fixed)h+=`<div class="fixed">${esc(fixed)}</div>`;
@@ -344,7 +345,7 @@ function panelPlan(){
   for(let i=0;i<n;i++)h+=`<div class="slotc"><span class="lb">枠${i+1}</span><div class="sel2"><select data-plan="${i}" id="plan${i}" ${S.auto?'disabled':''}>${actOptions(i)}</select>${optSel(i)}</div><p class="ds">${esc(optDesc(i))}</p></div>`;
   h+=`</div><div class="row"><button class="b ${S.auto?'on':''}" type="button" data-act="auto">おまかせ：${S.auto?'ON':'OFF'}</button><span class="hint">ONにすると行動を自動で決める</span></div>`;
   if(a<18&&a>=6){const opts=lessonOptions();h+=`<div class="grp"><h3>習い事</h3>${opts.length?`<select data-set="lesson" id="lessonSel"><option value="">なし</option>${opts.map(k=>`<option value="${k}" ${S.lesson===k?'selected':''}>${LESSONS[k].n}（月謝 ${num(LESSONS[k].cost*S.cty.inc)}円・家族が払う）</option>`).join('')}</select><p class="hint">行動に「習い事」を入れると素質がよく伸びる。</p>`:'<p class="hint">今の家計では月謝を払う余裕がない。</p>'}</div>`}
-  h+=`<div class="grp"><h3>時間の進み方</h3>${unitHtml()}<p class="hint">上の「次へ」で1ターン、▶で自動再生、「イベントまで」で次の出来事まで早送り。PCは P キーで停止／再開。</p></div>`;
+  h+=`<div class="grp"><h3>時間の進み方</h3>${unitHtml()}${speedOptsHtml()}<p class="hint">上の「次へ」で1ターン、▶で自動再生、「イベントまで」で次の出来事まで早送り。PCは P キーで停止／再開。</p></div>`;
   return h;
 }
 function panelSns(){
@@ -361,10 +362,10 @@ function panelSns(){
   h+=`</div><h2>投稿の方針</h2><div class="grp">
     <label class="slot"><span class="lb">ジャンル</span><select data-set="genre" id="genreSel">${Object.entries(GENRES).filter(([k])=>genreOk(k)).map(([k,g])=>`<option value="${k}" ${S.genre===k?'selected':''}>${g.n}（素質${Math.round(S.tal[talKey(k)]||0)}）${S.trend.g===k?' ★流行':''}</option>`).join('')}</select></label>
     <label class="slot"><span class="lb">スタイル</span><select data-set="style" id="styleSel">${Object.entries(STYLES).map(([k,s])=>`<option value="${k}" ${S.style===k?'selected':''}>${s.n}</option>`).join('')}</select></label>
-    <p class="hint">攻めるほど伸びやすいが、炎上しやすい。投稿の企画（ショート・大型企画・ライブ・コラボ）は「予定」の行動で選ぶ。</p></div>
-    <div class="grp"><h3>投稿の質 ${Math.round(q)}</h3>${bar(q,'p')}<p class="hint">スキル・素質・機材・スタッフ・研究・体調で決まる。今の流行：${SNS[S.trend.s].n}の「${GENRES[S.trend.g].n}」</p></div>`;
+    ${snsPlanHtml()}</div>
+    <div class="grp"><h3>投稿の質 ${Math.round(q)}</h3>${bar(q,'p')}<p class="hint">スキル・素質・機材・スタッフ・研究・体調で決まる。今の流行：「${GENRES[S.trend.g].n}」</p></div>`;
   if(S.last&&S.last.posts)h+=`<div class="card"><div class="hd"><span>先月の結果</span></div><div class="kv"><span>再生数</span><span>${num(S.last.views)}回</span><span>フォロワー増減</span><span>${S.last.newF>=0?'+':''}${num(S.last.newF)}人</span><span>広告・投げ銭</span><span>${yen((S.last.inc.sns||0)+(S.last.inc.tip||0))}</span></div></div>`;
-  if(S.rival)h+=`<div class="card"><div class="hd"><span>ライバル：${esc(S.rival.name)}</span><span class="muted small">${esc(S.rival.trait)}・仲${Math.round(S.rival.rel)}</span></div><div class="kv"><span>相手のフォロワー</span><span>${num(S.rival.f)}人</span><span>自分のフォロワー</span><span>${num(totalF())}人</span></div><p class="hint">仲が40以上になると「コラボ」投稿ができる。</p></div>`;
+  if(S.rival)h+=`<div class="card"><div class="hd"><span>ライバル：${esc(S.rival.name)}</span><span class="muted small">${esc(S.rival.trait)}・仲${Math.round(S.rival.rel)}</span></div><div class="kv"><span>相手のフォロワー</span><span>${num(S.rival.f)}人</span><span>自分のフォロワー</span><span>${num(totalF())}人</span></div><p class="hint">上の「コラボ」から申し込める。勝負は下の「ライバルとの勝負」から。</p></div>`;
   return h+snsExtra();
 }
 function panelMoneyAdult(){
@@ -436,7 +437,7 @@ function shopsPanel(){
 }
 function officePanel(){
   const c=S.cty.inc,o=S.office;
-  if(!has('company'))return '<p class="hint">研究「会社経営の基本」を終えると事務所を作れるようになる。</p>';
+  if(age()<20)return '<p class="hint">事務所は20歳から作れる。スタッフを雇ったり、タレントを育てたりできる。</p>';
   const nx=OFFICE[o.lv+1];
   let h=`<div class="kv"><span>今の事務所</span><span>${o.lv?esc(OFFICE[o.lv].n):'なし'}</span>${o.lv?`<span>家賃（月）</span><span>${yen(OFFICE[o.lv].rent*c)}</span><span>スタッフ</span><span>${staffTotal()} / ${OFFICE[o.lv].staff}人</span><span>タレント</span><span>${o.talents.length} / ${OFFICE[o.lv].tal}人</span>`:''}</div>`;
   if(nx)h+=`<div class="row"><button class="b sm pri" type="button" data-act="office" ${S.money<nx.cost*c||age()<18?'disabled':''}>${o.lv?'移転する':'事務所を作る'}：${esc(nx.n)} ${yen(nx.cost*c)}</button></div>`;

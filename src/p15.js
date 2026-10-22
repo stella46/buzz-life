@@ -40,7 +40,7 @@ function researchPanel(){applyResCost();const done=RES.filter(r=>has(r.id)).leng
   for(const [ck,cn] of Object.entries(RES_CAT)){const list=RES.filter(r=>r.cat===ck);
     const roots=list.filter(r=>!r.req||!list.some(x=>x.id===r.req));
     const row=(r,dep)=>{const ok=!r.req||has(r.req),yr=r.year&&S.y<r.year,dn=has(r.id);
-      let s=`<div class="rnode ${dn?'done':ok&&!yr?'ready':'lock'}" style="margin-left:${dep*14}px">${dep?'<span class="rl">└</span>':''}<div class="rb"><div>${dn?'✓ ':''}${esc(r.n)} <span class="muted small">${r.c}pt</span></div><div class="muted small">${esc(r.d)}${!ok?`（先に「${esc(RES.find(x=>x.id===r.req).n)}」）`:''}${yr?`（${r.year}年から）`:''}</div></div>${dn?'<span class="chip up">完了</span>':ok&&!yr?`<button class="b sm" type="button" data-res="${r.id}" ${S.rp<r.c?'disabled':''}>研究する</button>`:''}</div>`;
+      let s=`<div class="rnode ${dn?'done':ok&&!yr?'ready':'lock'}" style="margin-left:${dep*14}px">${dep?'<span class="rl">└</span>':''}<div class="rb"><div>${dn?'✓ ':''}${esc(r.n)} <span class="muted small">${r.c}pt</span></div><div class="muted small">${esc(r.d)}${!ok?`（先に「${esc(RES.find(x=>x.id===r.req).n)}」）`:''}${yr?`（${r.year}年から）`:''}${!dn&&ok&&!yr&&S.rp<r.c?`（あと${Math.ceil(r.c-S.rp)}pt・${rpEta(r.c)}）`:''}</div></div>${dn?'<span class="chip up">完了</span>':ok&&!yr?`<button class="b sm" type="button" data-res="${r.id}" ${S.rp<r.c?'disabled':''}>研究する</button>`:''}</div>`;
       for(const ch of list.filter(x=>x.req===r.id))s+=row(ch,dep+1);return s};
     h+=`<h3>${cn}</h3><div class="rtree">${roots.map(r=>row(r,0)).join('')}</div>`}
   h+=`<h3>ずっと続けられる研究</h3><p class="hint">研究ポイントが余ったら。何段でも重ねられる（20段まで）。段が上がるほど必要なポイントが増える。</p><div class="rtree">${RLV.map(([k,n,d])=>`<div class="rnode ready"><div class="rb"><div>${n} <b>${rlv(k)}段</b> <span class="muted small">${rlvCost(k)}pt</span></div><div class="muted small">${d}</div></div><button class="b sm" type="button" data-rlv="${k}" ${S.rp<rlvCost(k)||rlv(k)>=20?'disabled':''}>研究する</button></div>`).join('')}</div>`;
@@ -56,7 +56,7 @@ const SKT=[
 const SK_COST=[1,2,4,6,8];
 const sk=id=>!!(S&&S.skt&&S.skt[id]);
 function skNode(id){for(const [bk,bn,ns] of SKT){const i=ns.findIndex(n=>n[0]===id);if(i>=0)return {bk,bn,i,n:ns[i],cost:SK_COST[i],prev:i?ns[i-1][0]:null}}return null}
-function skBuy(id){const x=skNode(id);if(!x||sk(id)||(x.prev&&!sk(x.prev))||S.sp<x.cost)return;S.sp-=x.cost;S.skt[id]=1;log(`スキル「${x.n[1]}」を覚えた`,'good');snd('buy');
+function skBuy(id){const x=skNode(id);if(!x||sk(id)||S.sp<x.cost)return;S.sp-=x.cost;S.skt[id]=1;log(`スキル「${x.n[1]}」を覚えた`,'good');snd('buy');
   if(id==='s2')ad('looks',3);
   if(SKT.some(([bk,bn,ns])=>ns.every(n=>sk(n[0])))){recSet('branch',1)}save();render()}
 const SP_MILE=[['buzz',2,'初めてバズった',()=>S.stats.buzz>0],['f1',1,'フォロワー1万人',()=>S.stats.maxF>=1e4],['f2',2,'フォロワー10万人',()=>S.stats.maxF>=1e5],['f3',3,'フォロワー100万人',()=>S.stats.maxF>=1e6],
@@ -65,8 +65,8 @@ const SP_MILE=[['buzz',2,'初めてバズった',()=>S.stats.buzz>0],['f1',1,'�
 function spTick(){if(S.sp==null){S.sp=0;S.skt={};S.spGot={};S.spAge=0}const a=age();
   if(a>=10&&(a-10)%4===0&&S.spAge!==a){S.spAge=a;S.sp++}
   for(const [k,v,n,f] of SP_MILE){if(S.spGot[k])continue;let ok=false;try{ok=f()}catch(_){}if(ok){S.spGot[k]=1;S.sp+=v;log(`スキルポイント+${v}（${n}）`,'good')}}}
-function sktHtml(){let h=`<h2>この人生のスキル</h2><p class="hint">スキルポイント <b>${S.sp||0}</b>。10歳から4年ごとに1ポイント、人生の節目（初めてのバズ・結婚・会社設立など）でもらえる。上から順に覚える。この人生の間だけ有効。</p><div class="sktree">`;
-  for(const [bk,bn,ns] of SKT){h+=`<div class="skb"><h3>${bn}</h3>`;ns.forEach((n,i)=>{const own=sk(n[0]),can=!own&&(!i||sk(ns[i-1][0]));h+=`${i?'<div class="skl">│</div>':''}<button class="sknode ${own?'own':can?'can':'lock'}" type="button" data-skt="${n[0]}" ${own||!can||(S.sp||0)<SK_COST[i]?'disabled':''}><b>${esc(n[1])}</b><span>${esc(n[2])}</span><em>${own?'習得済み':SK_COST[i]+'pt'}</em></button>`});h+='</div>'}
+function sktHtml(){let h=`<h2>この人生のスキル</h2><p class="hint">スキルポイント <b>${S.sp||0}</b>。10歳から4年ごとに1ポイント、人生の節目（初めてのバズ・結婚・会社設立など）でもらえる。どれからでも覚えられる（下のものほどポイントが多く必要）。この人生の間だけ有効。</p><div class="sktree">`;
+  for(const [bk,bn,ns] of SKT){h+=`<div class="skb"><h3>${bn}</h3>`;ns.forEach((n,i)=>{const own=sk(n[0]),can=!own;h+=`${i?'<div class="skl">│</div>':''}<button class="sknode ${own?'own':can?'can':'lock'}" type="button" data-skt="${n[0]}" ${own||!can||(S.sp||0)<SK_COST[i]?'disabled':''}><b>${esc(n[1])}</b><span>${esc(n[2])}</span><em>${own?'習得済み':SK_COST[i]+'pt'}</em></button>`});h+='</div>'}
   return h+'</div>'}
 
 // ----- 引き継ぎスキルツリー（すべての人生で有効） -----
@@ -124,10 +124,10 @@ function ecoMul(){let m=1;for(const h of HIST)if(h.eco&&histOk(h)&&S.y>=h.y&&S.y
 function postHook(k,q,buzzed,nf){
   const sr=S.series;const fat=(has('series_k')?.6:1);if(sr.g===S.genre){sr.n+=k;sr.fat+=k*(POPT==='big'?.3:1)*fat}else{sr.g=S.genre;sr.n=k;sr.fat=0}
   const F=totalF(),prev=Math.max(1,F-Math.max(0,nf));
-  let g=(.0025*k*(sr.n>=3?1.6:1)+(POPT==='live'?.004*k:0)+(POPT==='collab'?.001*k:0))*(1-S.fanCore/.4)*(sk('s4')?1.3:1)*(has('fan_comm')?1.3:1);
+  let g=(.0025*k*(sr.n>=3?1.6:1)+(POPT==='live'?.004*k:0)+(POPT==='collab'?.001*k:0))*(1-S.fanCore/.4)*(sk('s4')?1.3:1)*(has('fan_comm')?1.3:1)*(S.style==='story'?1.5:S.style==='chill'?1.25:S.style==='trend'?.6:1);
   S.fanCore=clamp(S.fanCore+g,.02,.4);
   if(nf>0)S.fanCore=(S.fanCore*prev+nf*.04)/(prev+nf);
-  S.fanAnti=clamp(S.fanAnti+((S.style==='edge'?.0025:S.style==='safe'?-.001:.0003)*k+(buzzed?.006:0))*(has('anti_care')&&(S.style!=='safe')?.5:1),0,.3);
+  S.fanAnti=clamp(S.fanAnti+((S.style==='edge'?.0025:(S.style==='safe'||S.style==='chill')?-.001:.0003)*k+(buzzed?.006:0))*(has('anti_care')&&(S.style!=='safe')?.5:1),0,.3);
   S.fanCore=clamp(S.fanCore,.02,.4);
 }
 function monthHook8(){

@@ -33,7 +33,7 @@ function defaultAct(){const a=age();return a<13?pick(['play','homework','friends
 
 // ----- 子どもはお金を借りない（足りないときは親が払う） -----
 function ad(k,v,cat){if(k==='money'&&cat==='medical'&&v<0&&S.subs&&S.subs.insurance)v=Math.round(v*.3);
-  if(!v)return;if(v>0&&k!=='money'&&k!=='f'&&S.body)v*=bodyMul(k)*perkMul(k);if(v<0&&k==='mental'&&sk('l2'))v*=.8;
+  if(!v)return;if(v>0&&k!=='money'&&k!=='f'&&S.body)v*=bodyMul(k)*perkMul(k)*(k.startsWith('tal.')?TALMUL:1);if(v<0&&k==='mental'&&sk('l2'))v*=.8;
   if(k in P_KEYS)S.p[k]=clamp(S.p[k]+v);
   else if(k in SK_KEYS)S.sk[k]=clamp(S.sk[k]+v);
   else if(k==='money'){if(!cat)v=Math.round(v*(S.cty?S.cty.inc:1));

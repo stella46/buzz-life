@@ -1,5 +1,5 @@
 // ===== v0.6：遊びの拡張 =====
-function ensureV6(){if(!S)return;ensureV7();ensureV8();
+function ensureV6(){if(!S)return;ensureV7();ensureV8();ensureV10();
   if(S.fanCore==null){S.fanCore=.05;S.fanAnti=.02}
   if(!S.series)S.series={g:null,n:0,fat:0};
   if(!S.pers)S.pers={careful:0,bold:0,kind:0,compet:0};
@@ -174,7 +174,7 @@ function battle(){const r=S.rival;if(!r)return;S.cd.battle=S.am;
 function snsExtra(){if(!S.snsOpen)return '';const sr=S.series,core=S.fanCore,anti=S.fanAnti,light=Math.max(0,1-core-anti),F=totalF();
   let h=`<h2>ファン</h2><div class="fanbar"><i style="width:${core*100}%" class="c"></i><i style="width:${light*100}%" class="l"></i><i style="width:${anti*100}%" class="a"></i></div><div class="kv"><span>ガチ勢</span><span>${num(F*core)}人（${Math.round(core*100)}%）</span><span>ライト層</span><span>${num(F*light)}人</span><span>アンチ</span><span>${num(F*anti)}人（${Math.round(anti*100)}%）</span></div><p class="hint">ガチ勢はシリーズものやライブで増え、ファンクラブの収入になる。アンチは攻めた投稿で増え、炎上しやすくなる。</p>`;
   h+=`<h3>シリーズ</h3>`+(sr.g?`<p class="hint">「${esc(GENRES[sr.g].n)}」シリーズ ${Math.floor(sr.n)}回目・マンネリ度 ${Math.min(100,Math.round(sr.fat*5))}%${sr.fat>10?'（飽きられ始めている）':sr.n>=3?'（固定ファンがついている）':''}</p><div class="row"><button class="b sm" type="button" data-act="newSeries">シリーズを終えて新しく始める</button></div>`:'<p class="hint">同じジャンルで投稿を続けるとシリーズになる。</p>');
-  if(S.rumor)h+=`<h3>流行の噂</h3><p class="hint">そのうち「${esc(GENRES[S.rumor.g].n)}」が${esc(SNS[S.rumor.s].n)}で来るらしい（確度${S.rumor.acc}%）。先にジャンルを合わせておくと大きく伸びるかも。</p>`;
+  if(S.rumor)h+=`<h3>流行の噂</h3><p class="hint">そのうち「${esc(GENRES[S.rumor.g].n)}」が来るらしい（確度${S.rumor.acc}%）。先にジャンルを合わせておくと大きく伸びるかも。</p>`;
   if(S.rival){const cd=S.cd.battle!=null&&S.am-S.cd.battle<3;h+=`<h3>ライバルとの勝負</h3><p class="hint">通算 ${S.rivalRec.w}勝${S.rivalRec.l}敗。勝つとフォロワーを奪える。</p><button class="b sm" type="button" data-act="battle" ${cd?'disabled':''}>${cd?'次の勝負は'+(3-(S.am-S.cd.battle))+'か月後':`「${esc(S.rival.name)}」に勝負を挑む`}</button>`}
   return h}
 

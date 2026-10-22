@@ -263,6 +263,14 @@ a.b{display:inline-block;text-decoration:none;align-self:flex-start}
 .mcard.fixedsize .fbody{flex:1 1 auto;min-height:0;overflow:auto;padding-right:4px;display:flex;flex-direction:column;gap:10px}
 .mcard.fixedsize .subtabs{flex:0 0 auto}
 .mcard.fixedsize{overflow:hidden}
+.todos{border:2px solid var(--cyan);padding:10px;margin-bottom:12px;background:var(--panel2)}
+.todos h3{margin:0 0 8px}
+.todogrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.todo{font:inherit;text-align:left;background:var(--panel);color:var(--ink);border:2px solid var(--line);padding:6px 8px;cursor:pointer;display:flex;flex-direction:column;gap:2px}
+.todo span{font-size:12px;color:var(--muted)}
+.todo.hot{border-color:var(--pink)}
+.todo:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.seg.wrapseg{flex-wrap:wrap}
 </style>
 
 <div id="app">
@@ -683,7 +691,7 @@ E('s_collab',{t:'コラボの誘い',cat:'SNS',w:.03,cd:8,when:()=>S.rival&&S.sn
   text:()=>`ライバル配信者「${S.rival.name}」（フォロワー${num(S.rival.f)}人）からコラボの誘いがきた。`,
   ch:[['コラボする',()=>{const g=Math.round(Math.min(S.rival.f,totalF()*3)*R(.02,.08)*(has('collab')?1.5:1));ad('f',g);ad('social',3);rel(S.rival,10);S.rival.f+=Math.round(totalF()*.04);return `お互いのファンが行き来して、フォロワーが${num(g)}人増えた。`}],['断る',()=>{rel(S.rival,-5);return '「また今度ね」と返した。'}]]});
 E('s_trend',{t:'流行の波',cat:'SNS',w:.035,cd:6,when:()=>S.snsOpen&&S.trend.g!==S.genre,
-  text:()=>`今、${SNS[S.trend.s].n}では「${GENRES[S.trend.g].n}」が大流行している。`,
+  text:()=>`今、SNSでは「${GENRES[S.trend.g].n}」が大流行している。`,
   ch:[['ジャンルを乗り換える',()=>{S.genre=S.trend.g;ad('rep',-1);return `「${GENRES[S.genre].n}」に挑戦する。素質が低いと投稿の質は下がるので注意。`}],['今のジャンルを貫く',()=>{ad('rep',2);ad('mental',1);return 'ブレない姿勢を評価する声もある。'}]]});
 E('s_algo',{t:'おすすめの仕組みが変わった',cat:'SNS',w:.02,cd:18,when:()=>totalF()>=1000,
   text:()=>`${SNS[S.main].n}のおすすめの仕組みが変わったらしい。再生数が急に落ちた。`,
@@ -797,7 +805,7 @@ E('n_ai',{t:'ニュース',cat:'ニュース',w:.01,once:1,when:()=>age()>=10,te
 E('n_kidrule',{t:'ニュース',cat:'ニュース',w:.01,once:1,when:()=>age()>=5,text:()=>`「${ctry()}政府、子どもの動画出演と収益の扱いについてルール作りを検討」`,ch:[['考えさせられる',()=>{ad('know',1);return S.kc.on||S.kc.was?'自分の子ども時代の動画のことを思い出した。':'ニュースを見ながら家族と話した。'}]]});
 E('n_price',{t:'物価上昇',cat:'ニュース',w:.008,cd:36,when:()=>age()>=18,text:()=>'物価の上昇が止まらない。スーパーの値札がまた変わった。',ch:[['節約する',()=>{S.priceIdx=(S.priceIdx||1)*1.04;ad('happy',-1);return '生活費が少し上がった。'}]]});
 E('n_rank',{t:'ニュース',cat:'ニュース',w:.008,once:1,when:()=>age()>=10,text:()=>'「小学生のなりたい職業ランキング、今年も1位は配信者」',ch:[['だよね',()=>{ad('happy',1);return '時代は変わった。'}]]});
-E('n_newsns',{t:'新しい流行',cat:'ニュース',w:.01,cd:48,when:()=>age()>=13,text:()=>'若者の間で、また新しい楽しみ方が流行り始めたらしい。',ch:[['気にとめておく',()=>{newTrend();return `流行が「${SNS[S.trend.s].n}の${GENRES[S.trend.g].n}」に移り始めた。`}]]});
+E('n_newsns',{t:'新しい流行',cat:'ニュース',w:.01,cd:48,when:()=>age()>=13,text:()=>'若者の間で、また新しい楽しみ方が流行り始めたらしい。',ch:[['気にとめておく',()=>{newTrend();return `流行が「${GENRES[S.trend.g].n}」に移り始めた。`}]]});
 E('n_hate',{t:'ニュース',cat:'ニュース',w:.008,once:1,when:()=>age()>=15,text:()=>'「ネットの誹謗中傷、書きこんだ人の特定がしやすく」——法律の改正が話題になっている。',ch:[['少しほっとする',()=>{ad('mental',2);return 'アンチへの向き合い方が変わるかもしれない。'}]]});
 
 // --- 老後 ---
@@ -2231,7 +2239,7 @@ function townPanel(){
   else if(t.t==='empty'){
     if(a<18)h+='<p class="hint">建物を建てられるのは18歳から。</p>';
     else{h+='<div>';for(const [k,b] of Object.entries(BLD)){const ok=!b.req||has(b.req);const cost=Math.round(b.cost*(b.pub&&S.role==='mayor'?.7:1));
-      h+=`<div class="shop"><div><div>${esc(b.n)} <span class="muted small">${yen(cost)}</span></div><div class="muted small">${ok?(b.fan?'売上はフォロワー数しだい':`月${b.inc>=0?'+':''}${yen(b.inc*S.cty.inc)}〜`)+(b.eff?'・'+esc(b.eff):''):'研究「'+esc(BLD_REQN(b.req))+'」で解放'}</div></div>${ok?`<button class="b sm" type="button" data-build="${k}" ${S.money<cost?'disabled':''}>建てる</button>`:''}</div>`}h+='</div>'}
+      h+=`<div class="shop"><div><div>${esc(b.n)} <span class="muted small">${yen(cost)}</span></div><div class="muted small">${ok?(b.fan?'売上はフォロワー数しだい':`月${b.inc>=0?'+':''}${yen(b.inc*S.cty.inc)}〜`)+(b.eff?'・'+esc(b.eff):''):'研究「'+esc(BLD_REQN(b.req))+'」で解放'+resHint(b.req)}</div></div>${ok?`<button class="b sm" type="button" data-build="${k}" ${S.money<cost?'disabled':''}>建てる</button>`:''}</div>`}h+='</div>'}
   }else h+='<p class="hint">ここには建てられない。</p>';
   return h+'</div>';
 }
@@ -2429,7 +2437,7 @@ function turn(){
   ensurePlan();
   if(age()<6){ad('happy',1*k);ad('tal.'+pick(TALK),.9*k);ad('social',.3*k)}
   else S.plan.forEach((a,i)=>{const ac=ACT[a];if(!ac||!ac.ok())return;const os=ac.opts?ac.opts.filter(o=>!o.ok||o.ok()):null;const o=os&&os.length?(os.find(x=>x.k===S.planOpt[i])||os[0]):null;
-    try{actHook(a,o)}catch(_){}if(a==='post'){POPT=o?o.k:'normal';doPost(k);POPT='normal'}else if(o&&o.f)o.f(k);else ac.f(k)});
+    try{actHook(a,o)}catch(_){}if(a==='post'){POPT=postPlanNow();doPost(k);POPT='normal'}else if(o&&o.f)o.f(k);else ac.f(k)});
   if(S.st==='school'){ad('know',1.1*k);ad('social',.4*k)}
   else if(S.st==='univ'){ad('know',1.3*k);ad('social',.4*k)}
   else if(S.st==='work'){ad('know',.3*k);ad('mental',-.5*k)}
@@ -2445,7 +2453,8 @@ function turn(){
   if(dm>=1000)setTimeout(()=>pop('+'+yen(dm)),250);
   let ev=null;
   while(S.q.length&&!ev){const e=EV[S.q.shift()];if(e&&(!e.when||e.when()))ev=e}
-  if(!ev)ev=rollEvent(S.unit==='season'?3:k);
+  let rolled=false;if(!ev){ev=rollEvent(S.unit==='season'?3:k);rolled=!!ev}
+  if(ev&&rolled&&autoEvOk(ev)){autoChoose(ev);ev=null}
   save();render();
   if(ev)showEvent(ev);
 }
@@ -2458,9 +2467,9 @@ function doPost(k){
   if(POPT==='short'){m.q=-8;m.disc=1.4*(key==='patto'?1.2:1);m.posts=1.5;m.rpm=.4}
   if(POPT==='big'){const c=Math.round(50000*k*ci());if(S.money>=c){outc('shop',c);m.q=12;m.posts=.5;m.buzz=2.2;m.tired=1.3}}
   if(POPT==='live'){m.posts=.5;m.conv=.8;m.tired=1.2;const tip=Math.round(totalF()*R(.02,.08)*(has('live')?2:1)*ci()*k);if(tip>0)inc('tip',tip);ad('social',.6*k);for(const n of S.friends)rel(n,.2*k)}
-  if(POPT==='collab'){m.disc=1.3;m.conv=1.2;if(S.rival&&S.rival.rel>=40){S.f[key]+=Math.round(Math.min(S.rival.f,totalF()*3+1000)*.002*k);rel(S.rival,2*k)}}
-  const q=clamp(postQuality()+m.q+(S.subs&&S.subs.editsoft?2:0)+(has('ai_edit')?4:0),1,100);
-  const tg=S.trend.g===S.genre?1.8:1,ts=S.trend.s===key?1.4:1;
+  if(POPT==='collab'){m.disc=1.3;m.conv=1.2;collabGain(key,k)}
+  const q=clamp(postQuality()+m.q+(S.subs&&S.subs.editsoft?2:0)+(has('ai_edit')?4:0)+styleQ(),1,100);
+  const tg=S.trend.g===S.genre?1.8:1,ts=1;
   const posts=8*k*m.posts;
   const base=f*(.06+q/500)*sn.reach;
   let disc=(q*q/100)*18*sn.disc*tg*ts*st.disc*R(.5,1.5)*(S.algo>0?(has('analytics')?.75:.5):1)*(1+Math.min(Math.sqrt(f),700)/120)*D.disc*(S.cty.disc||1)*(key==='patto'&&has('shorts')?1.25:1)*m.disc*discMul()*snsEraMul()*(1+Math.min(.3,(S.flags.lang||0)/100));
@@ -2468,7 +2477,7 @@ function doPost(k){
   if(chance((.006+q/5000)*(tg>1?1.5:1)*(1+stN('writer')*.15*staffMul())*m.buzz*buzzPerk()*Math.min(1,k*2))){const mm=R(4,16);views+=discV*mm;discV*=mm+1;buzzed=true}
   let nf=(discV*(.005+q/15000)*sn.conv+base*posts*.0008)*m.conv;
   nf*=Math.max(0,1-f/sn.cap);
-  if(q<25)nf-=f*.01*k;
+  if(q<20)nf-=f*.003*k;
   S.f[key]=Math.max(0,S.f[key]+nf);
   postHook(k,q,buzzed,nf);
   const money=f>=sn.mon?Math.round(views*sn.rpm*m.rpm*Math.max(.15,S.cty.inc)):0;
@@ -2610,11 +2619,11 @@ function endMonth(){
   if(S.m===4&&S.st==='work')S.salary=Math.round(S.salary*1.02);
   if(S.m===1){S.taxBase=S.yInc;S.yInc=0}
   if(S.m===3&&age()>=18&&S.taxBase>=(S.st==='work'?200000:480000)*c){if(S.flags.taxAuto){bill('tax','所得税（確定申告）',S.taxBase*.15*(has('tax_k')?.85:1));log('確定申告をした。税金の請求書が届いた','life')}else S.q.push('tax')}
-  withTown(homeTown(),()=>{monthSys();monthHook();monthHook7();monthHook8()});
+  withTown(homeTown(),()=>{monthSys();monthHook();monthHook7();monthHook8();monthHook10()});
   if(a<18&&S.money<0){S.money=0;log('足りない分は家族が払ってくれた','life')}
   drift();
-  for(const key in S.f){if(!S.open[key])continue;const posted=S.mo.posts>0&&key===S.main;S.f[key]*=posted?.993:.98}
-  if(S.rival)S.rival.f=Math.round(clamp(S.rival.f*(1+R(.004,.035)*(1-S.rival.f/2e6))+R(5,150),0,2e6));
+  for(const key in S.f){if(!S.open[key])continue;const posted=S.mo.posts>0&&key===S.main;S.f[key]*=posted?.996:.99}
+  if(S.rival)S.rival.f=Math.round(clamp(S.rival.f*(1+R(-.004,.02)*(1-S.rival.f/2e6)*(S.rival.f>totalF()*2.5+3000?.15:1))+R(3,60),0,2e6));
   for(const key in S.f)S.f[key]=Math.min(S.f[key],SNS[key].cap);
   if(S.am>=S.trend.until)newTrend();
   if(S.algo>0)S.algo--;
@@ -2689,7 +2698,7 @@ function renderPanel(){
   if(tab==='life'&&SUB.life==='album')paintAlbums();
 }
 function panelPlan(){
-  const a=age(),n=freeSlots();ensurePlan();let h=noticesHtml()+`<h2>${S.unit==='week'?'今週':'今月'}の行動</h2>`;
+  const a=age(),n=freeSlots();ensurePlan();let h=noticesHtml()+todoHtml()+`<h2>${S.unit==='week'?'今週':'今月'}の行動</h2>`;
   if(a<6)return h+`<p class="hint">6歳までは自動で育っていく。気になる出来事が起きると止まる。</p><button class="b pri" type="button" data-act="grow">小学生になるまで見守る</button>`;
   const fixed={school:'学校（自動）',univ:'大学（自動）',work:`仕事：${S.job}（自動）`}[S.st];
   if(fixed)h+=`<div class="fixed">${esc(fixed)}</div>`;
@@ -2698,7 +2707,7 @@ function panelPlan(){
   for(let i=0;i<n;i++)h+=`<div class="slotc"><span class="lb">枠${i+1}</span><div class="sel2"><select data-plan="${i}" id="plan${i}" ${S.auto?'disabled':''}>${actOptions(i)}</select>${optSel(i)}</div><p class="ds">${esc(optDesc(i))}</p></div>`;
   h+=`</div><div class="row"><button class="b ${S.auto?'on':''}" type="button" data-act="auto">おまかせ：${S.auto?'ON':'OFF'}</button><span class="hint">ONにすると行動を自動で決める</span></div>`;
   if(a<18&&a>=6){const opts=lessonOptions();h+=`<div class="grp"><h3>習い事</h3>${opts.length?`<select data-set="lesson" id="lessonSel"><option value="">なし</option>${opts.map(k=>`<option value="${k}" ${S.lesson===k?'selected':''}>${LESSONS[k].n}（月謝 ${num(LESSONS[k].cost*S.cty.inc)}円・家族が払う）</option>`).join('')}</select><p class="hint">行動に「習い事」を入れると素質がよく伸びる。</p>`:'<p class="hint">今の家計では月謝を払う余裕がない。</p>'}</div>`}
-  h+=`<div class="grp"><h3>時間の進み方</h3>${unitHtml()}<p class="hint">上の「次へ」で1ターン、▶で自動再生、「イベントまで」で次の出来事まで早送り。PCは P キーで停止／再開。</p></div>`;
+  h+=`<div class="grp"><h3>時間の進み方</h3>${unitHtml()}${speedOptsHtml()}<p class="hint">上の「次へ」で1ターン、▶で自動再生、「イベントまで」で次の出来事まで早送り。PCは P キーで停止／再開。</p></div>`;
   return h;
 }
 function panelSns(){
@@ -2715,10 +2724,10 @@ function panelSns(){
   h+=`</div><h2>投稿の方針</h2><div class="grp">
     <label class="slot"><span class="lb">ジャンル</span><select data-set="genre" id="genreSel">${Object.entries(GENRES).filter(([k])=>genreOk(k)).map(([k,g])=>`<option value="${k}" ${S.genre===k?'selected':''}>${g.n}（素質${Math.round(S.tal[talKey(k)]||0)}）${S.trend.g===k?' ★流行':''}</option>`).join('')}</select></label>
     <label class="slot"><span class="lb">スタイル</span><select data-set="style" id="styleSel">${Object.entries(STYLES).map(([k,s])=>`<option value="${k}" ${S.style===k?'selected':''}>${s.n}</option>`).join('')}</select></label>
-    <p class="hint">攻めるほど伸びやすいが、炎上しやすい。投稿の企画（ショート・大型企画・ライブ・コラボ）は「予定」の行動で選ぶ。</p></div>
-    <div class="grp"><h3>投稿の質 ${Math.round(q)}</h3>${bar(q,'p')}<p class="hint">スキル・素質・機材・スタッフ・研究・体調で決まる。今の流行：${SNS[S.trend.s].n}の「${GENRES[S.trend.g].n}」</p></div>`;
+    ${snsPlanHtml()}</div>
+    <div class="grp"><h3>投稿の質 ${Math.round(q)}</h3>${bar(q,'p')}<p class="hint">スキル・素質・機材・スタッフ・研究・体調で決まる。今の流行：「${GENRES[S.trend.g].n}」</p></div>`;
   if(S.last&&S.last.posts)h+=`<div class="card"><div class="hd"><span>先月の結果</span></div><div class="kv"><span>再生数</span><span>${num(S.last.views)}回</span><span>フォロワー増減</span><span>${S.last.newF>=0?'+':''}${num(S.last.newF)}人</span><span>広告・投げ銭</span><span>${yen((S.last.inc.sns||0)+(S.last.inc.tip||0))}</span></div></div>`;
-  if(S.rival)h+=`<div class="card"><div class="hd"><span>ライバル：${esc(S.rival.name)}</span><span class="muted small">${esc(S.rival.trait)}・仲${Math.round(S.rival.rel)}</span></div><div class="kv"><span>相手のフォロワー</span><span>${num(S.rival.f)}人</span><span>自分のフォロワー</span><span>${num(totalF())}人</span></div><p class="hint">仲が40以上になると「コラボ」投稿ができる。</p></div>`;
+  if(S.rival)h+=`<div class="card"><div class="hd"><span>ライバル：${esc(S.rival.name)}</span><span class="muted small">${esc(S.rival.trait)}・仲${Math.round(S.rival.rel)}</span></div><div class="kv"><span>相手のフォロワー</span><span>${num(S.rival.f)}人</span><span>自分のフォロワー</span><span>${num(totalF())}人</span></div><p class="hint">上の「コラボ」から申し込める。勝負は下の「ライバルとの勝負」から。</p></div>`;
   return h+snsExtra();
 }
 function panelMoneyAdult(){
@@ -2790,7 +2799,7 @@ function shopsPanel(){
 }
 function officePanel(){
   const c=S.cty.inc,o=S.office;
-  if(!has('company'))return '<p class="hint">研究「会社経営の基本」を終えると事務所を作れるようになる。</p>';
+  if(age()<20)return '<p class="hint">事務所は20歳から作れる。スタッフを雇ったり、タレントを育てたりできる。</p>';
   const nx=OFFICE[o.lv+1];
   let h=`<div class="kv"><span>今の事務所</span><span>${o.lv?esc(OFFICE[o.lv].n):'なし'}</span>${o.lv?`<span>家賃（月）</span><span>${yen(OFFICE[o.lv].rent*c)}</span><span>スタッフ</span><span>${staffTotal()} / ${OFFICE[o.lv].staff}人</span><span>タレント</span><span>${o.talents.length} / ${OFFICE[o.lv].tal}人</span>`:''}</div>`;
   if(nx)h+=`<div class="row"><button class="b sm pri" type="button" data-act="office" ${S.money<nx.cost*c||age()<18?'disabled':''}>${o.lv?'移転する':'事務所を作る'}：${esc(nx.n)} ${yen(nx.cost*c)}</button></div>`;
@@ -2896,6 +2905,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v0.10','2026年10月22日',['投稿の企画（ふつう・ショート・大型企画・ライブ・コラボ）は「発信」タブで決めるように。「予定」は「投稿する」を入れるだけ','流行はジャンルだけに（SNSの流行はなくした）。1〜2年ほど続く。「流行に自動で合わせる」と、流行が変わったら止める設定を追加','倍速のとき、よくある出来事は自動で選んで進むように（大事な出来事だけ止まる）。一生のプレイ時間が短くなった','コラボを申し込めるように。ほかの配信者から誘われることも','スタイルを5つ追加（ゆるく癒し・ガチ解説・バラエティ・エモい物語・流行に全乗り）','フォロワーが減りにくく、伸びやすく。ライバルが伸びすぎないように','機材や暮らしの買い物は、買い足すほど効果が小さくなるように','恋人からのプロポーズ、配偶者からの「子どもがほしい」も起こるように','家族チャンネルを13歳以降もそのまま続けられるように','事務所は研究なしで20歳から作れるように。研究やスキルの「○○を先に」を減らし、まだ解放できないものには、あと何ポイント・何か月かかるかを表示','「予定」タブのいちばん上に「いまできること」を表示。押すとその画面に移る']],
   ['v0.9.3','2026年10月22日',['「遊び方」と「アップデート情報」で項目を切りかえても、画面の大きさが変わらないように（中身だけスクロール）']],
   ['v0.9.2','2026年10月22日',['感想フォームの「一緒に送る」のチェック欄が崩れて表示されていたのを直した']],
   ['v0.9.1','2026年10月22日',['感想・不具合を「送る」と、共有の画面を出さずに開発者へ直接届くように（アカウントは不要）']],
@@ -3188,7 +3198,7 @@ function defaultAct(){const a=age();return a<13?pick(['play','homework','friends
 
 // ----- 子どもはお金を借りない（足りないときは親が払う） -----
 function ad(k,v,cat){if(k==='money'&&cat==='medical'&&v<0&&S.subs&&S.subs.insurance)v=Math.round(v*.3);
-  if(!v)return;if(v>0&&k!=='money'&&k!=='f'&&S.body)v*=bodyMul(k)*perkMul(k);if(v<0&&k==='mental'&&sk('l2'))v*=.8;
+  if(!v)return;if(v>0&&k!=='money'&&k!=='f'&&S.body)v*=bodyMul(k)*perkMul(k)*(k.startsWith('tal.')?TALMUL:1);if(v<0&&k==='mental'&&sk('l2'))v*=.8;
   if(k in P_KEYS)S.p[k]=clamp(S.p[k]+v);
   else if(k in SK_KEYS)S.sk[k]=clamp(S.sk[k]+v);
   else if(k==='money'){if(!cat)v=Math.round(v*(S.cty?S.cty.inc:1));
@@ -3269,7 +3279,7 @@ X('k2_grandparents','家族','おじいちゃんおばあちゃんの家',ag(4,1
 X('k2_tv','成長','テレビで見た配信者',ag(8,12),.05,'テレビに出ていた配信者を見て、ドキドキした。',[['ノートに企画を書く',{plan:2,t_comedy:1},'13歳になったらやりたいことリストができた。']],{once:1});
 X('k2_pocket','お金','おこづかいアップの交渉',ag(8,12),.04,'友達はもっとおこづかいをもらっているらしい。',[['お手伝いを条件に交渉',()=>chance(.5)?{talk:2,money:500}:{talk:1},''],['今のままでいい',{relP:1},'']],{once:1});
 // ===== v0.6：遊びの拡張 =====
-function ensureV6(){if(!S)return;ensureV7();ensureV8();
+function ensureV6(){if(!S)return;ensureV7();ensureV8();ensureV10();
   if(S.fanCore==null){S.fanCore=.05;S.fanAnti=.02}
   if(!S.series)S.series={g:null,n:0,fat:0};
   if(!S.pers)S.pers={careful:0,bold:0,kind:0,compet:0};
@@ -3444,7 +3454,7 @@ function battle(){const r=S.rival;if(!r)return;S.cd.battle=S.am;
 function snsExtra(){if(!S.snsOpen)return '';const sr=S.series,core=S.fanCore,anti=S.fanAnti,light=Math.max(0,1-core-anti),F=totalF();
   let h=`<h2>ファン</h2><div class="fanbar"><i style="width:${core*100}%" class="c"></i><i style="width:${light*100}%" class="l"></i><i style="width:${anti*100}%" class="a"></i></div><div class="kv"><span>ガチ勢</span><span>${num(F*core)}人（${Math.round(core*100)}%）</span><span>ライト層</span><span>${num(F*light)}人</span><span>アンチ</span><span>${num(F*anti)}人（${Math.round(anti*100)}%）</span></div><p class="hint">ガチ勢はシリーズものやライブで増え、ファンクラブの収入になる。アンチは攻めた投稿で増え、炎上しやすくなる。</p>`;
   h+=`<h3>シリーズ</h3>`+(sr.g?`<p class="hint">「${esc(GENRES[sr.g].n)}」シリーズ ${Math.floor(sr.n)}回目・マンネリ度 ${Math.min(100,Math.round(sr.fat*5))}%${sr.fat>10?'（飽きられ始めている）':sr.n>=3?'（固定ファンがついている）':''}</p><div class="row"><button class="b sm" type="button" data-act="newSeries">シリーズを終えて新しく始める</button></div>`:'<p class="hint">同じジャンルで投稿を続けるとシリーズになる。</p>');
-  if(S.rumor)h+=`<h3>流行の噂</h3><p class="hint">そのうち「${esc(GENRES[S.rumor.g].n)}」が${esc(SNS[S.rumor.s].n)}で来るらしい（確度${S.rumor.acc}%）。先にジャンルを合わせておくと大きく伸びるかも。</p>`;
+  if(S.rumor)h+=`<h3>流行の噂</h3><p class="hint">そのうち「${esc(GENRES[S.rumor.g].n)}」が来るらしい（確度${S.rumor.acc}%）。先にジャンルを合わせておくと大きく伸びるかも。</p>`;
   if(S.rival){const cd=S.cd.battle!=null&&S.am-S.cd.battle<3;h+=`<h3>ライバルとの勝負</h3><p class="hint">通算 ${S.rivalRec.w}勝${S.rivalRec.l}敗。勝つとフォロワーを奪える。</p><button class="b sm" type="button" data-act="battle" ${cd?'disabled':''}>${cd?'次の勝負は'+(3-(S.am-S.cd.battle))+'か月後':`「${esc(S.rival.name)}」に勝負を挑む`}</button>`}
   return h}
 
@@ -3878,7 +3888,7 @@ function researchPanel(){applyResCost();const done=RES.filter(r=>has(r.id)).leng
   for(const [ck,cn] of Object.entries(RES_CAT)){const list=RES.filter(r=>r.cat===ck);
     const roots=list.filter(r=>!r.req||!list.some(x=>x.id===r.req));
     const row=(r,dep)=>{const ok=!r.req||has(r.req),yr=r.year&&S.y<r.year,dn=has(r.id);
-      let s=`<div class="rnode ${dn?'done':ok&&!yr?'ready':'lock'}" style="margin-left:${dep*14}px">${dep?'<span class="rl">└</span>':''}<div class="rb"><div>${dn?'✓ ':''}${esc(r.n)} <span class="muted small">${r.c}pt</span></div><div class="muted small">${esc(r.d)}${!ok?`（先に「${esc(RES.find(x=>x.id===r.req).n)}」）`:''}${yr?`（${r.year}年から）`:''}</div></div>${dn?'<span class="chip up">完了</span>':ok&&!yr?`<button class="b sm" type="button" data-res="${r.id}" ${S.rp<r.c?'disabled':''}>研究する</button>`:''}</div>`;
+      let s=`<div class="rnode ${dn?'done':ok&&!yr?'ready':'lock'}" style="margin-left:${dep*14}px">${dep?'<span class="rl">└</span>':''}<div class="rb"><div>${dn?'✓ ':''}${esc(r.n)} <span class="muted small">${r.c}pt</span></div><div class="muted small">${esc(r.d)}${!ok?`（先に「${esc(RES.find(x=>x.id===r.req).n)}」）`:''}${yr?`（${r.year}年から）`:''}${!dn&&ok&&!yr&&S.rp<r.c?`（あと${Math.ceil(r.c-S.rp)}pt・${rpEta(r.c)}）`:''}</div></div>${dn?'<span class="chip up">完了</span>':ok&&!yr?`<button class="b sm" type="button" data-res="${r.id}" ${S.rp<r.c?'disabled':''}>研究する</button>`:''}</div>`;
       for(const ch of list.filter(x=>x.req===r.id))s+=row(ch,dep+1);return s};
     h+=`<h3>${cn}</h3><div class="rtree">${roots.map(r=>row(r,0)).join('')}</div>`}
   h+=`<h3>ずっと続けられる研究</h3><p class="hint">研究ポイントが余ったら。何段でも重ねられる（20段まで）。段が上がるほど必要なポイントが増える。</p><div class="rtree">${RLV.map(([k,n,d])=>`<div class="rnode ready"><div class="rb"><div>${n} <b>${rlv(k)}段</b> <span class="muted small">${rlvCost(k)}pt</span></div><div class="muted small">${d}</div></div><button class="b sm" type="button" data-rlv="${k}" ${S.rp<rlvCost(k)||rlv(k)>=20?'disabled':''}>研究する</button></div>`).join('')}</div>`;
@@ -3894,7 +3904,7 @@ const SKT=[
 const SK_COST=[1,2,4,6,8];
 const sk=id=>!!(S&&S.skt&&S.skt[id]);
 function skNode(id){for(const [bk,bn,ns] of SKT){const i=ns.findIndex(n=>n[0]===id);if(i>=0)return {bk,bn,i,n:ns[i],cost:SK_COST[i],prev:i?ns[i-1][0]:null}}return null}
-function skBuy(id){const x=skNode(id);if(!x||sk(id)||(x.prev&&!sk(x.prev))||S.sp<x.cost)return;S.sp-=x.cost;S.skt[id]=1;log(`スキル「${x.n[1]}」を覚えた`,'good');snd('buy');
+function skBuy(id){const x=skNode(id);if(!x||sk(id)||S.sp<x.cost)return;S.sp-=x.cost;S.skt[id]=1;log(`スキル「${x.n[1]}」を覚えた`,'good');snd('buy');
   if(id==='s2')ad('looks',3);
   if(SKT.some(([bk,bn,ns])=>ns.every(n=>sk(n[0])))){recSet('branch',1)}save();render()}
 const SP_MILE=[['buzz',2,'初めてバズった',()=>S.stats.buzz>0],['f1',1,'フォロワー1万人',()=>S.stats.maxF>=1e4],['f2',2,'フォロワー10万人',()=>S.stats.maxF>=1e5],['f3',3,'フォロワー100万人',()=>S.stats.maxF>=1e6],
@@ -3903,8 +3913,8 @@ const SP_MILE=[['buzz',2,'初めてバズった',()=>S.stats.buzz>0],['f1',1,'�
 function spTick(){if(S.sp==null){S.sp=0;S.skt={};S.spGot={};S.spAge=0}const a=age();
   if(a>=10&&(a-10)%4===0&&S.spAge!==a){S.spAge=a;S.sp++}
   for(const [k,v,n,f] of SP_MILE){if(S.spGot[k])continue;let ok=false;try{ok=f()}catch(_){}if(ok){S.spGot[k]=1;S.sp+=v;log(`スキルポイント+${v}（${n}）`,'good')}}}
-function sktHtml(){let h=`<h2>この人生のスキル</h2><p class="hint">スキルポイント <b>${S.sp||0}</b>。10歳から4年ごとに1ポイント、人生の節目（初めてのバズ・結婚・会社設立など）でもらえる。上から順に覚える。この人生の間だけ有効。</p><div class="sktree">`;
-  for(const [bk,bn,ns] of SKT){h+=`<div class="skb"><h3>${bn}</h3>`;ns.forEach((n,i)=>{const own=sk(n[0]),can=!own&&(!i||sk(ns[i-1][0]));h+=`${i?'<div class="skl">│</div>':''}<button class="sknode ${own?'own':can?'can':'lock'}" type="button" data-skt="${n[0]}" ${own||!can||(S.sp||0)<SK_COST[i]?'disabled':''}><b>${esc(n[1])}</b><span>${esc(n[2])}</span><em>${own?'習得済み':SK_COST[i]+'pt'}</em></button>`});h+='</div>'}
+function sktHtml(){let h=`<h2>この人生のスキル</h2><p class="hint">スキルポイント <b>${S.sp||0}</b>。10歳から4年ごとに1ポイント、人生の節目（初めてのバズ・結婚・会社設立など）でもらえる。どれからでも覚えられる（下のものほどポイントが多く必要）。この人生の間だけ有効。</p><div class="sktree">`;
+  for(const [bk,bn,ns] of SKT){h+=`<div class="skb"><h3>${bn}</h3>`;ns.forEach((n,i)=>{const own=sk(n[0]),can=!own;h+=`${i?'<div class="skl">│</div>':''}<button class="sknode ${own?'own':can?'can':'lock'}" type="button" data-skt="${n[0]}" ${own||!can||(S.sp||0)<SK_COST[i]?'disabled':''}><b>${esc(n[1])}</b><span>${esc(n[2])}</span><em>${own?'習得済み':SK_COST[i]+'pt'}</em></button>`});h+='</div>'}
   return h+'</div>'}
 
 // ----- 引き継ぎスキルツリー（すべての人生で有効） -----
@@ -3962,10 +3972,10 @@ function ecoMul(){let m=1;for(const h of HIST)if(h.eco&&histOk(h)&&S.y>=h.y&&S.y
 function postHook(k,q,buzzed,nf){
   const sr=S.series;const fat=(has('series_k')?.6:1);if(sr.g===S.genre){sr.n+=k;sr.fat+=k*(POPT==='big'?.3:1)*fat}else{sr.g=S.genre;sr.n=k;sr.fat=0}
   const F=totalF(),prev=Math.max(1,F-Math.max(0,nf));
-  let g=(.0025*k*(sr.n>=3?1.6:1)+(POPT==='live'?.004*k:0)+(POPT==='collab'?.001*k:0))*(1-S.fanCore/.4)*(sk('s4')?1.3:1)*(has('fan_comm')?1.3:1);
+  let g=(.0025*k*(sr.n>=3?1.6:1)+(POPT==='live'?.004*k:0)+(POPT==='collab'?.001*k:0))*(1-S.fanCore/.4)*(sk('s4')?1.3:1)*(has('fan_comm')?1.3:1)*(S.style==='story'?1.5:S.style==='chill'?1.25:S.style==='trend'?.6:1);
   S.fanCore=clamp(S.fanCore+g,.02,.4);
   if(nf>0)S.fanCore=(S.fanCore*prev+nf*.04)/(prev+nf);
-  S.fanAnti=clamp(S.fanAnti+((S.style==='edge'?.0025:S.style==='safe'?-.001:.0003)*k+(buzzed?.006:0))*(has('anti_care')&&(S.style!=='safe')?.5:1),0,.3);
+  S.fanAnti=clamp(S.fanAnti+((S.style==='edge'?.0025:(S.style==='safe'||S.style==='chill')?-.001:.0003)*k+(buzzed?.006:0))*(has('anti_care')&&(S.style!=='safe')?.5:1),0,.3);
   S.fanCore=clamp(S.fanCore,.02,.4);
 }
 function monthHook8(){
@@ -4172,4 +4182,177 @@ function showNews(tabk){const t=tabk||'new';const web=/^https?:$/.test(location.
 ・昔の版のセーブは、いまのセーブとは別。いまのデータは消えない。
 ・昔の版から戻るときは、画面のいちばん上の黄色い帯の「最新版に戻る」を押す。</p></div>${web?'':'<p class="hint">※この機能はWeb版（stella46.github.io/buzz-life）でだけ使える。</p>'}<div class="news">${OLD_VERS.map(([v,u,d])=>`<section class="nv"><div class="hd"><b>${esc(v)}</b></div><p class="small">${esc(d)}</p>${u&&web?`<a class="b sm" href="${u}">${esc(v)}で遊んでみる</a>`:''}</section>`).join('')}</div>`;
   tabbedModal('news','アップデート','アップデート情報',[['new','新しくなったこと','data-news'],['old','昔の版で遊ぶ（おまけ）','data-news']],t,body);markVer()}
+// ===== v0.10：遊びやすさの見直し（流行・投稿の企画・コラボ・スタイル・自動進行・解放条件・やることリスト） =====
+
+// ----- 新しいスタイル -----
+Object.assign(STYLES,{
+  chill:{n:'ゆるく癒し',disc:.9,fl:0,d:'炎上しにくく、ガチ勢が育ちやすい。伸びはゆっくり'},
+  expert:{n:'ガチ解説',disc:.95,fl:.001,d:'知識が高いほど質が上がる。勉強・解説系に強い'},
+  variety:{n:'バラエティ',disc:1.15,fl:.004,d:'見つかりやすく、そこそこ攻める'},
+  story:{n:'エモい物語',disc:1.05,fl:.002,d:'ガチ勢がとても育ちやすい'},
+  trend:{n:'流行に全乗り',disc:1,fl:.003,d:'流行のジャンルのときだけ大きく伸びる。ガチ勢は育ちにくい'}
+});
+STYLES.safe.d='炎上しにくいが、伸びはひかえめ';STYLES.norm.d='ふつう';STYLES.edge.d='伸びやすいが、炎上しやすくアンチも増える';
+const styleQ=()=>S.style==='expert'?clamp((S.p.know-40)/4,-4,12):S.style==='chill'&&S.p.mental>60?2:0;
+
+// ----- 投稿の企画（「発信」タブで決める） -----
+const POSTPLAN=[
+  {k:'normal',n:'ふつうの投稿',d:'いつもどおりの投稿'},
+  {k:'short',n:'ショート動画',d:'見つかりやすいが質は下がる。広告収益は少なめ'},
+  {k:'big',n:'大型企画',d:'毎月5万円かかるが、質が大きく上がりバズりやすい',ok:()=>S.money>=50000*ci()},
+  {k:'live',n:'ライブ配信',d:'投げ銭が入る。ガチ勢が育つ',ok:()=>totalF()>=100},
+  {k:'collab',n:'コラボ',d:'下の「コラボ」で相手が決まっているときだけ',ok:()=>!!collabNow()}];
+function postPlanNow(){const p=POSTPLAN.find(x=>x.k===S.postPlan);return p&&(!p.ok||p.ok())?p.k:'normal'}
+ACT.post.opts=null;ACT.post.d='SNSに投稿する。企画・ジャンル・スタイルは「発信」タブで決める';
+
+// ----- コラボ相手 -----
+const CO_NAMES=['ゆずポン','ハルカ・ノート','ミナト探検隊','こたつネコ','オムライス大佐','ソラミミ','トーマのラボ','ゆるっと姉妹','カゲロウ','ピクセル番長','まめしば日記','ナツメ堂','リリィ★','ドンちゃんねる','ぽこぺん','ウミネコ通信'];
+function mkCreator(){const F=Math.max(300,totalF());return {id:'c'+Math.random().toString(36).slice(2,8),name:pick(CO_NAMES),role:'配信者',trait:pick(['人当たりがいい','職人気質','明るい','マイペース','努力家']),genre:pick(Object.keys(GENRES).filter(g=>genreOk(g))),f:Math.round(F*R(.3,2.5)+RI(200,3000)),rel:RI(25,55),cn:0}}
+function collabNow(){if(!S.collabWith||!(S.collabUntil>S.am))return null;if(S.collabWith==='rival')return S.rival;return (S.collabs||[]).find(c=>c.id===S.collabWith)||null}
+function acceptChance(p){const ratio=(totalF()+300)/(p.f+300);return clamp(.15+p.rel/120+Math.min(.35,ratio*.25)+(has('collab')?.1:0)+(sk&&sk('r2')?.05:0),.05,.95)}
+function askCollab(id){const p=id==='rival'?S.rival:(S.collabs||[]).find(c=>c.id===id);if(!p||(S.cd['ask_'+id]!=null&&S.am-S.cd['ask_'+id]<2))return;S.cd['ask_'+id]=S.am;
+  if(chance(acceptChance(p))){S.collabWith=id;S.collabUntil=S.am+3;S.postPlan='collab';rel(p,3);log(`${p.name}とのコラボが決まった（3か月）`,'sns');tl(`${p.name}とコラボした`);toast(`${p.name}がコラボを引き受けてくれた！`)}
+  else{rel(p,1);log(`${p.name}にコラボを断られた。また今度`,'sns');toast(`${p.name}「今回はごめんね」`)}save();render()}
+function collabGain(key,k){const p=collabNow();if(!p)return;const g=Math.round(Math.min(p.f,totalF()*3+2000)*.006*k*(has('collab')?1.5:1)/(1+(p.cn||0)*.15));S.f[key]+=g;S.mo.newF+=g;rel(p,1.5*k);p.f=Math.round(p.f+totalF()*.002*k);p.cn=(p.cn||0)+k*.34}
+
+// ----- 投稿のつなぎこみ -----
+function discMul(){const sr=S.series||{n:0,fat:0};let m=1.05;if(sr.n>=3)m*=1+Math.min(.3,sr.n*.025);if(sr.fat>10)m*=1-Math.min(.45,(sr.fat-10)*.035);if(persTop()==='bold')m*=1.1;
+  if(sk('s3'))m*=1.1;m*=1+.02*rlv('sns');if(has('global'))m*=1.1;if(lg('g5'))m*=1.08;if(lg('g12'))m*=1.05;
+  if(S.style==='trend')m*=S.trend.g===S.genre?1.35:.8;return m}
+function eqBonus(){let t=0;for(const k in S.eq)t+=S.eq[k];return 16*(1-Math.exp(-t/7))}
+function postQuality(){
+  const g=GENRES[S.genre]||GENRES.talk;let mix=0;for(const s in g.w)mix+=(s==='know'?S.p.know:S.sk[s])*g.w[s];
+  const cond=(S.p.health+S.p.mental)/2;
+  const bonus=Math.min(20,stN('editor')*4*staffMul())+Math.min(10,countB('studio')*5)+(has('live')?2:0)+(has('analytics')?3:0);
+  return clamp(mix*.62+(S.tal[talKey(S.genre)]||0)*.3+eqBonus()+bonus+(cond-50)*.15,1,100);
+}
+// 同じ年に同じ物をくり返し買っても、素質の伸びはだんだん小さくなる
+let TALMUL=1;
+for(const list of [GOODS,KIDGOODS])for(const g of list){if(g.once||!g.f)continue;const f0=g.f;g.f=function(){const key=g.k+'@'+S.y;if(!S.gN)S.gN={};const n=S.gN[key]||0;S.gN[key]=n+1;TALMUL=1/(1+n*.8);try{return f0.apply(this,arguments)}finally{TALMUL=1}}}
+
+// ----- 流行（ジャンルだけ・長めに続く） -----
+function newTrend(){const gs=Object.keys(GENRES).filter(g=>genreOk(g));const old=S.trend&&S.trend.g;
+  let g=pick(gs);if(S.rumor&&S.am>=S.rumor.at&&chance(S.rumor.acc/100)&&GENRES[S.rumor.g])g=S.rumor.g;S.rumor=null;
+  if(gs.length>1)while(g===old)g=pick(gs);
+  S.trend={g,s:null,until:S.am+RI(14,26)};
+  if(S.am>0&&S.snsOpen&&old!==g){const msg=`流行のジャンルが「${GENRES[g].n}」に変わった`;ticker(msg);log(msg,'sns');
+    if(S.autoTrend&&genreOk(g)){S.genre=g;log(`ジャンルを自動で「${GENRES[g].n}」に合わせた`,'sns')}
+    else if(S.trendStop!==0&&(speed>0||skipping)){setSpeed(0);skipping=false;toast(msg+'（止めました）')}}}
+
+// ----- 倍速のとき、よくある出来事は自動で選ぶ -----
+const AUTO_SKIP=/^(l_|r_|w_fired|tax|flame|deal|m\d|bill_force|gen_|goal_|era_|hist_|co_ev|x_chain|regret)/;
+function autoEvOk(e){return S.autoEv!==0&&(speed>=2||skipping)&&e.w>0&&e.w<1&&!AUTO_SKIP.test(e.id)&&e.cat!=='恋愛'&&!/案件|PR/.test(e.t||'')}
+function autoChoose(e){try{if(typeof e.text==='function')e.text()}catch(_){}S.seen[e.id]=1;S.cd[e.id]=S.am;if(typeof META!=='undefined')META.seen[e.id]=1;
+  let chs;try{chs=(typeof e.ch==='function'?e.ch():e.ch)||[]}catch(_){chs=[]}if(!chs.length)return;
+  const c=chs.find(x=>!/借り|消費者金融|ローン/.test(x[0]))||chs[0];
+  DL={};let res='';try{res=c[1]()||''}catch(err){console.error(err)}DL=null;
+  log(`${e.t}：「${c[0]}」${res?' → '+res:''}（自動）`,e.cat==='SNS'?'sns':'life');S.stats.autoEv=(S.stats.autoEv||0)+1}
+
+// ----- 相手から言ってくる結婚・子ども -----
+E('l_propose_r',{t:'プロポーズされた',cat:'恋愛',w:.05,cd:12,when:()=>S.partner&&S.partner.rel>=65&&age()>=22&&!S.spouse,
+  text:()=>`${pn(S.partner)}「ずっと一緒にいたい。結婚してください」`,
+  ch:[['はい、よろこんで',()=>{S.q.push('l_wed');ad('happy',8);return '涙がこぼれた。式の準備を始めよう。'}],['少し待ってほしい',()=>{rel(S.partner,-3);return '「わかった、待ってるね」と笑ってくれた。'}],['ごめんなさい',()=>{if(chance(.5)){tl(S.partner.name+'と別れた');S.partner=null;ad('happy',-6);return 'それきり、ふたりの関係は終わった。'}rel(S.partner,-15);return '気まずい空気が流れた。'}]]});
+E('l_kidtalk',{t:'子どもの話',cat:'家族',w:.05,cd:18,when:()=>S.spouse&&S.kids.length<3&&age()>=22&&age()<=(S.g==='女'?43:50)&&!(S.flags.tryKid&&S.am<S.flags.tryKid),
+  text:()=>`${pn(S.spouse)}「そろそろ、子どものことも考えない？」`,
+  ch:[['そうしよう',()=>{S.flags.tryKid=S.am+12;rel(S.spouse,4);return 'ふたりで未来の話をした夜だった。'}],['もう少し先にしたい',()=>{rel(S.spouse,-1);return '「そっか、またゆっくり話そう」'}],['今は考えられない',()=>{rel(S.spouse,-4);ad('mental',-1);return '少しさみしそうだった。'}]]});
+E('c_invite',{t:'コラボのお誘い',cat:'SNS',w:.05,cd:6,when:()=>S.snsOpen&&totalF()>=300&&!collabNow()&&(S.collabs||[]).length>0,
+  text:()=>{const p=S.tmpC=pick(S.collabs);return `配信者「${p.name}」（${GENRES[p.genre].n}・フォロワー${num(p.f)}人）から「一緒にコラボしませんか？」と連絡がきた。`},
+  ch:[['やろう！',()=>{const p=S.tmpC;if(!p)return '';S.collabWith=p.id;S.collabUntil=S.am+3;S.postPlan='collab';rel(p,5);tl(`${p.name}とコラボした`);return '3か月、一緒に企画をやることになった。'}],['今回は見送る',()=>'また機会があれば。']]});
+
+// ----- 家族チャンネルを続ける -----
+EV.m13k.ch.splice(1,0,['このまま家族で続けてもらう',()=>{S.kc.cont=1;tl('家族チャンネルを続けることにした');return '家族チャンネルはこれからも続く。自分のSNSは自分で始めることもできる。'}]);
+function kidChannelTick(k){
+  if(!S.kc.on||(age()>=13&&!S.kc.cont))return;
+  S.kc.f+=(30+S.kc.f*.02)*R(.4,1.6)*k*(age()>=13?.8:1);
+  if(chance(.02*k)){S.kc.f+=RI(1000,15000);log('家族チャンネルの動画がバズったらしい','sns')}
+  if(age()>=6)inc('kc',Math.round(S.kc.f*.02*k*(S.kc.share?3:1)*Math.max(.15,S.cty.inc)));
+  ad('priv',-.4*k*(age()>=13?.5:1));
+}
+function kcHtml(){if(!S.kc.on||!S.kc.cont)return '';return `<div class="card"><div class="hd"><span>家族チャンネル（${esc(S.kc.byName)}と運営）</span></div><div class="big">${num(S.kc.f)}人</div><p class="hint">家族で続けている。収入の一部が入る。</p><div class="row"><button class="b sm" type="button" data-act="kcTake">自分のアカウントに引き継ぐ</button><button class="b sm ghost" type="button" data-act="kcEnd">家族チャンネルを終わりにする</button></div></div>`}
+
+// ----- 「発信」タブの投稿の方針 -----
+function snsPlanHtml(){const st=STYLES[S.style]||STYLES.norm;const cp=collabNow();
+  let h=`<p class="hint">スタイル：${esc(st.d||'')}</p>`;
+  h+=`<h3>投稿の企画</h3><div class="seg wrapseg">${POSTPLAN.map(p=>{const ok=!p.ok||p.ok();return `<button type="button" class="${postPlanNow()===p.k?'on':''}" data-pplan="${p.k}" ${ok?'':'disabled'}>${p.n}</button>`}).join('')}</div><p class="hint">${esc((POSTPLAN.find(p=>p.k===postPlanNow())||POSTPLAN[0]).d)}。「予定」で「投稿する」を入れた月に、この企画で投稿する。</p>`;
+  h+=`<h3>流行</h3><p class="hint">いまの流行は「${esc(GENRES[S.trend.g].n)}」（あと約${Math.max(1,S.trend.until-S.am)}か月続く）。流行のジャンルで投稿すると伸びやすい。</p>
+  <div class="row"><button class="b sm ${S.autoTrend?'on':''}" type="button" data-act="autoTrend">流行に自動で合わせる：${S.autoTrend?'ON':'OFF'}</button>${S.trend.g!==S.genre&&genreOk(S.trend.g)&&!S.autoTrend?'<button class="b sm pri" type="button" data-act="matchTrend">今すぐ流行に合わせる</button>':''}</div>`;
+  if(!S.collabs)S.collabs=[];
+  h+=`<h3>コラボ</h3>`;
+  if(cp)h+=`<p class="hint">いま「${esc(cp.name)}」とコラボ中（あと${S.collabUntil-S.am}か月）。投稿の企画が「コラボ」のとき、相手のファンが来てくれる。</p>`;
+  else h+=`<p class="hint">ほかの配信者にコラボを申し込める。引き受けてもらえると、3か月いっしょに投稿できる。フォロワーが近い相手や、仲がいい相手ほど引き受けてくれやすい。</p>`;
+  const list=(S.rival?[Object.assign({},S.rival,{id:'rival',genre:S.genre,name:S.rival.name+'（ライバル）'})]:[]).concat(S.collabs);
+  h+=list.map(p=>{const ch=acceptChance(p.id==='rival'?S.rival:p);const cd=S.cd['ask_'+p.id]!=null&&S.am-S.cd['ask_'+p.id]<2;return `<div class="shop"><div><div>${esc(p.name)} <span class="muted small">${esc((GENRES[p.genre]||GENRES.talk).n)}・${num(p.f)}人・仲${Math.round(p.rel)}</span></div><div class="muted small">引き受けてくれそう：${ch>=.6?'高い':ch>=.35?'ふつう':'低い'}</div></div><button class="b sm" type="button" data-askc="${p.id}" ${cp||cd?'disabled':''}>${cd?'返事待ち':'申し込む'}</button></div>`}).join('');
+  return h+kcHtml()}
+
+// ----- 速さの設定 -----
+function speedOptsHtml(){return `<div class="row"><button class="b sm ${S.autoEv!==0?'on':''}" type="button" data-act="autoEvT">倍速のとき、よくある出来事は自動で選ぶ：${S.autoEv!==0?'ON':'OFF'}</button><button class="b sm ${S.trendStop!==0?'on':''}" type="button" data-act="trendStopT">流行が変わったら止める：${S.trendStop!==0?'ON':'OFF'}</button></div><p class="hint">▶▶ と ▶▶▶ のとき、恋愛・結婚・仕事・炎上などの大事な出来事だけ止まり、ほかは自動で選んで記録に残す。</p>`}
+function etaText(){if(!S||!S.alive)return '';const per=S.unit==='season'?3:S.unit==='week'?.25:1;let secMonth,lbl;
+  if(skipping){secMonth=.05;lbl='イベントまで'}else if(speed>0){secMonth=1.5/speed/per;lbl=['','▶','▶▶','','▶▶▶'][speed]||'▶'}else return '';
+  const evy=(S.autoEv!==0&&(speed>=2||skipping))?1.8:EVY;const perYear=12*secMonth+evy*EVS;
+  return `⏱ ${lbl}の推定：10年で約${Math.max(1,Math.round(perYear*10/60))}分 ／ この人生のこり約${Math.max(1,Math.round(perYear*lifeLeftYears()/60))}分`}
+
+// ----- いまできること（予定タブの上） -----
+function todoHtml(){if(age()<6)return '';const a=age(),t=[];const go=(tab,label,sub)=>t.push(`<button class="todo" type="button" data-goto="${tab}">${label}${sub?`<span>${sub}</span>`:''}</button>`);
+  if(!S.snsOpen&&a>=13&&snsEra()&&!S.flags.noNet)go('sns','SNSを始める','「発信」でアカウントを作る');
+  if(S.snsOpen){go('sns','投稿の方針を決める',`${GENRES[S.genre].n}・${(STYLES[S.style]||STYLES.norm).n}・${(POSTPLAN.find(p=>p.k===postPlanNow())||POSTPLAN[0]).n}`);
+    if(S.trend.g!==S.genre&&genreOk(S.trend.g)&&!S.autoTrend)t.push(`<button class="todo hot" type="button" data-act="matchTrend">流行に合わせる<span>いまの流行：${esc(GENRES[S.trend.g].n)}</span></button>`);
+    if(!collabNow()&&totalF()>=300)go('sns','コラボを申し込む','ほかの配信者といっしょに投稿');}
+  const rr=researchReady();if(rr)go('biz:res','研究する',`${rr}つ研究できる`);
+  if((S.sp||0)>0)go('life:skill','スキルを覚える',`ポイント${S.sp}`);
+  if(a>=16&&!S.partner&&!S.spouse)go('life:choice','恋人を探す','人生の選択');
+  if(a>=18&&!anyShop()&&S.money>=1e6*Math.max(.2,S.cty.inc))go('biz:town','お店を建てる','まちの空き地を選ぶ');
+  if(a>=20&&!(S.cos||[]).length&&S.money>=3e7*Math.max(.2,S.cty.inc))go('biz:co','会社を設立する','代表になる');
+  if(!t.length)return '';
+  return `<div class="todos"><h3>いまできること</h3><div class="todogrid">${t.slice(0,6).join('')}</div></div>`}
+
+// ----- 研究・建物の「いつできる？」 -----
+function rpEta(c){const need=c-S.rp;if(need<=0)return 'いま';const r=Math.max(.05,S.rpRate||.5);const m=Math.ceil(need/r);return m>=24?`約${Math.round(m/12)}年`:`約${m}か月`}
+function resHint(id){const r=RES.find(x=>x.id===id);if(!r)return '';return `（${r.c}pt・${S.rp>=r.c?'いま研究できる':'あと'+rpEta(r.c)}・「事業」→「研究」）`}
+
+// ----- 解放のつながりを少なく -----
+const RQ={brand:null,analytics:null,company:null,eq5:null,avatar:null,fashion:null,studio:null,scout:null,hr:null,gamedev:null};
+for(const r of RES)if(r.id in RQ)r.req=RQ[r.id];
+{const c=RES.find(r=>r.id==='company');if(c){c.base=40;c.d='スタッフの効果アップ・スカウト・スタジオなど、事務所でできることが増える'}}
+for(const x of LEG)delete x.req;
+try{applyResCost()}catch(_){}
+
+// ----- 毎月 -----
+function monthHook10(){
+  if(!S.collabs)S.collabs=[];
+  if(S.snsOpen&&S.collabs.length<3)S.collabs.push(mkCreator());
+  if(S.snsOpen&&S.m===4&&S.collabs.length){S.collabs.sort((a,b)=>a.rel-b.rel);S.collabs[0]=mkCreator()}
+  for(const c of S.collabs)c.f=Math.round(c.f*(1+R(-.01,.025)));
+  if(S.collabWith&&!(S.collabUntil>S.am)){const p=S.collabWith==='rival'?S.rival:S.collabs.find(c=>c.id===S.collabWith);if(p)log(`${p.name}とのコラボ期間が終わった`,'sns');S.collabWith=null;if(S.postPlan==='collab')S.postPlan='normal'}
+  const rp0=S.rpPrev==null?S.rp:S.rpPrev;S.rpRate=S.rpRate==null?Math.max(0,S.rp-rp0):S.rpRate*.7+Math.max(0,S.rp-rp0)*.3;S.rpPrev=S.rp;
+}
+function ensureV10(){if(!S)return;if(S.postPlan==null)S.postPlan='normal';if(S.autoEv==null)S.autoEv=1;if(S.trendStop==null)S.trendStop=1;if(!S.collabs)S.collabs=[];if(S.trend&&S.trend.s)S.trend.s=null}
+
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!S)return;const d=b.dataset;
+  if(d.pplan){S.postPlan=d.pplan;save();renderPanel();return}
+  if(d.askc){askCollab(d.askc);return}
+  if(d.act==='autoTrend'){S.autoTrend=S.autoTrend?0:1;if(S.autoTrend&&genreOk(S.trend.g))S.genre=S.trend.g;save();renderPanel();return}
+  if(d.act==='matchTrend'){if(genreOk(S.trend.g)){S.genre=S.trend.g;log(`ジャンルを流行の「${GENRES[S.genre].n}」にした`,'sns');save();render()}return}
+  if(d.act==='autoEvT'){S.autoEv=S.autoEv!==0?0:1;save();renderPanel();renderCtrl();return}
+  if(d.act==='trendStopT'){S.trendStop=S.trendStop!==0?0:1;save();renderPanel();return}
+  if(d.act==='kcTake'){const g=Math.round(S.kc.f*.5);openSns('milu');S.f.milu+=g;S.kc.on=0;S.kc.cont=0;S.kc.was=1;tl('家族チャンネルを引き継いだ');log(`家族チャンネルから${num(g)}人を引き継いだ`,'sns');save();render();return}
+  if(d.act==='kcEnd'){S.kc.on=0;S.kc.cont=0;S.kc.was=1;ad('priv',5);log('家族チャンネルを終わりにした','life');save();render();return}
+});
+GUIDE.forEach(g=>{
+  if(g[0]==='sns')g[2]=`SNSでフォロワーを増やす。
+・「発信」タブで、ジャンル・スタイル・投稿の企画（ふつう・ショート・大型企画・ライブ・コラボ）を決める。「予定」で「投稿する」を入れた月に、その方針で投稿する。
+・流行のジャンルで投稿すると伸びやすい。流行は1〜2年ほど続く。「流行に自動で合わせる」をONにすると、ジャンルを自動で切りかえる。
+・スタイル：安全運転・ふつう・攻め・ゆるく癒し・ガチ解説・バラエティ・エモい物語・流行に全乗り。それぞれ伸び方・炎上・ファンの育ち方が違う。
+・コラボ：「発信」タブの「コラボ」から、ほかの配信者に申し込める。引き受けてもらえると3か月いっしょに投稿でき、相手のファンが来てくれる。相手から誘われることもある。
+・ファン層：ガチ勢はシリーズものやライブで育ち、ファンクラブ収入になる。アンチは攻めた投稿やバズで増え、炎上しやすくなる。
+・投稿の質はスキル・素質・機材・体調で決まる。機材は買い足すほど効果が小さくなる。`;
+  if(g[0]==='act')g[2]=`毎月の自由な時間に何をするかを決める。
+・いちばん上の「いまできること」に、今やれることが並ぶ。押すとその画面に移る。
+・行動を選んでから「何をするか」（勉強の種類・遊びの種類など）を選べる。投稿の企画は「発信」タブで決める。
+・学校や仕事は自動で入る。小学生は自由な枠が3つ。「おまかせ」をONにすると自動で決めてくれる。
+・時間の進み方（1か月・1週間・3か月）と、倍速のときの自動進行もここで変えられる。`;
+  if(g[0]==='skill')g[2]=`・研究：研究ポイントで新しい建物や機能を解放する。まだ研究できないものには、あと何ポイント・何か月くらいかかるかが出る。「事業」→「研究」。
+・この人生のスキル：スキルポイントで覚える。どれからでも覚えられる（下のものほどポイントが多く必要）。ポイントは10歳から4年ごとと、人生の節目でもらえる。「人生」→「スキル」。
+・引き継ぎスキル：人生を終えるともらえる「引き継ぎポイント」で覚える。これから生まれるすべての人生で有効。それぞれの解放条件を一度満たせば、どれからでも覚えられる。`;
+});
+OLD_VERS.unshift(['v0.9','versions/v0.9/','感想フォーム・推定プレイ時間・研究とスキルツリーが入ったころ']);
 </script>

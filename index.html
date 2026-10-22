@@ -335,6 +335,8 @@ body.mode-dark:is(.th-illust,.th-phone){--bg:#0f1115;--bg2:#16181f;--panel:#1c1f
 body.mode-dark.th-classic{--bg:#0d0e1f;--bg2:#14162e;--panel:#1a1c3c;--panel2:#22254a}
 body.mode-dark.th-pixel{--bg:#0a0b1c;--bg2:#12142e;--panel:#181a42;--panel2:#20235a}
 @media (min-width:701px){body.mode-dark.th-phone{background:linear-gradient(135deg,#1a1d29,#2a1f3a)}body.mode-light.th-hybrid{background:linear-gradient(135deg,#ffe3ec,#e3f0ff)}}
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tgrid .b{padding-inline:6px}
 </style>
 
 <div id="app">
@@ -347,15 +349,15 @@ body.mode-dark.th-pixel{--bg:#0a0b1c;--bg2:#12142e;--panel:#181a42;--panel2:#202
     <div class="tmenu">
       <button class="b pri" id="btnNew" type="button">はじめから（ランダムに生まれる）</button>
       <button class="b" id="btnCont" type="button">つづきから</button>
-      <button class="b" id="btnImport" type="button">セーブデータを読み込む</button>
-      <button class="b" type="button" data-act="achv">実績・図鑑</button>
-      <button class="b" type="button" data-act="guide">遊び方</button>
-      <button class="b" type="button" data-act="legacy">引き継ぎスキル</button>
-      <button class="b" type="button" data-act="settings">設定（音量）</button>
-      <button class="b" type="button" data-act="delMenu">セーブデータを消す</button>
+      <div class="tgrid">
+        <button class="b" type="button" data-act="guide">遊び方</button>
+        <button class="b" type="button" data-act="grpRec">実績・引き継ぎ</button>
+        <button class="b" type="button" data-act="settings">設定・セーブ</button>
+        <button class="b" type="button" data-act="grpEtc">感想・その他</button>
+      </div>
       <button class="b tnews" type="button" data-act="news">アップデート情報</button>
-      <button class="b" type="button" data-act="fb">感想・不具合を送る</button>
-      <button class="b ghost" id="btnCredit" type="button">出典・クレジット</button>
+      <button id="btnImport" type="button" hidden>セーブデータを読み込む</button>
+      <button id="btnCredit" type="button" hidden>出典・クレジット</button>
     </div>
     <p class="ver">試作版 v0.3.2 ／ お金の支払い・お店の経営・行動の中身・音量調整を追加</p>
   </section>
@@ -2971,6 +2973,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v1.0.3','2026年10月22日',['タイトル画面のボタンを整理：「遊び方」「実績・引き継ぎ」「設定・セーブ」「感想・その他」の4つにまとめた（「アップデート情報」はそのまま）','「設定・セーブ」に、見た目・音・画面の設定と、セーブデータの読み込み・削除・もしものときの復元をまとめた','「実績・引き継ぎ」に実績・図鑑と引き継ぎスキル、「感想・その他」に感想・不具合を送ると出典・クレジットをまとめた']],
   ['v1.0.2','2026年10月22日',['「アップデート情報」などの、画面の中の一部だけがスクロールする画面でも「▲」「▼」が使えるように','「設定」に画面の明るさ（50〜150%）を追加','画面の色を「見た目のまま／通常（明るい）／ダーク」から選べるように。どの見た目でも使える']],
   ['v1.0.1','2026年10月22日',['設定やメニューなどの画面の上に「✕ 閉じる」ボタンを追加。下まで行かなくても閉じられる','画面の右下に「▲」「▼」ボタンを追加。押すと、いちばん上・いちばん下へ一気に移動する（開いている画面の中でも使える）']],
   ['v1.0','2026年10月22日',['【見た目】設定で5つから選べるように：クラシック／A 高精細ドット／B イラスト／C スマホ画面／D スマホ＋ドット','主人公の見た目が、性別・年齢・肌・髪・服（制服・スーツ・パーカー・エプロンなど）・体調・気分・持ち物・結婚指輪・お金持ちかどうかで変わる。自由に生まれるモードでは髪型・髪の色・肌の色を選べる','場面が行動で変わる（配信・勉強・学校・職場・カフェでデート・公園・家族の食卓・お店・キッチン・秘密基地・寝室など）。昼と夜、季節、天気（雨・雪・桜・紅葉）も変わる','部屋が住まいや時代で変わる（昭和のブラウン管から未来のホログラムまで）。機材・飾り・ペット・記念の楯も部屋に出る。バズ・炎上・誕生日の演出つき','まちの地図、出来事のさし絵、思い出アルバム、タイトル画面、最近の投稿のサムネイルも新しい絵に','【音】音楽を5つから選べるように：クラシック／1 本格チップチューン／2 時代で変わる（昭和は歌謡曲風・平成はJ-POP風・令和はlo-fi・未来はシンセウェーブ）／3 場面で変わる／2＋3 時代×場面','効果音を一新（クラシックにも戻せる）。雨・街・外の環境音（ON/OFF）','投稿の企画（ふつう・ショート・大型企画・ライブ・コラボ）は「発信」タブで決めるように。「予定」は「投稿する」を入れるだけ','流行はジャンルだけに（SNSの流行はなくした）。1〜2年ほど続く。「流行に自動で合わせる」と、流行が変わったら止める設定を追加','倍速のとき、よくある出来事は自動で選んで進むように（大事な出来事だけ止まる）。一生のプレイ時間が短くなった','コラボを申し込めるように。ほかの配信者から誘われることも','スタイルを5つ追加（ゆるく癒し・ガチ解説・バラエティ・エモい物語・流行に全乗り）','フォロワーが減りにくく、伸びやすく。ライバルが伸びすぎないように','機材や暮らしの買い物は、買い足すほど効果が小さくなるように','恋人からのプロポーズ、配偶者からの「子どもがほしい」も起こるように','家族チャンネルを13歳以降もそのまま続けられるように','事務所は研究なしで20歳から作れるように。研究やスキルの「○○を先に」を減らし、まだ解放できないものには、あと何ポイント・何か月かかるかを表示','「予定」タブのいちばん上に「いまできること」を表示。押すとその画面に移る']],
@@ -4954,14 +4957,14 @@ function openModal(html){const m=$('#mcard');m.classList.remove('fixedsize');m.d
   const closable=/data-act="close"/.test(html);
   m.innerHTML=(closable?'<button class="b sm xclose" type="button" data-act="close" aria-label="閉じる">✕ 閉じる</button>':'')+html;
   $('#modal').hidden=false;m.scrollTop=0;const b=m.querySelector('button:not(.xclose)')||m.querySelector('button');if(b)b.focus({preventScroll:true});updScrollBtns()}
-(function(){const box=document.createElement('div');box.id='scrollBtns';box.innerHTML='<button type="button" class="sbtn" data-scr="top" aria-label="いちばん上へ">▲</button><button type="button" class="sbtn" data-scr="bottom" aria-label="いちばん下へ">▼</button>';document.body.appendChild(box)})();
+(function(){const box=document.createElement('div');box.id='scrollBtns';box.hidden=true;box.innerHTML='<button type="button" class="sbtn" data-scr="top" aria-label="いちばん上へ">▲</button><button type="button" class="sbtn" data-scr="bottom" aria-label="いちばん下へ">▼</button>';document.body.appendChild(box)})();
 function scrollTarget(){if($('#modal').hidden)return null;const m=$('#mcard');let best=m,range=m.scrollHeight-m.clientHeight;for(const el of m.querySelectorAll('*')){const r=el.scrollHeight-el.clientHeight;if(r>range+4){const oy=getComputedStyle(el).overflowY;if(oy==='auto'||oy==='scroll'){best=el;range=r}}}return best}
 function updScrollBtns(){const box=$('#scrollBtns');if(!box)return;const t=scrollTarget();let can;
   if(t)can=t.scrollHeight>t.clientHeight+40;else can=document.documentElement.scrollHeight>innerHeight+80;
   box.hidden=!can;box.classList.toggle('inmodal',!!t)}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-scr]');if(!b)return;const t=scrollTarget(),top=b.dataset.scr==='top';const beh=matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth';
   if(t)t.scrollTo({top:top?0:t.scrollHeight,behavior:beh});else window.scrollTo({top:top?0:document.documentElement.scrollHeight,behavior:beh})});
-setInterval(updScrollBtns,600);addEventListener('resize',updScrollBtns);
+setInterval(updScrollBtns,600);setTimeout(updScrollBtns,100);addEventListener('resize',updScrollBtns);
 
 // ===== v1.0.2：画面の明るさ・ダークモード／通常 =====
 var BRIGHT=100,CMODE='theme';try{BRIGHT=+(localStorage.getItem('buzz-bright')||100)||100;CMODE=localStorage.getItem('buzz-cmode')||'theme'}catch(_){}
@@ -4973,4 +4976,12 @@ function screenHtml(){return `<div class="vol"><label class="fld"><span>明る�
 document.addEventListener('input',e=>{if(e.target.dataset&&e.target.dataset.bright){BRIGHT=+e.target.value;try{localStorage.setItem('buzz-bright',String(BRIGHT))}catch(_){}applyScreen();const l=e.target.closest('label');if(l)l.querySelector('span').textContent=`明るさ ${BRIGHT}%`}});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-cmode]');if(!b)return;CMODE=b.dataset.cmode;try{localStorage.setItem('buzz-cmode',CMODE)}catch(_){}applyScreen();reopenSettings()});
 applyScreen();
+
+// ===== v1.0.3：タイトルのボタンをまとめる =====
+function showSettings(){openModal(`<div class="mcat life">設定</div><h2>設定・セーブ</h2><h3>音量</h3>${volHtml()}${soundBtns()}<h3>セーブデータ</h3><div class="mch"><button class="b" type="button" data-act="importT">セーブデータを読み込む</button></div><p class="hint">このブラウザに保存されているデータを消す。消したデータは元に戻せない。</p>${delHtml()}<button class="b pri" type="button" data-act="close">閉じる</button>`)}
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const a=b.dataset.act;
+  if(a==='importT'){showImport();return}
+  if(a==='grpRec'){openModal(`<div class="mcat life">実績・引き継ぎ</div><h2>実績・引き継ぎ</h2><div class="mch"><button class="b" type="button" data-act="achv">実績・図鑑<span class="small muted">（これまでの記録・出来事の図鑑・称号）</span></button><button class="b" type="button" data-act="legacy">引き継ぎスキル<span class="small muted">（すべての人生で有効なスキル）</span></button></div><button class="b pri" type="button" data-act="close">閉じる</button>`);return}
+  if(a==='grpEtc'){openModal(`<div class="mcat life">感想・その他</div><h2>感想・その他</h2><div class="mch"><button class="b" type="button" data-act="fb">感想・不具合を送る</button><button class="b" type="button" data-act="credit">出典・クレジット</button></div><button class="b pri" type="button" data-act="close">閉じる</button>`);return}
+});
 </script>

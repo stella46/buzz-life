@@ -50,14 +50,14 @@ function openModal(html){const m=$('#mcard');m.classList.remove('fixedsize');m.d
   const closable=/data-act="close"/.test(html);
   m.innerHTML=(closable?'<button class="b sm xclose" type="button" data-act="close" aria-label="閉じる">✕ 閉じる</button>':'')+html;
   $('#modal').hidden=false;m.scrollTop=0;const b=m.querySelector('button:not(.xclose)')||m.querySelector('button');if(b)b.focus({preventScroll:true});updScrollBtns()}
-(function(){const box=document.createElement('div');box.id='scrollBtns';box.innerHTML='<button type="button" class="sbtn" data-scr="top" aria-label="いちばん上へ">▲</button><button type="button" class="sbtn" data-scr="bottom" aria-label="いちばん下へ">▼</button>';document.body.appendChild(box)})();
+(function(){const box=document.createElement('div');box.id='scrollBtns';box.hidden=true;box.innerHTML='<button type="button" class="sbtn" data-scr="top" aria-label="いちばん上へ">▲</button><button type="button" class="sbtn" data-scr="bottom" aria-label="いちばん下へ">▼</button>';document.body.appendChild(box)})();
 function scrollTarget(){if($('#modal').hidden)return null;const m=$('#mcard');let best=m,range=m.scrollHeight-m.clientHeight;for(const el of m.querySelectorAll('*')){const r=el.scrollHeight-el.clientHeight;if(r>range+4){const oy=getComputedStyle(el).overflowY;if(oy==='auto'||oy==='scroll'){best=el;range=r}}}return best}
 function updScrollBtns(){const box=$('#scrollBtns');if(!box)return;const t=scrollTarget();let can;
   if(t)can=t.scrollHeight>t.clientHeight+40;else can=document.documentElement.scrollHeight>innerHeight+80;
   box.hidden=!can;box.classList.toggle('inmodal',!!t)}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-scr]');if(!b)return;const t=scrollTarget(),top=b.dataset.scr==='top';const beh=matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth';
   if(t)t.scrollTo({top:top?0:t.scrollHeight,behavior:beh});else window.scrollTo({top:top?0:document.documentElement.scrollHeight,behavior:beh})});
-setInterval(updScrollBtns,600);addEventListener('resize',updScrollBtns);
+setInterval(updScrollBtns,600);setTimeout(updScrollBtns,100);addEventListener('resize',updScrollBtns);
 
 // ===== v1.0.2：画面の明るさ・ダークモード／通常 =====
 var BRIGHT=100,CMODE='theme';try{BRIGHT=+(localStorage.getItem('buzz-bright')||100)||100;CMODE=localStorage.getItem('buzz-cmode')||'theme'}catch(_){}
@@ -69,3 +69,11 @@ function screenHtml(){return `<div class="vol"><label class="fld"><span>明る�
 document.addEventListener('input',e=>{if(e.target.dataset&&e.target.dataset.bright){BRIGHT=+e.target.value;try{localStorage.setItem('buzz-bright',String(BRIGHT))}catch(_){}applyScreen();const l=e.target.closest('label');if(l)l.querySelector('span').textContent=`明るさ ${BRIGHT}%`}});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-cmode]');if(!b)return;CMODE=b.dataset.cmode;try{localStorage.setItem('buzz-cmode',CMODE)}catch(_){}applyScreen();reopenSettings()});
 applyScreen();
+
+// ===== v1.0.3：タイトルのボタンをまとめる =====
+function showSettings(){openModal(`<div class="mcat life">設定</div><h2>設定・セーブ</h2><h3>音量</h3>${volHtml()}${soundBtns()}<h3>セーブデータ</h3><div class="mch"><button class="b" type="button" data-act="importT">セーブデータを読み込む</button></div><p class="hint">このブラウザに保存されているデータを消す。消したデータは元に戻せない。</p>${delHtml()}<button class="b pri" type="button" data-act="close">閉じる</button>`)}
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const a=b.dataset.act;
+  if(a==='importT'){showImport();return}
+  if(a==='grpRec'){openModal(`<div class="mcat life">実績・引き継ぎ</div><h2>実績・引き継ぎ</h2><div class="mch"><button class="b" type="button" data-act="achv">実績・図鑑<span class="small muted">（これまでの記録・出来事の図鑑・称号）</span></button><button class="b" type="button" data-act="legacy">引き継ぎスキル<span class="small muted">（すべての人生で有効なスキル）</span></button></div><button class="b pri" type="button" data-act="close">閉じる</button>`);return}
+  if(a==='grpEtc'){openModal(`<div class="mcat life">感想・その他</div><h2>感想・その他</h2><div class="mch"><button class="b" type="button" data-act="fb">感想・不具合を送る</button><button class="b" type="button" data-act="credit">出典・クレジット</button></div><button class="b pri" type="button" data-act="close">閉じる</button>`);return}
+});

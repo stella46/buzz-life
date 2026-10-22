@@ -319,6 +319,8 @@ body.mode-dark:is(.th-illust,.th-phone){--bg:#0f1115;--bg2:#16181f;--panel:#1c1f
 body.mode-dark.th-classic{--bg:#0d0e1f;--bg2:#14162e;--panel:#1a1c3c;--panel2:#22254a}
 body.mode-dark.th-pixel{--bg:#0a0b1c;--bg2:#12142e;--panel:#181a42;--panel2:#20235a}
 @media (min-width:701px){body.mode-dark.th-phone{background:linear-gradient(135deg,#1a1d29,#2a1f3a)}body.mode-light.th-hybrid{background:linear-gradient(135deg,#ffe3ec,#e3f0ff)}}
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tgrid .b{padding-inline:6px}
 </style>
 
 <div id="app">
@@ -331,15 +333,15 @@ body.mode-dark.th-pixel{--bg:#0a0b1c;--bg2:#12142e;--panel:#181a42;--panel2:#202
     <div class="tmenu">
       <button class="b pri" id="btnNew" type="button">はじめから（ランダムに生まれる）</button>
       <button class="b" id="btnCont" type="button">つづきから</button>
-      <button class="b" id="btnImport" type="button">セーブデータを読み込む</button>
-      <button class="b" type="button" data-act="achv">実績・図鑑</button>
-      <button class="b" type="button" data-act="guide">遊び方</button>
-      <button class="b" type="button" data-act="legacy">引き継ぎスキル</button>
-      <button class="b" type="button" data-act="settings">設定（音量）</button>
-      <button class="b" type="button" data-act="delMenu">セーブデータを消す</button>
+      <div class="tgrid">
+        <button class="b" type="button" data-act="guide">遊び方</button>
+        <button class="b" type="button" data-act="grpRec">実績・引き継ぎ</button>
+        <button class="b" type="button" data-act="settings">設定・セーブ</button>
+        <button class="b" type="button" data-act="grpEtc">感想・その他</button>
+      </div>
       <button class="b tnews" type="button" data-act="news">アップデート情報</button>
-      <button class="b" type="button" data-act="fb">感想・不具合を送る</button>
-      <button class="b ghost" id="btnCredit" type="button">出典・クレジット</button>
+      <button id="btnImport" type="button" hidden>セーブデータを読み込む</button>
+      <button id="btnCredit" type="button" hidden>出典・クレジット</button>
     </div>
     <p class="ver">試作版 v0.3.2 ／ お金の支払い・お店の経営・行動の中身・音量調整を追加</p>
   </section>

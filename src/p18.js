@@ -279,7 +279,7 @@ function drawRoom(){if(sceneStyle()==='classic')return drawRoomClassic();fr++;
   G.alpha(.85,()=>{G.R(4,184,96,13,'#000000',{r:3,o:false})});G.T(SCENE_N[m.loc]||'',8,194,'#ffffff',9);
   const lab=`${S.m}月 ${SEASON_N[m.se]} ${['park','base'].includes(m.loc)||true?WEA_N[m.w]:''}`;G.alpha(.85,()=>{G.R(236,184,80,13,'#000000',{r:3,o:false})});G.T(lab,312,194,'#ffffff',9,'right');
   drawFx()}
-let lastT2=0;function loop(t){const iv=sceneStyle()==='classic'?110:40;if(t-lastT2>iv){lastT2=t;try{drawRoom()}catch(err){}try{if(!$('#scrTitle').hidden&&sceneStyle()!=='classic')drawLogo()}catch(_){}}requestAnimationFrame(loop)}
+let lastT2=0;function loop(t){const iv=sceneStyle()==='classic'?110:(speed>=2||skipping?70:40);if(t-lastT2>iv){lastT2=t;try{drawRoom()}catch(err){}try{if(!$('#scrTitle').hidden&&sceneStyle()!=='classic')drawLogo()}catch(_){}}requestAnimationFrame(loop)}
 
 // ----- タイトルのロゴ -----
 function drawLogo(){if(sceneStyle()==='classic')return drawLogoClassic();const cv=$('#logoCv'),st=sceneStyle(),k=st==='illust'?3:2;if(cv.width!==160*k){cv.width=160*k;cv.height=80*k}cv.style.imageRendering=st==='illust'?'auto':'pixelated';

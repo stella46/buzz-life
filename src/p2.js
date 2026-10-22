@@ -138,7 +138,7 @@ function offersCh(edu){
   const o=S.offers||[];
   return o.map(j=>[`${j.n}（月給 ${num(j.sal)}円）`,()=>{S.st='work';S.job=j.n;S.salary=j.sal;S.edu=edu;S.offers=null;delete S.flags.ronin;tl(j.n+'として就職');ad('happy',3);return `${j.n}として働き始めた。毎月${num(j.sal)}円の給料が入る。仕事の時間は自動で使われる。`}]);
 }
-function wed(c,h){ad('money',-c);ad('happy',h);S.spouse=S.partner;S.spouse.role='配偶者';S.spouse.inc=RI(14,28)*10000;S.partner=null;S.indep=1;tl(S.spouse.name+'と結婚した');return 'ふたりの新しい生活が始まった。家計はふたりで支え合う。'}
+function wed(c,h){if(!S.partner)return 'その話は、いつの間にか立ち消えになった。';ad('money',-c);ad('happy',h);S.spouse=S.partner;S.spouse.role='配偶者';S.spouse.inc=RI(14,28)*10000;S.partner=null;S.indep=1;tl(S.spouse.name+'と結婚した');return 'ふたりの新しい生活が始まった。家計はふたりで支え合う。'}
 function divorce(){tl(S.spouse.name+'と離婚した');S.spouse=null;ad('happy',-12);ad('mental',-8);ad('money',-Math.round(Math.max(0,S.money)*.3),'loss');return '離婚が成立した。財産の一部を分けた。'}
 
 // ===== 出来事 =====

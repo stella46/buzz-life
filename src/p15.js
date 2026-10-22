@@ -30,7 +30,7 @@ RES.push(
   {id:'long_k',cat:'life',n:'長寿の研究',c:260,d:'病気や寿命のリスクが15%下がる',req:'health_k'}
 );
 for(const r of RES)if(r.base==null)r.base=r.c;
-function applyResCost(){const m=lg('g10')?.85:1;for(const r of RES)r.c=Math.round(r.base*m)}
+function applyResCost(){const m=(lg('g10')?.85:1)*.65;for(const r of RES)r.c=Math.round(r.base*m)}
 const RLV=[['sns','発信の研究','SNSの伸び+2%（1段ごと）'],['biz','経営の研究','お店のお客さん・会社の利益+2%（1段ごと）'],['life','暮らしの研究','毎月の健康とメンタルの回復+0.05（1段ごと）']];
 const rlv=k=>(S&&S.resLv&&S.resLv[k])||0;
 const rlvCost=k=>Math.round(120*Math.pow(1.35,rlv(k))*(lg('g10')?.85:1));

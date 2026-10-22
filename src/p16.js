@@ -93,7 +93,7 @@ function tabbedModal(kind,cat,title,tabs,cur,body,foot){const m=$('#mcard');
   openModal(`<div class="mcat life">${esc(cat)}</div><h2>${esc(title)}</h2><div class="subtabs">${tabsHtml}</div><div class="fbody">${body}</div>${foot||''}<button class="b pri" type="button" data-act="close">閉じる</button>`);
   m.classList.add('fixedsize');m.dataset.kind=kind}
 function showGuide(k){const cur=GUIDE.find(g=>g[0]===k)||GUIDE[0];
-  const body=`<h3>${esc(cur[1])}</h3>${cur[0]==='time'?timeHtml():`<p class="mtext guide">${esc(cur[2])}</p>`}${cur[0]==='fb'?'<div class="row"><button class="b" type="button" data-act="fb">感想・不具合を送る</button></div>':''}`;
+  const body=`<h3>${esc(cur[1])}</h3>${cur[0]==='time'?timeHtml():`<p class="mtext guide">${esc(cur[2])}</p>`}${cur[0]==='fb'?'<div class="row"><button class="b" type="button" data-act="fb">感想・不具合を送る</button></div>':''}${cur[0]==='basic'?'<div class="row"><button class="b pri" type="button" data-act="tutRestart">チュートリアルをする</button></div>':''}`;
   tabbedModal('guide','遊び方','遊び方',GUIDE.map(g=>[g[0],g[1],'data-guide']),cur[0],body)}
 function showNews(tabk){const t=tabk||'new';const web=/^https?:$/.test(location.protocol)&&!/claude/.test(location.hostname);let body='';
   if(t==='new')body=`<p class="hint">いま遊んでいるのは最新の ${esc(CUR_VER)}。新しい版が出ると自動で入れかわる（何もしなくてOK）。</p><div class="news">${CHANGELOG.map(([v,d,items],i)=>`<section class="nv ${i===0?'cur':''}"><div class="hd"><b>${esc(v)}</b><span class="muted small">${esc(d)}</span>${i===0?'<span class="chip up">いまの版</span>':''}</div><ul>${items.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></section>`).join('')}</div>`;

@@ -157,7 +157,7 @@ function birthday(a){
   log(`${a}歳の誕生日`,'life');
   bgmUpdate();
 }
-function deathCheck(){const h=S.p.health;let m=h<15?5:h<30?2.5:h<50?1.4:h>85?.85:1;if(S.flags.cancer==='untreated')m*=6;else if(S.flags.cancer==='treat')m*=1.8;const a=S.am/12;const cm=a<5?S.cty.child:S.cty.life;return chance(Math.min(.9,qx(a,S.g)*cm*DF().mort*mortMul())/12*m)}
+function deathCheck(){const h=S.p.health;let m=h<15?5:h<30?2.5:h<50?1.4:h>85?.85:1;if(S.flags.cancer==='untreated')m*=6;else if(S.flags.cancer==='treat')m*=1.8;const a=S.am/12;const cm=a<5?S.cty.child:S.cty.life;return chance(Math.min(.9,qx(a,S.g)*cm*DF().mort*mortMul()*spendMort())/12*m)}
 
 // ===== 新しい人生 =====
 let LASTOPT={stage:'nipporia',diff:'normal',endless:0,cty:null};
@@ -266,7 +266,7 @@ function showEnding(){
   const el=$('#scrEnd');
   el.innerHTML=`<div class="head"><p class="muted">${esc(S.y)}年${esc(S.m)}月 ／ ${esc(ctry())}${(S.gen||1)>1?` ／ ${S.gen}代目`:''}</p><h1>${esc(S.name)}の人生</h1><p>享年 ${age()}歳 ／ ${esc(S.cause)}</p><span class="ttl">${esc(ts[0])}</span><p class="muted small">${ts.slice(1).map(esc).join('・')}</p></div>
   ${S.endless?`<div class="card"><h3>家系をつなぐ</h3>${heirs.length?`<p class="hint">子どもの一人として人生を続けられる。お金・事務所・まち・研究は引き継がれる。</p><div class="row">${heirs.map((c,i)=>`<button class="b pri" type="button" data-heir="${i}">${esc(c.name)}（${Math.floor((S.am-c.born)/12)}歳）として続ける</button>`).join('')}</div>`:'<p class="hint">跡を継ぐ子どもがいないため、この家系はここで終わる。</p>'}</div>`:''}
-  <div class="egrid">${S.lpGain?`<div class="card"><span>引き継ぎポイント</span><div class="big">+${S.lpGain}</div></div>`:''}
+  <div class="egrid">${S.lpGain?`<div class="card"><span>引き継ぎポイント</span><div class="big">+${S.lpGain}</div></div>`:''}<div class="card"><span>この人生のプレイ時間</span><div class="big">${fmtDur(S.lifeMs)}</div></div>
     <div class="card"><span>スコア</span><div class="big">${sc.toLocaleString()}</div></div>
     <div class="card"><span>最高フォロワー</span><div class="big">${num(st.maxF)}人</div></div>
     <div class="card"><span>最高資産</span><div class="big">${yen(st.maxM)}</div></div>
@@ -485,7 +485,7 @@ function showAch(){
   <h3>集めた称号</h3><p class="small">${Object.keys(META.titles).map(esc).join('・')||'まだない'}</p>
   <button class="b pri" type="button" data-act="close">閉じる</button>`);
 }
-function initTitle(){applyTitle();const has2=!!loadSaved();$('#btnCont').disabled=!has2;$('#btnCont').textContent=has2?'つづきから':'つづきから（セーブなし）'}
+function initTitle(){applyTitle();try{contInfo()}catch(_){}const has2=!!loadSaved();$('#btnCont').disabled=!has2;$('#btnCont').textContent=has2?'つづきから':'つづきから（セーブなし）'}
 
 // ===== v0.2 の操作 =====
 document.addEventListener('click',e=>{

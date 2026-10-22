@@ -75,7 +75,7 @@ function turn(){
   ensurePlan();
   if(age()<6){ad('happy',1*k);ad('tal.'+pick(TALK),.9*k);ad('social',.3*k)}
   else S.plan.forEach((a,i)=>{const ac=ACT[a];if(!ac||!ac.ok())return;const os=ac.opts?ac.opts.filter(o=>!o.ok||o.ok()):null;const o=os&&os.length?(os.find(x=>x.k===S.planOpt[i])||os[0]):null;
-    try{actHook(a,o)}catch(_){}if(a==='post'){POPT=postPlanNow();doPost(k);POPT='normal'}else if(o&&o.f)o.f(k);else ac.f(k)});
+    try{actHook(a,o)}catch(_){}if(a==='post'){postAll(k)}else if(o&&o.f)o.f(k);else ac.f(k)});
   if(S.st==='school'){ad('know',1.1*k);ad('social',.4*k)}
   else if(S.st==='univ'){ad('know',1.3*k);ad('social',.4*k)}
   else if(S.st==='work'){ad('know',.3*k);ad('mental',-.5*k)}
@@ -93,7 +93,7 @@ function turn(){
   while(S.q.length&&!ev){const e=EV[S.q.shift()];if(e&&(!e.when||e.when()))ev=e}
   let rolled=false;if(!ev){ev=rollEvent(S.unit==='season'?3:k);rolled=!!ev}
   if(ev&&rolled&&autoEvOk(ev)){autoChoose(ev);ev=null}
-  save();render();
+  save();if(ev||(speed<2&&!skipping))render();else renderSoon();
   if(ev)showEvent(ev);
 }
 
@@ -103,7 +103,7 @@ function doPost(k){
   const key=S.main,sn=SNS[key],f=S.f[key],st=STYLES[S.style]||STYLES.norm,D=DF();
   const m={q:0,disc:1,posts:1,rpm:1,buzz:1,conv:1,tired:1};
   if(POPT==='short'){m.q=-8;m.disc=1.4*(key==='patto'?1.2:1);m.posts=1.5;m.rpm=.4}
-  if(POPT==='big'){const c=Math.round(50000*k*ci());if(S.money>=c){outc('shop',c);m.q=12;m.posts=.5;m.buzz=2.2;m.tired=1.3}}
+  if(POPT==='big'){const c=Math.round(50000*k*ci()*(svcOn('studio')?0:1));if(S.money>=c){if(c)outc('shop',c);m.q=12;m.posts=.5;m.buzz=2.2;m.tired=1.3}}
   if(POPT==='live'){m.posts=.5;m.conv=.8;m.tired=1.2;const tip=Math.round(totalF()*R(.02,.08)*(has('live')?2:1)*ci()*k);if(tip>0)inc('tip',tip);ad('social',.6*k);for(const n of S.friends)rel(n,.2*k)}
   if(POPT==='collab'){m.disc=1.3;m.conv=1.2;collabGain(key,k)}
   const q=clamp(postQuality()+m.q+(S.subs&&S.subs.editsoft?2:0)+(has('ai_edit')?4:0)+styleQ(),1,100);
@@ -126,7 +126,7 @@ function doPost(k){
   for(const s in (GENRES[S.genre]||GENRES.talk).w)if(s!=='know')ad(s,.25*k);
   if(buzzed){S.mo.buzz++;S.stats.buzz++;log(`投稿がバズった！ ${num(views)}回再生`,'sns');pop('バズった！','f');snd('buzz');if(S.stats.buzz===1)tl('初めてバズった')}
   const fp=(.0005+st.fl+Math.max(0,60-S.p.rep)/8000)*sn.flame*k*(f>300?1:.2)*D.flame*(S.cty.flame||1)*(POPT==='live'?1.4:1)*flameMul();
-  if(chance(fp)&&!S.q.includes('flame')&&!(S.cd.flame!=null&&S.am-S.cd.flame<6)){S.q.push('flame');S.mo.flame++}
+  if(chance(fp)&&!SUBPOST&&!S.q.includes('flame')&&!(S.cd.flame!=null&&S.am-S.cd.flame<6)){S.q.push('flame');S.mo.flame++}
   if(S.flags.noSide&&S.st==='work'&&chance(.03*k)&&!S.q.includes('w_fired'))S.q.push('w_fired');
 }
 
@@ -257,11 +257,11 @@ function endMonth(){
   if(S.m===4&&S.st==='work')S.salary=Math.round(S.salary*1.02);
   if(S.m===1){S.taxBase=S.yInc;S.yInc=0}
   if(S.m===3&&age()>=18&&S.taxBase>=(S.st==='work'?200000:480000)*c){if(S.flags.taxAuto){bill('tax','所得税（確定申告）',S.taxBase*.15*(has('tax_k')?.85:1));log('確定申告をした。税金の請求書が届いた','life')}else S.q.push('tax')}
-  withTown(homeTown(),()=>{monthSys();monthHook();monthHook7();monthHook8();monthHook10()});
+  withTown(homeTown(),()=>{monthSys();monthHook();monthHook7();monthHook8();monthHook10();monthHook11()});
   if(a<18&&S.money<0){S.money=0;log('足りない分は家族が払ってくれた','life')}
   drift();
   for(const key in S.f){if(!S.open[key])continue;const posted=S.mo.posts>0&&key===S.main;S.f[key]*=posted?.996:.99}
-  if(S.rival)S.rival.f=Math.round(clamp(S.rival.f*(1+R(-.004,.02)*(1-S.rival.f/2e6)*(S.rival.f>totalF()*2.5+3000?.15:1))+R(3,60),0,2e6));
+  rivalTick();
   for(const key in S.f)S.f[key]=Math.min(S.f[key],SNS[key].cap);
   if(S.am>=S.trend.until)newTrend();
   if(S.algo>0)S.algo--;
@@ -370,7 +370,7 @@ function panelSns(){
   return h+snsExtra();
 }
 function panelMoneyAdult(){
-  const sub=SUB.money;let h=subTabs('money',[['bills','家計',S.bills.length||''],['shop','買い物'],['room','部屋の飾り'],['bank','投資・借入']]);
+  const sub=SUB.money;let h=subTabs('money',[['bills','家計',S.bills.length||''],['spend','使い道'],['shop','買い物'],['room','部屋の飾り'],['bank','投資・借入']]);
   const c=Math.max(.2,S.cty.inc);
   if(sub==='bills'){
     h+=`<div class="kv big2"><span>所持金</span><span>${yen(S.money)}</span><span>未払いの請求</span><span>${yen(billTotal())}</span></div>`;
@@ -396,6 +396,7 @@ function panelMoneyAdult(){
     h+='</div>';
   }
   else if(sub==='room')h+=decoPanel();
+  else if(sub==='spend')h+=spendHtml();
   else if(sub==='bank'){
     const a=age();
     h+=`<h3>投資</h3><div class="kv"><span>投資の残高</span><span>${yen(S.inv)}</span></div><p class="hint">毎月値動きする。長く持つほど増えやすいが、減ることもある。</p><div class="row"><button class="b sm" type="button" data-inv="100000" ${S.money<100000*c||a<18?'disabled':''}>${yen(100000*c)} 入れる</button><button class="b sm" type="button" data-inv="1000000" ${S.money<1000000*c||a<18?'disabled':''}>${yen(1000000*c)} 入れる</button><button class="b sm" type="button" data-inv="-1" ${S.inv<=0?'disabled':''}>全部引き出す</button></div>`;
@@ -411,7 +412,7 @@ function panelBiz(){
   const shops=S.town.tiles.filter(t=>SHOP[t.t]).length;
   let h=subTabs('biz',[['town','まちの地図'],['shop','お店の経営',shops||''],['co','会社',(S.cos||[]).length||''],['office','事務所'],['res','研究',researchReady()?'!':'']]);
   const sub=SUB.biz;
-  if(sub==='town'){h+=townPanel();const t=S.town.tiles[S.town.sel];if(t&&SHOP[t.t])h+=`<div class="row"><button class="b sm pri" type="button" data-goto="biz:shop">このお店を経営する</button></div>`;h+=townExtra()+devHtml()}
+  if(sub==='town'){h+=townPanel();const t=S.town.tiles[S.town.sel];if(t&&SHOP[t.t])h+=`<div class="row"><button class="b sm pri" type="button" data-goto="biz:shop">このお店を経営する</button></div>`;h+=townAutoHtml()+townExtra()+devHtml()}
   else if(sub==='shop')h+=shopsPanel();
   else if(sub==='co')h+=coHtml();
   else if(sub==='office')h+=officePanel();

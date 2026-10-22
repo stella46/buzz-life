@@ -43,7 +43,7 @@ function lookFieldsHtml(){return `<label class="fld"><span>髪型</span><select 
 // ----- はじめに -----
 applyGfx();
 // 最初の1回だけ、見た目と音が変わったことを知らせる
-try{if(!localStorage.getItem('buzz-v1-notice')){localStorage.setItem('buzz-v1-notice','1');setTimeout(()=>{if(!S)openModal(`<div class="mcat life">v1.0</div><h2>見た目と音が新しくなりました</h2><p class="mtext">いまは「D スマホ＋ドット」と「2＋3 時代×場面」の音楽になっています。\n「設定」から、見た目（5種類）・音楽（5種類）・効果音・環境音を自由に切りかえられます。今までの見た目と音は「クラシック」で選べます。</p><div class="mch"><button class="b pri" type="button" data-act="settings">設定を開く</button><button class="b" type="button" data-act="close">このまま遊ぶ</button></div>`)},600)}}catch(_){}
+try{if(!localStorage.getItem('buzz-v1-notice')&&['done','never'].includes(localStorage.getItem('buzz-tut'))){localStorage.setItem('buzz-v1-notice','1');setTimeout(()=>{if(!S)openModal(`<div class="mcat life">v1.0</div><h2>見た目と音が新しくなりました</h2><p class="mtext">いまは「D スマホ＋ドット」と「2＋3 時代×場面」の音楽になっています。\n「設定」から、見た目（5種類）・音楽（5種類）・効果音・環境音を自由に切りかえられます。今までの見た目と音は「クラシック」で選べます。</p><div class="mch"><button class="b pri" type="button" data-act="settings">設定を開く</button><button class="b" type="button" data-act="close">このまま遊ぶ</button></div>`)},600)}}catch(_){}
 
 // ===== v1.0.1：画面の上の「閉じる」と、上・下へ一気に移動するボタン =====
 function openModal(html){const m=$('#mcard');m.classList.remove('fixedsize');m.dataset.kind='';
@@ -74,7 +74,7 @@ applyScreen();
 function showSettings(){openModal(`<div class="mcat life">設定</div><h2>設定・セーブ</h2><h3>音量</h3>${volHtml()}${soundBtns()}<h3>セーブデータ</h3><div class="mch"><button class="b" type="button" data-act="importT">セーブデータを読み込む</button></div><p class="hint">このブラウザに保存されているデータを消す。消したデータは元に戻せない。</p>${delHtml()}<button class="b pri" type="button" data-act="close">閉じる</button>`)}
 document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const a=b.dataset.act;
   if(a==='importT'){showImport();return}
-  if(a==='grpRec'){openModal(`<div class="mcat life">実績・引き継ぎ</div><h2>実績・引き継ぎ</h2><div class="mch"><button class="b" type="button" data-act="achv">実績・図鑑<span class="small muted">（これまでの記録・出来事の図鑑・称号）</span></button><button class="b" type="button" data-act="legacy">引き継ぎスキル<span class="small muted">（すべての人生で有効なスキル）</span></button></div><button class="b pri" type="button" data-act="close">閉じる</button>`);return}
+  if(a==='grpRec'){openModal(`<div class="mcat life">実績・引き継ぎ</div><h2>実績・引き継ぎ</h2><div class="mch"><button class="b" type="button" data-act="achv">実績・図鑑<span class="small muted">（これまでの記録・出来事の図鑑・称号）</span></button><button class="b" type="button" data-act="legacy">引き継ぎスキル<span class="small muted">（すべての人生で有効なスキル）</span></button><button class="b" type="button" data-act="playRec">プレイ時間の記録</button></div><button class="b pri" type="button" data-act="close">閉じる</button>`);return}
   if(a==='grpEtc'){openModal(`<div class="mcat life">感想・その他</div><h2>感想・その他</h2><div class="mch"><button class="b" type="button" data-act="fb">感想・不具合を送る</button><button class="b" type="button" data-act="credit">出典・クレジット</button></div><button class="b pri" type="button" data-act="close">閉じる</button>`);return}
 });
 

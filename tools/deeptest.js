@@ -11,7 +11,7 @@ const { chromium } = require('playwright');
     const out=[],bad=[];const note=(m)=>{if(bad.length<40)bad.push(m)};
     function scan(o,path,d){if(d>4||o==null)return;if(typeof o==='number'){if(!isFinite(o))note('NaN '+path);return}if(typeof o!=='object')return;for(const k in o){if(k==='log'||k==='hist'||k==='tl'||k==='album')continue;scan(o[k],path+'.'+k,d+1)}}
     const stages=['nipporia','japan','world','fantasy'],diffs=['easy','normal','hard','real'],eras=['now','past','future','pick'];
-    speed=2;let evShown=0,yrs=0;const _show=showEvent;showEvent=function(e){evShown++;if(S&&age()<18&&curEv==null){}return _show(e)};
+    speed=2;let evShown=0;window.EVC={},yrs=0;const _show=showEvent;showEvent=function(e){evShown++;EVC[e.id]=(EVC[e.id]||0)+1;if(S&&age()<18&&curEv==null){}return _show(e)};
     for(let run=0;run<runs;run++){
       const era=eras[(run+seed0)%4];const yearIn=String(1940+Math.floor(Math.random()*160));
       GFX=['pixel','illust','phone','hybrid','classic'][run%5];applyGfx();newGame({era,yearIn,stage:stages[(run+seed0)%4],diff:diffs[Math.floor(run/4+seed0)%4],endless:run%3===0?1:0});
@@ -24,7 +24,7 @@ const { chromium } = require('playwright');
         if(it%37===0)scan(S,'S',0);
         if(!S.alive){ if(S.endless&&S.kids.length&&gens<2){gens++;try{continueAsChild(0,false)}catch(e){note('cont '+e.message)}continue} break;}
         if(modalOpen()){if(curEv){if(age()<18&&curEv.chs.some(c=>/借りる|消費者金融|ローン/.test(c[0])))kidLoan++;choose(Math.floor(Math.random()*curEv.chs.length))}const ok=document.querySelector('[data-act="evok"]');if(ok)evOk();else if(modalOpen()){if(!curEv&&!document.querySelector('#mcard [data-act="close"]')&&!document.querySelector('#mcard button'))stuck++;closeModal()}continue}
-        speed=2;S.auto=Math.random()<.9?1:0;S.autopay=run%2?1:0;if(!S.autopay&&Math.random()<.9)payAll();
+        speed=2;S.auto=Math.random()<.9?1:0;S.autopay=1;
         try{
         S.plan.forEach((a,i)=>{const ac=ACT[a];if(ac&&ac.opts){const os=ac.opts.filter(o=>!o.ok||o.ok());if(os.length)S.planOpt[i]=pick(os).k}});
         applyResCost();if(Math.random()<.1){try{rlvBuy(pick(['sns','biz','life']))}catch(e){note('rlv '+e.message)}}for(const rr of RES){if(!has(rr.id)&&(!rr.req||has(rr.req))&&(!rr.year||S.y>=rr.year)&&S.rp>=rr.c){S.rp-=rr.c;S.res[rr.id]=1;cnt('res');break}}
@@ -52,6 +52,11 @@ const { chromium } = require('playwright');
         for(const c of S.cos){const up=COS[c.k].c*c.lv*Math.max(.2,S.cty.inc);if(c.lv<8&&S.money>up*5&&Math.random()<.02){outc('co',up);c.cap+=COS[c.k].c*c.lv;c.lv++}}
         if(a>=25&&allTowns().length<=TOWN_MAX&&Math.random()<.005){const d=pick(DEVS.filter(x=>!x.year||S.y>=x.year));if(S.money>d.cost*3*Math.max(.2,S.cty.inc)){devTown(d.k);cnt('town')}}
         if(S.towns2.length&&Math.random()<.03){switchTown(pick(S.towns2))}
+        if(Math.random()<.05){const it=pick(SPEND);if(spendOk(it)&&S.money>spCost(it)*3){doSpend(it.k);cnt('spend')}}
+        if(S.snsOpen&&totalF()>=500&&(S.subch||[]).length<2&&Math.random()<.01){if(!S.subch)S.subch=[];S.subch.push({id:'c'+S.am,name:'テスト',genre:S.genre,style:'norm',plan:'normal',f:100,core:.08,anti:.01});cnt('sub')}
+        if(a>=20&&Math.random()<.01){S.town.auto=S.town.auto||{b:5e6};S.town.auto.on=1}
+        if(Math.random()<.01){S.town.tiles.forEach(t=>{if(SHOP[t.t])t.mgr=1})}
+        if(Math.random()<.01)upgradeAll(S.money*.5);
         }catch(e){note('act '+e.message+' '+(e.stack||'').split('\n')[1])}
         if(modalOpen()&&!curEv){const ok=document.querySelector('[data-act="evok"]');if(ok)evOk();else closeModal()}
         if(age()<18&&S.money<0)note('minor negative money '+S.money);
@@ -61,14 +66,14 @@ const { chromium } = require('playwright');
       yrs+=S.am/12;
       // legacy purchase between lives
       legState();for(const x of LEG){try{legBuy(x.id)}catch(e){note('leg '+e.message)}}if(modalOpen())closeModal();
-      out.push({rv:S.rival?Math.round(S.rival.f):0,auto:S.stats.autoEv||0,y0,era,ctry:S.cty.n,age:age(),gen:S.gen||1,F:Math.round(S.stats.maxF),M:Math.round(S.stats.maxM/1e8)+'億',core:+S.fanCore.toFixed(2),res:RES.filter(r=>has(r.id)).length,sp:S.sp,skt:Object.keys(S.skt||{}).length,lp:META.leg.lp,legN:Object.keys(META.leg.nodes).length,co:S.cos.length,towns:allTowns().length,loads,kidLoan,stuck,it});
+      out.push({sub:(S.subch||[]).map(c=>Math.round(c.f)).join('/'),coll:(S.coll||[]).length,acts:JSON.stringify(acts),rv:S.rival?Math.round(S.rival.f):0,auto:S.stats.autoEv||0,y0,era,ctry:S.cty.n,age:age(),gen:S.gen||1,F:Math.round(S.stats.maxF),M:Math.round(S.stats.maxM/1e8)+'億',core:+S.fanCore.toFixed(2),res:RES.filter(r=>has(r.id)).length,sp:S.sp,skt:Object.keys(S.skt||{}).length,lp:META.leg.lp,legN:Object.keys(META.leg.nodes).length,co:S.cos.length,towns:allTowns().length,loads,kidLoan,stuck,it});
     }
     // UI flows
     try{showGuide('basic');for(const g of GUIDE)showGuide(g[0]);closeModal();showLegacy();closeModal();fbForm(null);closeModal();showSetup();for(const v of ['now','past','future','pick']){document.querySelector('#suEra').value=v;setupNotes()}closeModal()}catch(e){note('ui '+e.message)}
-    return {out,bad,evPerYear:(evShown/yrs).toFixed(2),rec:META.rec,leg:META.leg};
+    return {top:Object.entries(EVC).sort((a,b)=>b[1]-a[1]).slice(0,12),out,bad,evPerYear:(evShown/yrs).toFixed(2),rec:META.rec,leg:META.leg};
   },[runs,seed0]);
   for(const o of r.out)console.log(JSON.stringify(o));
   console.log('evPerYear',r.evPerYear,'rec',JSON.stringify(r.rec),'leg',JSON.stringify(r.leg));
-  console.log('BAD',r.bad);console.log('ERRS',errs.slice(0,20),errs.length);
+  console.log('TOP',JSON.stringify(r.top));console.log('BAD',r.bad);console.log('ERRS',errs.slice(0,20),errs.length);
   await b.close();
 })();

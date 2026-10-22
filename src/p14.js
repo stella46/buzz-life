@@ -97,10 +97,10 @@ function homeTown(){return allTowns().find(t=>t.home)||S.town}
 function withTown(T,fn){if(!T||T===S.town)return fn();const i=S.towns2.indexOf(T);if(i<0)return fn();const cur=S.town;S.towns2[i]=cur;S.town=T;try{return fn()}finally{S.towns2[i]=T;S.town=cur}}
 function switchTown(T){const i=S.towns2.indexOf(T);if(i<0)return;S.towns2[i]=S.town;S.town=T}
 const townName=T=>T.nm||S.region.n;
-function devTown(k,nm){const d=DEVS.find(x=>x.k===k);const c=Math.round(d.cost*Math.max(.2,S.cty.inc)*devCostMul());if(S.money<c||allTowns().length>TOWN_MAX)return;
+function devTown(k,nm){const tpk=($('#devTpl')||{}).value||'none';const d=DEVS.find(x=>x.k===k);const c=Math.round(d.cost*Math.max(.2,S.cty.inc)*devCostMul()*(TPL[tpk]||TPL.none).m);if(S.money<c||allTowns().length>TOWN_MAX)return;
   outc('dev',c);const T=newTown(d.rt);T.tiles.forEach(t=>{if(t.t==='house'&&chance(.55))t.t='empty'});T.nm=(nm||'').trim().slice(0,10)||d.n;T.rt=d.rt;T.kind=k;T.bonus=(T.bonus||0)+(d.tour||0)*4;T.support=50;T.reqs=[];T.sel=-1;
   if(d.tour)for(let j=0;j<d.tour;j++){const i=T.tiles.findIndex(t=>t.t==='empty');if(i>=0)T.tiles[i]={t:'tourism',lv:1}}
-  S.towns2.push(T);switchTown(T);S.town.dev=calcDev();tl(`新しいまち「${T.nm}」の開発を始めた`);ticker(`${S.name}が新しいまち「${T.nm}」の開発に着手`);ad('rep',3);snd('buy');save();render()}
+  S.towns2.push(T);switchTown(T);applyTpl(tpk);S.town.dev=calcDev();tl(`新しいまち「${T.nm}」の開発を始めた`);ticker(`${S.name}が新しいまち「${T.nm}」の開発に着手`);ad('rep',3);snd('buy');save();render()}
 function otherTownsMonth(){const home=homeTown();let tot=0;
   for(const T of allTowns()){if(T===home)continue;withTown(T,()=>{let pr=0;S.town.tiles.forEach((t,i)=>{const b=BLD[t.t];if(!b)return;if(SHOP[t.t])pr+=shopCalc(i,true).profit;else pr+=Math.round(b.inc*t.lv*S.cty.inc*ecoMul()*popMul())});
     S.town.dev=calcDev();S.town.support=clamp((S.town.support||50)+(50-(S.town.support||50))*.02+S.town.dev/400);tot+=pr;const d=DEVS.find(x=>x.k===S.town.kind);if(d)bill('dev','まちの管理費（'+townName(S.town)+'）',d.cost*.0025*Math.max(.2,S.cty.inc)*(has('town_plan')?.7:1))})}
@@ -111,7 +111,7 @@ function townSwitchHtml(){const ts=allTowns();let h='';
 function devHtml(){const a=age();let h=`<h3>新しいまちを開発する</h3><p class="hint">空き地を買って、自分の手で新しいまちを育てる。持てるのはふるさとのほかに${TOWN_MAX}つまで。開発したまちのお店や施設の利益も毎月入る（そのかわり毎月の管理費がかかる）。</p>`;
   if(a<25)return h+'<p class="hint">25歳から開発できる。</p>';
   if(allTowns().length>TOWN_MAX)return h+'<p class="hint">これ以上は持てない。</p>';
-  h+=`<div class="row"><input id="devName" maxlength="10" placeholder="まちの名前（空欄なら自動）"></div>`;
+  h+=`<div class="row"><input id="devName" maxlength="10" placeholder="まちの名前（空欄なら自動）"><select id="devTpl">${Object.entries(TPL).map(([k,t])=>`<option value="${k}">${t.n}${t.m>1?"（費用×1.3・最初から建物つき）":""}</option>`).join("")}</select></div>`;
   h+=DEVS.map(d=>{const c=Math.round(d.cost*Math.max(.2,S.cty.inc)*devCostMul());const lock=d.year&&S.y<d.year;return `<div class="shop"><div><div>${esc(d.n)} <span class="muted small">${yen(c)}</span></div><div class="muted small">${esc(d.d)}</div></div><button class="b sm" type="button" data-dev="${d.k}" ${lock||S.money<c?'disabled':''}>${lock?d.year+'年から':'開発する'}</button></div>`}).join('');
   return h}
 

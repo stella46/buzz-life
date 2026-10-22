@@ -206,10 +206,10 @@ function importStr(s){try{s=s.trim();if(!s.startsWith('NIP1.'))return null;const
 
 // ===== 速度 =====
 let speed=0,timer=null,skipping=false;
-let resumeAt=0;
+let resumeAt=0,SKIP_PREV=0;
 function setSpeed(s){speed=s;skipping=false;clearInterval(timer);timer=null;if(s>0)timer=setInterval(()=>{if(S&&S.alive&&!modalOpen()&&Date.now()>=resumeAt)turn()},Math.round(1500/s));renderCtrl()}
 function stopBtn(){return (speed>0||skipping)?'<div class="row"><button class="b sm ghost" type="button" data-act="stopauto">自動再生を止める（いまは'+(skipping?'早送り':'▶'.repeat(speed===4?3:speed))+'）</button></div>':''}
-function skipToEvent(){if(!S||modalOpen())return;setSpeed(0);skipping=true;renderCtrl();let n=0;const step=()=>{if(!skipping||!S||!S.alive)return;for(let i=0;i<6;i++){if(modalOpen()||!S.alive){skipping=false;renderCtrl();return}turn();n++;if(n>=600){skipping=false;renderCtrl();return}}requestAnimationFrame(step)};step()}
+function skipToEvent(){if(!S||modalOpen())return;SKIP_PREV=speed>0?speed:(SKIP_PREV||0);setSpeed(0);skipping=true;renderCtrl();let n=0;const step=()=>{if(!skipping||!S||!S.alive)return;for(let i=0;i<6;i++){if(modalOpen()||!S.alive){skipping=false;renderCtrl();return}turn();n++;if(n>=600){skipping=false;renderCtrl();return}}requestAnimationFrame(step)};step()}
 
 // ===== 音 =====
 let AC=null,sndOn=true;
@@ -249,7 +249,8 @@ function evOk(){
   while(S.q.length){const e=EV[S.q.shift()];if(e&&(!e.when||e.when())){showEvent(e);return}}
   render();
   if(skipping)skipping=false;
-  resumeAt=Date.now()+1600;
+  if(SKIP_PREV>0&&speed===0){const s2=SKIP_PREV;SKIP_PREV=0;setSpeed(s2)}
+  resumeAt=Date.now()+900;
   renderCtrl();
 }
 

@@ -77,3 +77,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)r
   if(a==='grpRec'){openModal(`<div class="mcat life">実績・引き継ぎ</div><h2>実績・引き継ぎ</h2><div class="mch"><button class="b" type="button" data-act="achv">実績・図鑑<span class="small muted">（これまでの記録・出来事の図鑑・称号）</span></button><button class="b" type="button" data-act="legacy">引き継ぎスキル<span class="small muted">（すべての人生で有効なスキル）</span></button></div><button class="b pri" type="button" data-act="close">閉じる</button>`);return}
   if(a==='grpEtc'){openModal(`<div class="mcat life">感想・その他</div><h2>感想・その他</h2><div class="mch"><button class="b" type="button" data-act="fb">感想・不具合を送る</button><button class="b" type="button" data-act="credit">出典・クレジット</button></div><button class="b pri" type="button" data-act="close">閉じる</button>`);return}
 });
+
+// ===== v1.0.4：流行が変わったお知らせ（止めずに一時停止だけ） =====
+E('trend_chg',{t:'流行が変わった',cat:'SNS',w:0,text:()=>`流行のジャンルが「${GENRES[S.trend.g].n}」に変わった（あと約${Math.max(1,S.trend.until-S.am)}か月続く）。\nいまのジャンルは「${GENRES[S.genre].n}」。`,
+  ch:()=>{const a=[];if(S.genre!==S.trend.g&&genreOk(S.trend.g))a.push(['流行に合わせる',()=>{S.genre=S.trend.g;return `ジャンルを「${GENRES[S.genre].n}」にした。`}]);a.push(['このまま続ける',()=>'いまのジャンルで続ける。']);a.push(['これからは自動で合わせる',()=>{S.autoTrend=1;if(genreOk(S.trend.g))S.genre=S.trend.g;return '流行が変わったら、ジャンルを自動で合わせる。（「発信」タブで変えられる）'}]);return a}});

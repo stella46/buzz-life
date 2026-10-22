@@ -53,7 +53,7 @@ function newTrend(){const gs=Object.keys(GENRES).filter(g=>genreOk(g));const old
   S.trend={g,s:null,until:S.am+RI(14,26)};
   if(S.am>0&&S.snsOpen&&old!==g){const msg=`流行のジャンルが「${GENRES[g].n}」に変わった`;ticker(msg);log(msg,'sns');
     if(S.autoTrend&&genreOk(g)){S.genre=g;log(`ジャンルを自動で「${GENRES[g].n}」に合わせた`,'sns')}
-    else if(S.trendStop!==0&&(speed>0||skipping)){setSpeed(0);skipping=false;toast(msg+'（止めました）')}}}
+    else if(S.trendStop!==0&&(speed>0||skipping)&&!S.q.includes('trend_chg'))S.q.push('trend_chg')}}
 
 // ----- 倍速のとき、よくある出来事は自動で選ぶ -----
 const AUTO_SKIP=/^(l_|r_|w_fired|tax|flame|deal|m\d|bill_force|gen_|goal_|era_|hist_|co_ev|x_chain|regret)/;
@@ -101,7 +101,7 @@ function snsPlanHtml(){const st=STYLES[S.style]||STYLES.norm;const cp=collabNow(
   return h+kcHtml()}
 
 // ----- 速さの設定 -----
-function speedOptsHtml(){return `<div class="row"><button class="b sm ${S.autoEv!==0?'on':''}" type="button" data-act="autoEvT">倍速のとき、よくある出来事は自動で選ぶ：${S.autoEv!==0?'ON':'OFF'}</button><button class="b sm ${S.trendStop!==0?'on':''}" type="button" data-act="trendStopT">流行が変わったら止める：${S.trendStop!==0?'ON':'OFF'}</button></div><p class="hint">▶▶ と ▶▶▶ のとき、恋愛・結婚・仕事・炎上などの大事な出来事だけ止まり、ほかは自動で選んで記録に残す。</p>`}
+function speedOptsHtml(){return `<div class="row"><button class="b sm ${S.autoEv!==0?'on':''}" type="button" data-act="autoEvT">倍速のとき、よくある出来事は自動で選ぶ：${S.autoEv!==0?'ON':'OFF'}</button><button class="b sm ${S.trendStop!==0?'on':''}" type="button" data-act="trendStopT">流行が変わったらお知らせ：${S.trendStop!==0?'ON':'OFF'}</button></div><p class="hint">▶▶ と ▶▶▶ のとき、恋愛・結婚・仕事・炎上などの大事な出来事だけ止まり、ほかは自動で選んで記録に残す。出来事で止まっても、OKを押せば同じ速さで続きが進む。</p>`}
 function etaText(){if(!S||!S.alive)return '';const per=S.unit==='season'?3:S.unit==='week'?.25:1;let secMonth,lbl;
   if(skipping){secMonth=.05;lbl='イベントまで'}else if(speed>0){secMonth=1.5/speed/per;lbl=['','▶','▶▶','','▶▶▶'][speed]||'▶'}else return '';
   const evy=(S.autoEv!==0&&(speed>=2||skipping))?1.8:EVY;const perYear=12*secMonth+evy*EVS;

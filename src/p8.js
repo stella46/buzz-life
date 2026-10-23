@@ -410,13 +410,15 @@ function panelMoneyAdult(){
 }
 function panelBiz(){
   const shops=S.town.tiles.filter(t=>SHOP[t.t]).length;
-  let h=subTabs('biz',[['town','まちの地図'],['shop','お店の経営',shops||''],['co','会社',(S.cos||[]).length||''],['office','事務所'],['svc','サブスク事業',(S.svcs||[]).length||''],['res','研究',researchReady()?'!':'']]);
+  let h=subTabs('biz',[['town','まちの地図'],['shop','お店の経営',shops||''],['co','会社',(S.cos||[]).length||''],['office','事務所'],['svc','サブスク事業',(S.svcs||[]).length||''],['aw','賞・イベント',(S.hostAct||[]).length||''],['mega','大計画',(S.mega||[]).filter(m=>!m.done).length||''],['res','研究',researchReady()?'!':'']]);
   const sub=SUB.biz;
   if(sub==='town'){h+=townPanel();const t=S.town.tiles[S.town.sel];if(t&&SHOP[t.t])h+=`<div class="row"><button class="b sm pri" type="button" data-goto="biz:shop">このお店を経営する</button></div>`;h+=townAutoHtml()+townExtra()+devHtml()}
   else if(sub==='shop')h+=shopsPanel();
   else if(sub==='co')h+=coHtml();
   else if(sub==='office')h+=officePanel();
   else if(sub==='svc')h+=svcHtml();
+  else if(sub==='aw')h+=awHtml();
+  else if(sub==='mega')h+=megaHtml();
   else h+=researchPanel();
   return h;
 }

@@ -88,7 +88,7 @@ const allSnsF=n=>['milu','patto','tsubu','holo'].every(k=>S.open&&S.open[k]&&(S.
  ['tal100','天才の目覚め','どれかの素質が100をこえる',()=>tfOf()>=100],
  ['tal200','達人の域','どれかの素質が200をこえる',()=>tfOf()>=200],
  ['subs10','サブスク好き','サブスクを10件契約する',()=>Object.values(S.subs||{}).filter(Boolean).length>=10],
- ['world','世界を見た','海外旅行に行く',()=>S.spent&&S.spent.trip_w>0],
+ ['tripw','世界を見た','海外旅行に行く',()=>S.spent&&S.spent.trip_w>0],
  ['age90','卒寿','90歳まで生きる',k=>k==='d'&&age()>=90],
  ['life10','人生のベテラン','人生を10回終える',k=>k==='d'&&(META.lives||0)>=9],
  ['life30','人生の達人','人生を30回終える',k=>k==='d'&&(META.lives||0)>=29],

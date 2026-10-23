@@ -586,3 +586,11 @@ ACH.push(['ev800','千の物語へ','出来事を800種類見る',()=>Object.key
 EVL=null;
 OLD_VERS.unshift(['v0.10','versions/v0.10/','流行・投稿の企画・コラボ・自動進行が入ったころ（見た目は旧デザイン）']);
 OLD_VERS.unshift(['v1.0','versions/v1.0/','グラフィックとサウンドを一新したころ（v1.0.4）']);
+
+// ===== v1.1.1：メインのSNSがずれてフォロワーが増えないのを修正 =====
+function fixMain(){if(!S||!S.snsOpen||!S.open||S.open[S.main])return;const k=Object.keys(SNS).find(x=>S.open[x]);if(!k)return;const old=S.main;if(old&&S.f[old]>0){S.f[k]=(S.f[k]||0)+S.f[old];S.f[old]=0}S.main=k}
+const _postAll11=postAll;postAll=function(k){fixMain();return _postAll11(k)};
+const _sph11=snsPlanHtml;snsPlanHtml=function(){fixMain();let h='';if(S&&S.snsOpen&&!(S.plan||[]).includes('post'))h+=`<div class="card warn"><p class="mtext">いまの予定に「投稿する」が入っていないので、フォロワーは増えない。「予定」タブで「投稿する」を入れよう。</p></div>`;return h+_sph11()};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-opensns]');if(b&&S)setTimeout(()=>{if(!S.open[S.main]||!S.f[S.main]){if(!S.open[S.main])S.main=b.dataset.opensns}fixMain();try{if(!S.genre)S.genre=topTal()}catch(_){}save(true);render()},0)},true);
+const _turn111=turn;turn=function(){fixMain();return _turn111.apply(this,arguments)};
+const _outc111=outc;outc=function(cat,v){if(S&&v>0&&age()<18&&S.money-v<0){const cover=v-Math.max(0,S.money);if(cover>0){try{log(`足りない${yen(cover)}は家族が払ってくれた`,'life')}catch(_){}}_outc111(cat,Math.max(0,S.money));return}return _outc111(cat,v)};

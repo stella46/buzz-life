@@ -1,3 +1,4 @@
+var TAL_MAX=300;
 // ===== v0.5：子ども時代の充実・子どもの借金をなくす =====
 // ----- 子ども向けの行動 -----
 ACT.homework={n:'宿題・自由研究',d:'知識と素質が伸びる',ok:()=>age()>=6&&age()<=15,f:k=>ACT.homework.opts[0].f(k),opts:[
@@ -40,7 +41,7 @@ function ad(k,v,cat){if(k==='money'&&cat==='medical'&&v<0&&S.subs&&S.subs.insura
     if(v<0&&age()<18&&S.money+v<0){const cover=-(S.money+v);v=-Math.max(0,S.money);if(cover>0)log(`足りない${yen(cover)}は家族が払ってくれた`,'life')}
     if(v>0)inc(cat==='loss'?'loss':(cat||'ev'),v);else if(v<0)outc(cat||'ev',-v)}
   else if(k==='f'){const key=S.open[S.main]?S.main:'milu';if(!S.open[key])return;S.f[key]=Math.max(0,S.f[key]+v)}
-  else if(k.startsWith('tal.')){const t=talKey(k.slice(4));S.tal[t]=clamp((S.tal[t]||0)+v)}
+  else if(k.startsWith('tal.')){const t=talKey(k.slice(4)),c0=S.tal[t]||0;S.tal[t]=Math.max(0,Math.min(TAL_MAX,c0+(v>0&&c0>=100?v*.6:v)))}
   if(DL)DL[k]=(DL[k]||0)+v;
 }
 EV.poor.when=()=>age()>=18;

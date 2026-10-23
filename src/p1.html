@@ -151,6 +151,14 @@ textarea{width:100%;background:var(--bg);color:var(--ink);border:2px solid var(-
 .fld span{color:var(--muted)}
 .fld input{background:var(--bg);color:var(--ink);border:2px solid var(--line);padding:6px 8px;min-width:0;width:100%;font:inherit}
 .fld input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.mnav{display:flex;gap:6px;position:sticky;top:-8px;z-index:3;margin:-8px 0 4px;flex-wrap:wrap;align-items:center}.mnav .b{flex:0 0 auto}.mnav .xclose.inbar{margin:0 0 0 auto!important;position:static}
+#btnSc{flex:0 0 auto!important}
+.mcard .fbody,.mcard{-webkit-overflow-scrolling:touch;overscroll-behavior:contain}.mcard.fixedsize .fbody{touch-action:pan-y}.mcard .fbody .news{max-height:none;overflow:visible}
+body.ufont,body.ufont button,body.ufont input,body.ufont select,body.ufont textarea,body.ufont h1,body.ufont h2,body.ufont h3{font-family:var(--ufont)!important}
+.roomtog{position:absolute;right:6px;bottom:6px;z-index:4;font:inherit;font-size:12px;padding:4px 8px;border-radius:999px;border:1px solid var(--line);background:rgba(0,0,0,.55);color:#fff;cursor:pointer}
+body.roommin .roomwrap{aspect-ratio:auto;height:40px;overflow:hidden}body.roommin .roomwrap canvas,body.roommin #pops{display:none}body.roommin .roomtog{top:6px;bottom:auto;background:var(--panel);color:var(--ink)}
+.talrows{display:flex;flex-direction:column;gap:8px}.talrow{border:1px solid var(--line);padding:8px 10px;border-radius:10px}.talrow.cur{border-color:var(--pink)}.talrow .tl{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.talrow .tv{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.tbar{position:relative;height:8px;background:var(--bg);border-radius:4px;margin:6px 0;overflow:visible}.tbar i{position:absolute;left:0;top:0;bottom:0;background:var(--gold);border-radius:4px}.tbar em{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--pink)}
 .mtop{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 12px}.mtop .b{min-height:52px;font-size:15px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.3}.mtop .b small{font-size:11px;opacity:.8}
 .warnb{border-color:var(--gold)!important;color:var(--gold)!important}
 .mtabs{margin-bottom:6px}.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin:6px 0 10px}

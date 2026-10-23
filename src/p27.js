@@ -79,3 +79,43 @@ Object.assign(SUBS,{
  t_brain:{c:'tal',n:'脳とつながる学習機',p:3e6,age:18,yr:2060,d:'すべての素質 +0.3／月（2060年から）',f:()=>{for(const t of TALK)talSub(t,.3)}}
 });
 const _slh27=subsListHtml;subsListHtml=function(){let h=_slh27();if(SUBCAT==='tal'){for(const [t] of TAL_UP){const k='t3_'+t;if((S.tal[t]||0)<80&&!(S.subs&&S.subs[k]))h=h.replace(`data-sub2="${k}"`,`data-sub2="${k}" disabled`)}}return h};
+
+// ----- 出典・クレジット（v1.1.7 時点の内容に更新） -----
+function showCredit(){openModal(`<div class="mcat life">クレジット</div><h2>出典・クレジット</h2><div class="credit">
+<p class="hint">いま遊んでいる版：${esc(CUR_VER)}</p>
+<h3>統計データ</h3>
+<p>以下のデータを参考に、ゲーム用に大きく丸めて加工しています。数値は実際の統計そのものではありません。</p>
+<ul>
+<li>出典：厚生労働省「簡易生命表」を加工して作成（年齢別の死亡確率）</li>
+<li>出典：厚生労働省「国民生活基礎調査」を加工して作成（世帯所得の分布）</li>
+<li>出典：厚生労働省「賃金構造基本統計調査」を加工して作成（初任給）</li>
+<li>出典：文部科学省「学校基本調査」を加工して作成（大学進学率）</li>
+<li>がんの生涯リスク「およそ2人に1人」は、国立がん研究センターが公表している統計に基づく一般的な目安です</li>
+<li>日本の政府統計は、政府標準利用規約（第2.0版）に基づいて利用しています</li>
+<li>実在の国の暮らし向き・物価・ネットの普及率などの目安：世界銀行 World Development Indicators（CC BY 4.0）を加工して作成</li>
+</ul>
+<h3>実際の出来事</h3>
+<p>舞台「日本」や「過去」の時代で起きる実際の出来事（オリンピック、改元、景気の変化など）は、広く知られている歴史上の事実をもとに、このゲームのために書いたオリジナルの文章で紹介しています。</p>
+<h3>フォント</h3>
+<p>次のフォントは、どれも SIL Open Font License 1.1 で公開されているもので、Google Fonts から読み込んでいます（「見た目」で選んだものだけ）。</p>
+<ul>
+<li>DotGothic16（Fontworks）</li>
+<li>Zen Maru Gothic（Yoshimichi Ohira）</li>
+<li>M PLUS Rounded 1c（M+ FONTS PROJECT）</li>
+<li>Noto Sans JP（Google）</li>
+<li>Klee One（Fontworks）</li>
+</ul>
+<h3>絵・音楽・効果音</h3>
+<p>主人公・部屋・まち・さし絵・投稿のサムネイルなどの絵、BGM（チップチューン・時代・場面の曲）、効果音、環境音は、すべてこのゲームのためにプログラムで描いた・作曲して鳴らしたオリジナルです。外部の画像・音源・既存の曲は使っていません。</p>
+<h3>文章</h3>
+<p>出来事（1000種類以上）・投稿のタイトル・アイテム・サブスク・事務所の名前などの文章は、すべてこのゲームのためのオリジナルです。</p>
+<h3>使っているサービス</h3>
+<ul>
+<li>公開：GitHub Pages</li>
+<li>文字の表示：Google Fonts</li>
+<li>感想・不具合の送信：Google フォーム（送ったときだけ、書いた内容が開発者に届きます）</li>
+</ul>
+<p>セーブデータや設定は、このブラウザの中にだけ保存されます。</p>
+<h3>おことわり</h3>
+<p>このゲームはフィクションです。登場する国・地名・人物・SNS・企業・サービス・商品は架空のもので、実在のものとは関係ありません（舞台「日本」や「世界のどこか」の国名・実際の出来事を除く）。ゲーム内のお金・健康・法律などの内容は遊びのためのもので、実際の助言ではありません。</p></div>
+<button class="b pri" type="button" data-act="close">閉じる</button>`)}

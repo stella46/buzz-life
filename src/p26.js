@@ -42,3 +42,4 @@ function kidSubN(){return Object.keys(S.subs||{}).filter(k=>S.subs[k]&&SUBS[k]&&
 document.addEventListener('click',e=>{const b=e.target.closest('[data-ksub]');if(!b||!S)return;const k=b.dataset.ksub;if(!S.subs)S.subs={};if(!S.subs[k]&&kidSubN()>=kidSubMax())return;S.subs[k]=S.subs[k]?0:1;S.kidSub=S.kidSub||{};S.kidSub[k]=S.subs[k]?1:0;log(S.subs[k]?`「${SUBS[k].n}」を習わせてもらえることになった`:`「${SUBS[k].n}」をやめた`,'life');save();renderPanel()});
 const _kmp16=kidMoneyPanel;kidMoneyPanel=function(){return _kmp16()+kidSubsHtml()};
 const _slh16=subsListHtml;subsListHtml=function(){const h=_slh16();return SUBCAT==='tal'?h.replace('<div class="seg wrapseg">','<p class="hint">素質は高くなるほど伸びにくい。同じ素質のサブスクを2つ以上契約すると、2つ目からは効果が半分。</p><div class="seg wrapseg">'):h};
+for(const id of ['rv_buzz','rv_scandal']){const e=EV[id];if(e){const w=e.when;e.when=()=>!!S.rival&&(!w||w())}}

@@ -392,7 +392,7 @@ function panelMoneyAdult(){
     if(age()>=18){h+=`<h3>住まい</h3><p class="hint">今の住まい：${esc((HOMES[S.home]||HOMES[0]).n)}${S.indep?`（家賃と生活費 月${yen(livingCost())}）`:''}</p><div>`;
       HOMES.forEach((hm,i)=>{if(i===0||i===S.home)return;const rent=Math.round(S.region.cost*.5*hm.m*(S.priceIdx||1));const cost=hm.buy?Math.round(hm.buy*S.cty.inc):rent*2;h+=`<div class="shop"><div><div>${esc(hm.n)}</div><div class="muted small">${hm.buy?`購入 ${yen(cost)}・毎月の維持費 ${yen(rent)}`:`家賃 月${yen(rent)}・引っ越し代 ${yen(cost)}`}${hm.h?'・幸福が毎月上がる':''}</div></div><button class="b sm" type="button" data-home="${i}" ${S.money<cost?'disabled':''}>${hm.buy?'買う':'引っ越す'}</button></div>`});h+='</div>'}
     h+=`<h3>契約・サブスク</h3><p class="hint">毎月の請求書に加わる。いつでも解約できる。</p><div>`;
-    for(const [k,s] of Object.entries(SUBS)){if(age()<s.age)continue;const on=!!S.subs[k];h+=`<div class="shop"><div><div>${esc(s.n)} <span class="muted small">月${yen(s.p*Math.max(.3,S.cty.inc))}</span></div><div class="muted small">${esc(s.d)}</div></div><button class="b sm ${on?'on':''}" type="button" data-sub2="${k}">${on?'契約中（解約）':'契約する'}</button></div>`}
+    h+=subsListHtml();
     h+='</div>';
   }
   else if(sub==='room')h+=decoPanel();
@@ -410,12 +410,13 @@ function panelMoneyAdult(){
 }
 function panelBiz(){
   const shops=S.town.tiles.filter(t=>SHOP[t.t]).length;
-  let h=subTabs('biz',[['town','まちの地図'],['shop','お店の経営',shops||''],['co','会社',(S.cos||[]).length||''],['office','事務所'],['res','研究',researchReady()?'!':'']]);
+  let h=subTabs('biz',[['town','まちの地図'],['shop','お店の経営',shops||''],['co','会社',(S.cos||[]).length||''],['office','事務所'],['svc','サブスク事業',(S.svcs||[]).length||''],['res','研究',researchReady()?'!':'']]);
   const sub=SUB.biz;
   if(sub==='town'){h+=townPanel();const t=S.town.tiles[S.town.sel];if(t&&SHOP[t.t])h+=`<div class="row"><button class="b sm pri" type="button" data-goto="biz:shop">このお店を経営する</button></div>`;h+=townAutoHtml()+townExtra()+devHtml()}
   else if(sub==='shop')h+=shopsPanel();
   else if(sub==='co')h+=coHtml();
   else if(sub==='office')h+=officePanel();
+  else if(sub==='svc')h+=svcHtml();
   else h+=researchPanel();
   return h;
 }
@@ -444,10 +445,10 @@ function officePanel(){
   let h=`<div class="kv"><span>今の事務所</span><span>${o.lv?esc(OFFICE[o.lv].n):'なし'}</span>${o.lv?`<span>家賃（月）</span><span>${yen(OFFICE[o.lv].rent*c)}</span><span>スタッフ</span><span>${staffTotal()} / ${OFFICE[o.lv].staff}人</span><span>タレント</span><span>${o.talents.length} / ${OFFICE[o.lv].tal}人</span>`:''}</div>`;
   if(nx)h+=`<div class="row"><button class="b sm pri" type="button" data-act="office" ${S.money<nx.cost*c||age()<18?'disabled':''}>${o.lv?'移転する':'事務所を作る'}：${esc(nx.n)} ${yen(nx.cost*c)}</button></div>`;
   if(!o.lv)return h;
-  h+='<h3>スタッフ</h3><p class="hint">給料は毎月の請求書で払う。払えないと辞めてしまう。</p><div>';
+  h+=oftHtml();h+='<h3>スタッフ</h3><p class="hint">給料は毎月の請求書で払う。払えないと辞めてしまう。</p><div>';
   for(const [k,s] of Object.entries(STAFF))h+=`<div class="shop"><div><div>${esc(s.n)}：${stN(k)}人 <span class="muted small">月給 ${yen(s.sal*c)}</span></div><div class="muted small">${esc(s.d)}</div></div><div class="row"><button class="b sm" type="button" data-hire="${k}" ${staffTotal()>=OFFICE[o.lv].staff?'disabled':''}>雇う</button>${stN(k)?`<button class="b sm ghost" type="button" data-fire="${k}">減らす</button>`:''}</div></div>`;
   h+='</div><h3>所属タレント</h3>';
-  if(o.talents.length)h+=`<div>${o.talents.map((t,j)=>`<div class="card"><div class="hd"><span>${esc(t.name)}</span><span class="muted small">${esc(GENRES[t.genre].n)}・${num(t.f)}人</span></div><div class="ctl"><span>方針</span><div class="seg">${Object.entries(TPOL).map(([k,p])=>`<button class="${(t.pol||'bal')===k?'on':''}" type="button" data-tpol="${j}" data-v="${k}">${p.n}</button>`).join('')}</div></div><div class="row"><button class="b sm" type="button" data-tdeal="${j}" ${!stN('manager')||t.dealAm===S.am?'disabled':''}>${t.dealAm===S.am?'今月は案件ずみ':'案件を取ってくる'}</button>${stN('manager')?'':'<span class="hint">マネージャーがいると案件を取れる</span>'}</div></div>`).join('')}</div>`;
+  if(o.talents.length)h+=`<div>${o.talents.map((t,j)=>`<div class="card"><div class="hd"><span>${esc(t.name)}</span><span class="muted small">${esc(GENRES[t.genre].n)}・${num(t.f)}人</span></div><div class="ctl"><span>方針</span><div class="seg">${Object.entries(TPOL).map(([k,p])=>`<button class="${(t.pol||'bal')===k?'on':''}" type="button" data-tpol="${j}" data-v="${k}">${p.n}</button>`).join('')}</div></div><div class="row"><button class="b sm" type="button" data-tdeal="${j}" ${!stN('manager')||t.dealAm===S.am?'disabled':''}>${t.dealAm===S.am?'今月は案件ずみ':'案件を取ってくる'}</button>${stN('manager')?'':'<span class="hint">マネージャーがいると案件を取れる</span>'}</div>${talEndHtml(j)}</div>`).join('')}</div>`;
   else h+='<p class="hint">まだいない。</p>';
   if(has('scout'))h+=`<div class="row"><button class="b sm" type="button" data-act="scout" ${o.talents.length>=OFFICE[o.lv].tal||S.money<300000*c?'disabled':''}>タレントを探す ${yen(300000*c)}</button></div>`;
   else h+='<p class="hint">研究「スカウト網」でタレントを探せる。</p>';

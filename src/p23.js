@@ -25,7 +25,7 @@ function pseed(a){let x=(a*2654435761)>>>0;return ()=>{x^=x<<13;x>>>=0;x^=x>>17;
 function postTitle(seed){const r=pseed(seed),pk=a=>a[Math.floor(r()*a.length)];const g=S.genre;const base=PT2[g]||PT2.talk;
   const recent=(S.posts||[]).map(p=>p.base);let t=pk(base);for(let i=0;i<6&&recent.includes(t);i++)t=pk(base);const b0=t;
   const sea=(PT_EV[S.m]&&r()<.5&&!(S.m===10&&S.y<1995))?pk(PT_EV[S.m]):PT_SEASON[S.m-1];
-  t=t.replace('{n}',String(pk([2,3,5,7,10,12,20,24,30,50,100]))).replace('{s}',sea).replace('{f}',pk(PT_F)).replace('{p}',pk(PT_P)).replace('{o}',pk(PT_O));
+  t=t.replace(/\{n\}/g,()=>String(pk([2,3,5,7,10,12,20,24,30,50,100]))).replace(/\{s\}/g,sea).replace(/\{f\}/g,()=>pk(PT_F)).replace(/\{p\}/g,()=>pk(PT_P)).replace(/\{o\}/g,()=>pk(PT_O));
   let pre='',suf='';const pl=typeof POPT!=='undefined'?POPT:'normal';
   if(pl==='short')pre=pk(['【ショート】','【60秒】','【1分】']);else if(pl==='big')pre=pk(['【大型企画】','【総集編】','【完全版】']);else if(pl==='live')pre=pk(['【生配信】','【ライブ】']);
   else if(pl==='collab'){let nm='';try{const c=collabNow();nm=c&&c.name?c.name.split(/[ ・]/)[0]:''}catch(_){}pre=nm?`【${nm}さんとコラボ】`:'【コラボ】'}

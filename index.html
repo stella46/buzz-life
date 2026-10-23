@@ -175,6 +175,7 @@ body.ufont,body.ufont button,body.ufont input,body.ufont select,body.ufont texta
 body.roommin .roomwrap{aspect-ratio:auto;height:40px;overflow:hidden}body.roommin .roomwrap canvas,body.roommin #pops{display:none}body.roommin .roomtog{top:6px;bottom:auto;background:var(--panel);color:var(--ink)}
 .talrows{display:flex;flex-direction:column;gap:8px}.talrow{border:1px solid var(--line);padding:8px 10px;border-radius:10px}.talrow.cur{border-color:var(--pink)}.talrow .tl{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.talrow .tv{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
 .tbar{position:relative;height:8px;background:var(--bg);border-radius:4px;margin:6px 0;overflow:visible}.tbar i{position:absolute;left:0;top:0;bottom:0;background:var(--gold);border-radius:4px}.tbar em{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--pink)}
+.mcard.menufix>*{flex:0 0 auto}.mcard.menufix>#mbody{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain;touch-action:pan-y;display:block}.mcard.menufix>#mbody>*+*{margin-top:8px}
 .mtop{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 12px}.mtop .b{min-height:52px;font-size:15px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.3}.mtop .b small{font-size:11px;opacity:.8}
 .warnb{border-color:var(--gold)!important;color:var(--gold)!important}
 .mtabs{margin-bottom:6px}.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin:6px 0 10px}
@@ -2996,6 +2997,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v1.2.1','2026年10月23日',['ゲーム中のメニューの大きさを固定。タブを切りかえても枠の大きさが変わらず、中身だけがスクロールするように','見た目や支払いなどを切りかえても、メニューが開き直さず、スクロールの位置もそのまま']],
   ['v1.2','2026年10月23日',['【セーブスロット】5つのスロットに、別々の人生を保存できるように。「はじめから」でどのスロットで始めるか選べて、新しい人生で前の人生が上書きされなくなった（上書きするときは確認あり）','「つづきから」は、人生が2つ以上あるとき一覧から選べる（最後に遊んだ順）。メニューの「セーブ」→「セーブスロット」から、遊びながら別の人生に切りかえたり、消したりできる','実績・図鑑・引き継ぎスキルは、全スロット共通','【引き継ぎをかんたんに】「コードをコピー」「ファイルに保存」の1タップで、全スロットのセーブと実績をまとめて渡せる。新しい端末では「コードを貼りつけ」（コピーしてあれば自動で読み込む）か「ファイルを開く」だけ。コードは圧縮して短くした','前の版で書き出した「NIP1.」のコードも、空いているスロットに読み込める','チュートリアルは空いているスロットで始まるように（今のセーブを上書きしない）','保存の重さはこれまでと同じ（遊んでいる1つのスロットだけを保存し、一覧には小さなまとめだけを使う）']],
   ['v1.1.8','2026年10月23日',['「出典・クレジット」を最新の内容に更新：世界銀行のデータ（CC BY 4.0）、実際の出来事の扱い、追加した4つのフォント（すべて SIL Open Font License 1.1）、絵・音楽・文章がオリジナルであること、セーブと感想の扱い、おことわり']],
   ['v1.1.7','2026年10月23日',['メニューなどの画面で、別の画面を開いたときに「← 戻る」「⌂ はじめへ」で前の画面に戻れるように','文字の種類を7つから選べるように（見た目のまま・まるゴシック・ドット文字・Mプラス丸・ゴシック・手書き風・端末の標準）','文字の大きさを4段階で変えられるように（小さめ・ふつう・大きめ・とても大きい）','スマホで「アップデート情報」などがスクロールしにくいことがあったのを直した（画面の中に二重のスクロールがあったため）','「⚡ ショートカット」ボタンを追加：どのタブのどの画面へも1回で行ける。よく使う画面が上に出る','スマホでタブを切りかえたら、中身の先頭まで自動で移動するように。部屋の絵を「▲ たたむ」で小さくでき、スクロールが少なくて済む','素質の上限を100から300に。100をこえると伸びはゆっくりになるが、投稿の質と「見つかりやすさ」が上がり続ける','素質の画面をわかりやすく：ランク（入門〜神の領域）と、投稿の質・見つかりやすさへの効果を数字で表示','素質のサブスクを追加（各素質の中級 +0.8、素質80からの上級 +1.6、なんでも体験教室、才能発見コーチ、AI専属トレーナー、脳とつながる学習機など、全部で40種類以上）']],
@@ -6524,4 +6526,19 @@ const _menuBody28=menuBody;menuBody=function(){if(MENU_TAB!=='save')return _menu
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act="grpRec"],[data-act="settings"]');if(!b)return;setTimeout(()=>{const m=$('#mcard');if(!m)return;const x=m.querySelector('[data-act="importT"],[data-act="export"],[data-act="achv"]');const box=x&&x.closest('.mch');if(!box||m.querySelector('[data-act="transfer"]'))return;box.insertAdjacentHTML('afterbegin',`<button class="b" type="button" data-act="slots">セーブスロット<span class="small muted">（5つの人生を別々に保存）</span></button><button class="b" type="button" data-act="transfer">引き継ぎ<span class="small muted">（別の端末・ブラウザへ）</span></button>`)},0)});
 initTitle();
 OLD_VERS.unshift(['v1.1','versions/v1.1/','出来事1000種類・チュートリアル・サブスク・事務所の種類などが入ったころ（v1.1.8）']);
+
+// ===== v1.2.1：メニューの大きさを固定（タブを切りかえても大きさが変わらない） =====
+const MENU_TABS=[['main','ゲーム・記録'],['look','見た目・音'],['save','セーブ'],['etc','その他']];
+let MENU_SHOWN='';
+showMenu=function(){
+  if(!S||$('#scrGame').hidden)return showSettings();
+  const m=$('#mcard'),open=!$('#modal').hidden&&m.dataset.kind==='menu'&&$('#mbody');
+  if(open){const body=$('#mbody'),keep=MENU_SHOWN===MENU_TAB?body.scrollTop:0;
+    m.querySelectorAll('[data-mtab]').forEach(b=>{const on=b.dataset.mtab===MENU_TAB;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on))});
+    body.innerHTML=menuBody();body.scrollTop=keep;MENU_SHOWN=MENU_TAB;try{updScrollBtns()}catch(_){}return}
+  openModal(`<div class="mcat life">メニュー</div><h2>メニュー</h2>
+  <div class="mtop"><button class="b pri" type="button" data-act="close">▶ ゲームに戻る</button><button class="b warnb" type="button" data-act="totitle">⌂ タイトルへ戻る<small>（自動で保存されます）</small></button></div>
+  <div class="seg wrapseg mtabs">${MENU_TABS.map(([k,n])=>`<button type="button" class="${MENU_TAB===k?'on':''}" data-mtab="${k}" aria-pressed="${MENU_TAB===k}">${n}</button>`).join('')}</div>
+  <div id="mbody" class="fbody">${menuBody()}</div>`);
+  m.classList.add('fixedsize','menufix');m.dataset.kind='menu';MENU_SHOWN=MENU_TAB};
 </script>

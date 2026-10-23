@@ -398,7 +398,7 @@ E('l_fight',{t:'ケンカ',cat:'恋愛',w:.03,cd:8,when:()=>!!lover(),
   ch:[['素直に謝る',()=>{rel(lover(),4);ad('mental',-1);return '仲直りできた。'}],['とことん話し合う',()=>{if(chance(.6)){rel(lover(),8);return 'お互いの気持ちがわかって、前より仲良くなった。'}rel(lover(),-6);return '話し合いは平行線だった。'}],['距離を置く',()=>{rel(lover(),-8);ad('mental',2);return 'しばらく連絡をとらなかった。'}]]});
 E('l_propose',{t:'プロポーズ',cat:'恋愛',w:.08,cd:12,when:()=>S.partner&&S.partner.rel>=70&&age()>=22,
   text:()=>`${pn(S.partner)}と付き合って長い。そろそろ結婚を考える？`,
-  ch:[['プロポーズする',()=>{if(chance(S.partner.rel/110)){S.q.push('l_wed');return '「はい」と返事をもらえた！'}rel(S.partner,-10);return '「まだ考えられない」と言われてしまった。'}],['まだ早い',()=>'今の関係を大事にすることにした。']]});
+  ch:[['プロポーズする',()=>{if(!S.partner)return 'その話は、いつの間にか立ち消えになった。';if(chance(S.partner.rel/110)){S.q.push('l_wed');return '「はい」と返事をもらえた！'}rel(S.partner,-10);return '「まだ考えられない」と言われてしまった。'}],['まだ早い',()=>'今の関係を大事にすることにした。']]});
 E('l_breakup',{t:'別れ話',cat:'恋愛',w:.08,cd:6,when:()=>S.partner&&S.partner.rel<15,
   text:()=>`${pn(S.partner)}「わたしたち、もう終わりにしよう」`,
   ch:[['引き止める',()=>{if(chance(.4)){rel(S.partner,15);return 'もう少しだけ続けてみることになった。'}tl(S.partner.name+'と別れた');S.partner=null;ad('happy',-8);return '気持ちは戻らなかった。'}],['受け入れる',()=>{tl(S.partner.name+'と別れた');S.partner=null;ad('happy',-6);ad('mental',-3);return 'ひとりの夜が長い。'}]]});

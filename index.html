@@ -832,7 +832,7 @@ E('l_fight',{t:'ケンカ',cat:'恋愛',w:.03,cd:8,when:()=>!!lover(),
   ch:[['素直に謝る',()=>{rel(lover(),4);ad('mental',-1);return '仲直りできた。'}],['とことん話し合う',()=>{if(chance(.6)){rel(lover(),8);return 'お互いの気持ちがわかって、前より仲良くなった。'}rel(lover(),-6);return '話し合いは平行線だった。'}],['距離を置く',()=>{rel(lover(),-8);ad('mental',2);return 'しばらく連絡をとらなかった。'}]]});
 E('l_propose',{t:'プロポーズ',cat:'恋愛',w:.08,cd:12,when:()=>S.partner&&S.partner.rel>=70&&age()>=22,
   text:()=>`${pn(S.partner)}と付き合って長い。そろそろ結婚を考える？`,
-  ch:[['プロポーズする',()=>{if(chance(S.partner.rel/110)){S.q.push('l_wed');return '「はい」と返事をもらえた！'}rel(S.partner,-10);return '「まだ考えられない」と言われてしまった。'}],['まだ早い',()=>'今の関係を大事にすることにした。']]});
+  ch:[['プロポーズする',()=>{if(!S.partner)return 'その話は、いつの間にか立ち消えになった。';if(chance(S.partner.rel/110)){S.q.push('l_wed');return '「はい」と返事をもらえた！'}rel(S.partner,-10);return '「まだ考えられない」と言われてしまった。'}],['まだ早い',()=>'今の関係を大事にすることにした。']]});
 E('l_breakup',{t:'別れ話',cat:'恋愛',w:.08,cd:6,when:()=>S.partner&&S.partner.rel<15,
   text:()=>`${pn(S.partner)}「わたしたち、もう終わりにしよう」`,
   ch:[['引き止める',()=>{if(chance(.4)){rel(S.partner,15);return 'もう少しだけ続けてみることになった。'}tl(S.partner.name+'と別れた');S.partner=null;ad('happy',-8);return '気持ちは戻らなかった。'}],['受け入れる',()=>{tl(S.partner.name+'と別れた');S.partner=null;ad('happy',-6);ad('mental',-3);return 'ひとりの夜が長い。'}]]});
@@ -3669,7 +3669,7 @@ function seekLover(m){if(S.cd.seek!=null&&S.am-S.cd.seek<3)return;S.cd.seek=S.am
   else{ad('mental',-2);openModal(`<div class="mcat">恋愛</div><h2>今回はご縁がなかった</h2><p class="mtext">何人かと会ってみたが、ピンとくる人はいなかった。\n見た目や人間関係を磨くと、出会いやすくなる。</p><button class="b pri" type="button" data-act="close">閉じる</button>`)}save();render()}
 const CHOICE_TXT={propose:'プロポーズする？',breakup:'恋人と別れる？',divorce:'離婚する？ 財産の一部を分けることになる。',trykid:'子どもを授かることを考える？（この先1年ほど、子どもが生まれやすくなる）',change:'転職活動をする？',quit:'会社を辞めて専業クリエイターになる？ 給料がなくなる。',gap:'6か月休職する？ その間は給料が出ないが、心と体が回復する。',hunt:'就職活動をする？',univ:'大学に入り直す？ 4年間は大学生になる（仕事は辞める）。学費は奨学金になる。',move:'別の地域へ引っ越す？',abroad:'海外へ移住する？ 物価や収入がその国のものに変わる。'};
 function doChoice(c){const ci2=Math.max(.2,S.cty.inc);
-  if(c==='propose'){S.q.push('l_propose');const e=EV[S.q.shift()];closeModal();showEvent(e);return}
+  if(c==='propose'){if(!S.partner)return;S.q.push('l_propose');const e=EV[S.q.shift()];closeModal();showEvent(e);return}
   if(c==='breakup'){tl(S.partner.name+'と別れた');S.partner=null;ad('happy',-6);ad('mental',-3);persAdd('bold',2)}
   if(c==='divorce'){divorce()}
   if(c==='trykid'){S.flags.tryKid=S.am+12;log('子どもを授かることを考え始めた','life')}
@@ -6569,4 +6569,9 @@ const _cm30=closeModal;closeModal=function(){document.documentElement.classList.
 setInterval(()=>{if($('#modal').hidden)document.documentElement.classList.remove('mlock')},1000);
 // アップデート情報：古い版はたたんでおき、画面を軽く
 const _news30=showNews;showNews=function(t){const r=_news30(t);try{const box=document.querySelector('#mcard .news');if(box){const secs=[...box.querySelectorAll(':scope>section.nv')];if(secs.length>6){const d=document.createElement('details');d.className='oldnews';d.innerHTML=`<summary>それより前の版を見る（${secs.length-6}件）</summary>`;secs.slice(6).forEach(s=>d.appendChild(s));box.appendChild(d)}}}catch(_){}return r};
+// 恋人がいなくなったあとに、恋人がいる前提の出来事が出て止まらないように
+for(const [id,f] of [['l_propose',()=>!!S.partner],['l_wed',()=>!!S.partner],['l_propose_r',()=>!!S.partner]]){const e=EV[id];if(e){const w=e.when;e.when=()=>f()&&(!w||w())}}
+// 出来事を表示したときの一時データを覚えておき、選んだときに使う（あいだで別の処理が入っても止まらないように）
+const _se30=showEvent;showEvent=function(e){const r=_se30.apply(this,arguments);try{if(curEv){curEv._tmp=S.tmp;curEv._tmpT=S.tmpT;curEv._tmpSv=S.tmpSv}}catch(_){}return r};
+const _ch30=choose;choose=function(i){try{if(curEv&&'_tmp' in curEv){if(curEv._tmp!=null)S.tmp=curEv._tmp;if(curEv._tmpT!=null)S.tmpT=curEv._tmpT;if(curEv._tmpSv!=null)S.tmpSv=curEv._tmpSv}}catch(_){}return _ch30.apply(this,arguments)};
 </script>

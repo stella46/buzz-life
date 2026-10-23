@@ -21,3 +21,8 @@ const _cm30=closeModal;closeModal=function(){document.documentElement.classList.
 setInterval(()=>{if($('#modal').hidden)document.documentElement.classList.remove('mlock')},1000);
 // アップデート情報：古い版はたたんでおき、画面を軽く
 const _news30=showNews;showNews=function(t){const r=_news30(t);try{const box=document.querySelector('#mcard .news');if(box){const secs=[...box.querySelectorAll(':scope>section.nv')];if(secs.length>6){const d=document.createElement('details');d.className='oldnews';d.innerHTML=`<summary>それより前の版を見る（${secs.length-6}件）</summary>`;secs.slice(6).forEach(s=>d.appendChild(s));box.appendChild(d)}}}catch(_){}return r};
+// 恋人がいなくなったあとに、恋人がいる前提の出来事が出て止まらないように
+for(const [id,f] of [['l_propose',()=>!!S.partner],['l_wed',()=>!!S.partner],['l_propose_r',()=>!!S.partner]]){const e=EV[id];if(e){const w=e.when;e.when=()=>f()&&(!w||w())}}
+// 出来事を表示したときの一時データを覚えておき、選んだときに使う（あいだで別の処理が入っても止まらないように）
+const _se30=showEvent;showEvent=function(e){const r=_se30.apply(this,arguments);try{if(curEv){curEv._tmp=S.tmp;curEv._tmpT=S.tmpT;curEv._tmpSv=S.tmpSv}}catch(_){}return r};
+const _ch30=choose;choose=function(i){try{if(curEv&&'_tmp' in curEv){if(curEv._tmp!=null)S.tmp=curEv._tmp;if(curEv._tmpT!=null)S.tmpT=curEv._tmpT;if(curEv._tmpSv!=null)S.tmpSv=curEv._tmpSv}}catch(_){}return _ch30.apply(this,arguments)};

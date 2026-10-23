@@ -276,7 +276,7 @@ function seekLover(m){if(S.cd.seek!=null&&S.am-S.cd.seek<3)return;S.cd.seek=S.am
   else{ad('mental',-2);openModal(`<div class="mcat">恋愛</div><h2>今回はご縁がなかった</h2><p class="mtext">何人かと会ってみたが、ピンとくる人はいなかった。\n見た目や人間関係を磨くと、出会いやすくなる。</p><button class="b pri" type="button" data-act="close">閉じる</button>`)}save();render()}
 const CHOICE_TXT={propose:'プロポーズする？',breakup:'恋人と別れる？',divorce:'離婚する？ 財産の一部を分けることになる。',trykid:'子どもを授かることを考える？（この先1年ほど、子どもが生まれやすくなる）',change:'転職活動をする？',quit:'会社を辞めて専業クリエイターになる？ 給料がなくなる。',gap:'6か月休職する？ その間は給料が出ないが、心と体が回復する。',hunt:'就職活動をする？',univ:'大学に入り直す？ 4年間は大学生になる（仕事は辞める）。学費は奨学金になる。',move:'別の地域へ引っ越す？',abroad:'海外へ移住する？ 物価や収入がその国のものに変わる。'};
 function doChoice(c){const ci2=Math.max(.2,S.cty.inc);
-  if(c==='propose'){S.q.push('l_propose');const e=EV[S.q.shift()];closeModal();showEvent(e);return}
+  if(c==='propose'){if(!S.partner)return;S.q.push('l_propose');const e=EV[S.q.shift()];closeModal();showEvent(e);return}
   if(c==='breakup'){tl(S.partner.name+'と別れた');S.partner=null;ad('happy',-6);ad('mental',-3);persAdd('bold',2)}
   if(c==='divorce'){divorce()}
   if(c==='trykid'){S.flags.tryKid=S.am+12;log('子どもを授かることを考え始めた','life')}

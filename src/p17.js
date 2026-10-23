@@ -44,7 +44,7 @@ function postQuality(){
 }
 // 同じ年に同じ物をくり返し買っても、素質の伸びはだんだん小さくなる
 let TALMUL=1;
-for(const list of [GOODS,KIDGOODS])for(const g of list){if(g.once||!g.f)continue;const f0=g.f;g.f=function(){const key=g.k+'@'+S.y;if(!S.gN)S.gN={};const n=S.gN[key]||0;S.gN[key]=n+1;TALMUL=1/(1+n*.8);try{return f0.apply(this,arguments)}finally{TALMUL=1}}}
+if(0)for(const list of [GOODS,KIDGOODS])for(const g of list){if(g.once||!g.f)continue;const f0=g.f;g.f=function(){const key=g.k+'@'+S.y;if(!S.gN)S.gN={};const n=S.gN[key]||0;S.gN[key]=n+1;TALMUL=1/(1+n*.8);try{return f0.apply(this,arguments)}finally{TALMUL=1}}}
 
 // ----- 流行（ジャンルだけ・長めに続く） -----
 function newTrend(){const gs=Object.keys(GENRES).filter(g=>genreOk(g));const old=S.trend&&S.trend.g;

@@ -387,7 +387,7 @@ function panelMoneyAdult(){
     h+=`<h3>配信の機材</h3><div>`;
     for(const [k,e] of Object.entries(EQ)){const lv=S.eq[k],cur=e.t[lv],nx=lv<eqMax()?e.t[lv+1]:null;h+=`<div class="shop"><div><div>${e.n}：${esc(cur[0])}</div>${nx?`<div class="muted small">次：${esc(nx[0])} ${yen(nx[1])}</div>`:`<div class="muted small">${lv<4&&!has('eq5')?'さらに上は研究「プロ機材の知識」で解放':'最高レベル'}</div>`}</div>${nx?`<button class="b sm" type="button" data-buy="${k}" ${S.money<nx[1]?'disabled':''}>買う</button>`:''}</div>`}
     h+=`</div><p class="hint">機材ボーナス：投稿の質+${Math.round(eqBonus())}</p><h3>暮らしの買い物</h3><div>`;
-    for(const g of GOODS){if(g.age&&age()<g.age)continue;if(g.ok&&!g.ok())continue;const owned=g.once&&S.goods[g.k];const p=Math.round(g.p*c);h+=`<div class="shop"><div><div>${esc(g.n)} <span class="muted small">${yen(p)}</span></div><div class="muted small">${esc(g.d)}</div></div>${owned?'<span class="chip up">持っている</span>':`<button class="b sm" type="button" data-good="${g.k}" ${S.money<p?'disabled':''}>買う</button>`}</div>`}
+    h+=goodsNote();for(const g of GOODS){if(g.age&&age()<g.age)continue;if(g.ok&&!g.ok())continue;h+=goodRow(g,'good',Math.round(g.p*c))}
     h+='</div>';
     if(age()>=18){h+=`<h3>住まい</h3><p class="hint">今の住まい：${esc((HOMES[S.home]||HOMES[0]).n)}${S.indep?`（家賃と生活費 月${yen(livingCost())}）`:''}</p><div>`;
       HOMES.forEach((hm,i)=>{if(i===0||i===S.home)return;const rent=Math.round(S.region.cost*.5*hm.m*(S.priceIdx||1));const cost=hm.buy?Math.round(hm.buy*S.cty.inc):rent*2;h+=`<div class="shop"><div><div>${esc(hm.n)}</div><div class="muted small">${hm.buy?`購入 ${yen(cost)}・毎月の維持費 ${yen(rent)}`:`家賃 月${yen(rent)}・引っ越し代 ${yen(cost)}`}${hm.h?'・幸福が毎月上がる':''}</div></div><button class="b sm" type="button" data-home="${i}" ${S.money<cost?'disabled':''}>${hm.buy?'買う':'引っ越す'}</button></div>`});h+='</div>'}
@@ -488,7 +488,7 @@ document.addEventListener('click',e=>{
   if(t.dataset.sub){const [tk,sk]=t.dataset.sub.split(':');SUB[tk]=sk;renderPanel();return}
   if(t.dataset.goto){const [tk,sk]=t.dataset.goto.split(':');SUB[tk]=sk;setTab(tk);renderBadges();return}
   if(t.dataset.pay){if(payBill(t.dataset.pay)){snd('coin');save();render()}return}
-  if(t.dataset.good){const g=GOODS.find(x=>x.k===t.dataset.good),p=Math.round(g.p*Math.max(.2,S.cty.inc));if(S.money>=p&&!(g.once&&S.goods[g.k])){outc('goods',p);DL=null;g.f();if(g.once)S.goods[g.k]=1;log(`${g.n}を買った`,'good');snd('buy');save();render()}return}
+  if(t.dataset.good){const g=GOODS.find(x=>x.k===t.dataset.good),p=Math.round(g.p*Math.max(.2,S.cty.inc));if(S.money>=p&&!(g.once&&S.goods[g.k])&&goodCanBuy(g,0)){outc('goods',p);DL=null;goodApply(g,0,()=>g.f());if(g.once)S.goods[g.k]=1;log(`${g.n}を買った`,'good');snd('buy');save();render()}return}
   if(t.dataset.sub2){const k=t.dataset.sub2;S.subs[k]=S.subs[k]?0:1;log(S.subs[k]?`${SUBS[k].n}を契約した`:`${SUBS[k].n}を解約した`,'life');save();render();return}
   if(t.dataset.home){const i=+t.dataset.home,hm=HOMES[i];const rent=Math.round(S.region.cost*.5*hm.m*(S.priceIdx||1));const cost=hm.buy?Math.round(hm.buy*S.cty.inc):rent*2;if(S.money>=cost){outc('move',cost);S.home=i;S.indep=1;delete S.goods.furniture;if(hm.priv)ad('priv',10);tl(hm.n+'に住み始めた');log(`${hm.n}に引っ越した`,'life');snd('buy');save();render()}return}
   if(t.dataset.inv){const c=Math.max(.2,S.cty.inc);const v=+t.dataset.inv;if(v<0){inc('invout',Math.round(S.inv));S.inv=0;log('投資を全部引き出した','life')}else{const a=Math.round(v*c);if(S.money>=a){outc('invest',a);S.inv+=a;log(`${yen(a)}を投資に回した`,'life')}}save();render();return}

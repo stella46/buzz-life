@@ -60,7 +60,7 @@ const KIDGOODS=[
 function kidMoneyPanel(){
   const a=age(),c=Math.max(.2,S.cty.inc),allow=Math.round(TIERS[S.tier].allow*(a>=13?2:1)*S.cty.inc);
   let h=`<h2>おこづかい</h2><div class="kv big2"><span>おこづかいの残り</span><span>${yen(S.money)}</span><span>毎月のおこづかい</span><span>${yen(allow)}</span></div><p class="hint">「お手伝い」の行動でおこづかいを増やせる。18歳になると、家計・住まい・投資などが使えるようになる。</p><h3>おこづかいで買う</h3><div>`;
-  for(const g of KIDGOODS){const p=Math.round(g.p*c);h+=`<div class="shop"><div><div>${esc(g.n)} <span class="muted small">${yen(p)}</span></div><div class="muted small">${esc(g.d)}</div></div><button class="b sm" type="button" data-kgood="${g.k}" ${S.money<p?'disabled':''}>買う</button></div>`}
+  h+=goodsNote();for(const g of KIDGOODS){h+=goodRow(g,'kgood',Math.round(g.p*c))}
   h+='</div>';
   if(a>=13){h+=`<h3>配信の機材</h3><div>`;for(const [k,e] of Object.entries(EQ)){const lv=S.eq[k],cur=e.t[lv],nx=lv<eqMax()?e.t[lv+1]:null;h+=`<div class="shop"><div><div>${e.n}：${esc(cur[0])}</div>${nx?`<div class="muted small">次：${esc(nx[0])} ${yen(nx[1])}</div>`:''}</div>${nx?`<button class="b sm" type="button" data-buy="${k}" ${S.money<nx[1]?'disabled':''}>買う</button>`:''}</div>`}h+='</div>'}
   if(S.flags.noNet&&a>=13){const pr=Math.round(20000*Math.max(.25,S.cty.inc));h+=`<div class="shop"><div><div>スマホと通信契約</div><div class="muted small">SNSを始められるようになる ${yen(pr)}</div></div><button class="b sm pri" type="button" data-act="buyphone" ${S.money<pr?'disabled':''}>買う</button></div>`}
@@ -69,7 +69,7 @@ function kidMoneyPanel(){
 }
 function panelMoney(){if(age()<18)return kidMoneyPanel();return panelMoneyAdult()}
 OUT_LBL.kgoods='おこづかいの買い物';INC_LBL.allow='おこづかい・お手伝い';
-document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t||!S)return;if(t.dataset.kgood){const g=KIDGOODS.find(x=>x.k===t.dataset.kgood),p=Math.round(g.p*Math.max(.2,S.cty.inc));if(S.money>=p){outc('kgoods',p);g.f();log(`${g.n}を買った`,'good');snd('buy');save();render()}}});
+document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t||!S)return;if(t.dataset.kgood){const g=KIDGOODS.find(x=>x.k===t.dataset.kgood),p=Math.round(g.p*Math.max(.2,S.cty.inc));if(S.money>=p&&goodCanBuy(g,1)){outc('kgoods',p);goodApply(g,1,()=>g.f());log(`${g.n}を買った`,'good');snd('buy');save();render()}}});
 
 // ----- 時間の進み方：3か月ずつ -----
 function unitHtml(){return `<select data-set="unit" id="unitSel"><option value="month" ${S.unit==='month'?'selected':''}>1ターン＝1か月</option><option value="season" ${S.unit==='season'?'selected':''}>1ターン＝3か月（早く進める）</option><option value="week" ${S.unit==='week'?'selected':''}>1ターン＝1週間（細かく決めたいとき）</option></select>`}

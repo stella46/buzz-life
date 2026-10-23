@@ -1,6 +1,6 @@
 
 // ===== v1.4：会社の経営を本格的に（開発費・従業員・オフィスと支社・レイアウト・名前・買収・合併） =====
-const CO_MAX2=8;
+const CO_MAX2=15;
 // ----- 作るものの開発費（現実に近い金額。物価で変わる） -----
 const PCOST={game:[3e7,3e8,3e9],it:[2e7,2e8,2e9],food:[5e6,3e7,2e8],apparel:[1e7,8e7,5e8],media:[5e6,5e7,5e8],estate:[3e8,3e9,3e10],space:[5e9,5e10,3e11]};
 const PSTAFF={game:[3,30,200],it:[3,20,150],food:[2,10,50],apparel:[2,10,60],media:[2,10,80],estate:[5,30,200],space:[20,200,2000]};

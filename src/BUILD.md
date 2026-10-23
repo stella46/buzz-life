@@ -1,7 +1,7 @@
 # ビルド手順（Buzz人生シミュレーター）
-ソースは p1.html（画面とCSS）＋ p2〜p41.js（p37 はなし）（スクリプト）。この順でつなげて1枚のHTMLにする。
+ソースは p1.html（画面とCSS）＋ p2〜p45.js（p37 はなし）（スクリプト）。この順でつなげて1枚のHTMLにする。
 
-    { cat p1.html; echo '<script>'; cat p2.js p4.js p6.js p3.js p7.js p8.js p9.js p10.js p11.js p12.js p13.js p14.js p15.js p16.js p17.js p18.js p19.js p20.js p21.js p22.js p23.js p24.js p25.js p26.js p27.js p28.js p29.js p30.js p31.js p32.js p33.js p34.js p35.js p36.js p38.js p39.js p40.js p41.js; echo '</script>'; } > nipporia.html
+    { cat p1.html; echo '<script>'; cat p2.js p4.js p6.js p3.js p7.js p8.js p9.js p10.js p11.js p12.js p13.js p14.js p15.js p16.js p17.js p18.js p19.js p20.js p21.js p22.js p23.js p24.js p25.js p26.js p27.js p28.js p29.js p30.js p31.js p32.js p33.js p34.js p35.js p36.js p38.js p39.js p40.js p41.js p42.js p43.js p44.js p45.js; echo '</script>'; } > nipporia.html
 
 - 後のファイルほど優先（同じ名前の function は後のものが使われる）
 - p2：データ・基本の出来事 / p4：国・難易度・研究・まち・実績・BGM / p6：出来事（v0.2） / p3：エンジン・画面（v0.1） / p7：v0.2の差し替え / p8：v0.3（行動の中身・請求書・経営・5タブ） / p9：設定・削除・アップデート情報（CHANGELOG） / p10：セーブ保管・過去バージョン / p11：出来事（v0.4） / p12：子ども時代（v0.5） / p13：v0.6（人生の選択・目標・ファン層・アルバムほか） / p14：v0.7（時代・実際の出来事・会社・新しいまち・遊び方） / p15：v0.8（研究追加・スキルツリー2種・感想フォーム・舞台説明） / p16：v0.9（推定プレイ時間・感想フォーム改・バージョン画面）。感想の送り先は p16.js の FB_URL（feedback/feedback_sheet.gs をスプレッドシートに置いてウェブアプリとして公開したURL）
@@ -32,3 +32,7 @@
 - p33：v1.3.1 デバッグモード（パスワードのSHA-256だけを置く。入口はタイトルの版表示を5回タップか設定の「開発者」。オンの端末は buzz-dev に保存）
 - p34：v1.4 開発費（PCOST）と必要人数、従業員（c.emp：一般社員数＋主要メンバー key）、オフィス・支社（c.offices・OSZ）とレイアウト（ROOMS）、会社の管理画面（showCo）、会社名・まち名の変更、会社の買収（S.coMkt）・合併、まちの買収（S.townMkt）
 - p35：v2.0 実績確認の分割、超大企業（Lv12・部署・子会社・持ち株）／p36：賞（毎年14種）と自分で開くイベント（12種・審査3通り）／p38：大計画26種／p39：出来事（p39a〜l をつなげたもの、v2.0 で増やした分は確率×0.5）／p40：実績（分野別画面）／p41：ひみつの実績追加・選択時のエラーで止まらない保護
+- p42：v2.1 タイトルロゴ（logo.webp／ドット系は logo-dot.png）、はじめからでバージョン選択（versions/v1.2/）
+- p43：v2.1 世界進出（WREG・SNSのcapを getter で倍率）、世界的バズ・世界的大ヒット、節目のお祝い（popBig）、ランキング（架空）、ライバル企業（S.rcos・rc_*）
+- p44：v2.1 お金の表示（万・億・兆・京・垓）、出来事の種類ごとのおまかせ（S.evSkip）、つながり（交流は月3回：S.koryu）
+- p45：v2.1 大計画100種類、事業・人生タブのグループ化（SUBGRP）、v2.0の保管

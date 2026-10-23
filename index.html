@@ -3034,6 +3034,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v2.3','2026年10月23日',['【人生の終わりのモード】「亡くなったら終わり」と「エンドレス（子どもに引き継ぐ）」を、遊んでいる途中でも切りかえられるようになりました。「人生」→「自分」→「能力」から変更できます。','「亡くなったら終わり」で人生を終えたときも、子どもがいれば、その場でエンドレスにして子どもに引き継げるようにしました。']],
   ['v2.2.1','2026年10月23日',['タイトルロゴを、これまでのタイトル文字と同じくらいの大きさにしました。','タイトルロゴをより高画質にしました。']],
   ['v2.2','2026年10月23日',['【予定の決め方】予定の決め方を4つから選べるようになりました。「予定」タブの上にあるボタンで、いつでも切りかえられます。','・いつもの枠：これまでどおり、枠ごとに行動を選びます。','・いつもの予定＋今月だけ：ふだんの予定は毎月そのままくり返されます。変えたい月だけ「今月だけ予定を変える」を使えば、翌月は自動でふだんの予定に戻ります。','・割合で決める：「投稿50%・休み20%」のように、時間の使い方をつまみで配分します。端数は月ごとに順番に回るので、長い目で見ると割合どおりになります。','・割合＋今月だけ：ふだんは割合で、変えたい月だけ「今月だけ」を使えます。']],
   ['v2.1','2026年10月23日',['【タイトルロゴ】新しいタイトルロゴになりました。','【バージョンの選択】「はじめから」で、最新版のほかに v1.2.3 も選べるようになりました。v2.0で大きく変わる前の遊び心地を楽しめます。','【世界進出】登録者がふえると、アジア・北米・ヨーロッパなど7つの地域へ順に進出できるようになりました。進出するほど届けられる人数が広がり、最大で数億人のファンを目指せます。','【世界的バズ・世界的大ヒット】バズったときにまれに「世界的バズ」が起き、登録者が一気にふえます。会社の作品が高い評価を得ると、世界的な大ヒットになることがあります。','【ランキング】「人生」→「記録」→「世界・ランキング」で、世界の配信者ランキング・長者番付・企業ランキングと、今月のようすやハイライトを見られるようになりました。','【節目のお祝い】登録者・資産・社員数が大きな節目をこえると、身近なものにたとえてお知らせします（例：東京ドーム何杯分、日本の人みんなに1人いくら配れるか）。','【ライバル企業】会社を持つと、同じ分野のライバル企業が現れるようになりました。新作の発表、引きぬき、値下げ競争、買収の打診などの出来事が起きます。','【つながり】「人生」→「人」→「つながり」で、家族・恋人・友達・子どもと、ボタンひとつで交流できるようになりました（毎月3回まで・予定の枠は使いません）。自分のための時間も選べます。','【出来事のおまかせ】出来事の種類ごとに「おまかせ」を設定できるようになりました。選んだ種類のよくある出来事は、ふつうの速さでも止まらずに進みます。出来事の画面からも設定できます。','【お金の表示】大きな金額を「兆」「京」でも表示するようにしました（例：1兆2000億円）。','【事業】持てる会社を15社まで、自分のサブスクを10個まで運営できるようになりました。','【大計画】74種類を追加し、全部で100種類になりました。「エンタメ」「ふしぎ」の分類と、「いま始められるものだけ」の絞り込みを追加しました。','【画面の整理】「事業」と「人生」のタブの項目をグループにまとめ、見つけやすくしました。','実績を17個追加しました。']],
@@ -8584,4 +8585,18 @@ document.addEventListener('change',e=>{const t=e.target;if(!S)return;const d=t.d
  else if(d.rw!=null){const r=ratioRows()[+d.rw];if(r)r[2]=+t.value}
  else return;save();renderPanel()});
 document.addEventListener('input',e=>{const t=e.target;if(!S||t.dataset.rw==null)return;const rows=ratioRows(),r=rows[+t.dataset.rw];if(!r)return;r[2]=+t.value;const sum=ratioSum();rows.forEach((x,i)=>{const el=document.getElementById('rpct'+i);if(el)el.textContent=(sum&&ACT[x[0]]&&ACT[x[0]].ok()?Math.round(x[2]/sum*100):0)+'%'})});
+
+// ===== v2.3：人生の終わりのモードを、遊んでいる途中でも切りかえられるように =====
+function endModeHtml(){const on=!!S.endless,kids=(S.kids||[]).length;
+ return `<div class="card endmode"><div class="hd"><span>人生の終わり</span><span class="chip">${on?'エンドレス（子どもに引き継ぐ）':'亡くなったら終わり'}</span></div>
+ <p class="hint">${on?`亡くなったとき、子どもとして人生を続けられます。お金・事務所・まち・研究も引き継がれます。50歳をすぎると「この子に託す」で、生きているうちに子どもの人生へ移ることもできます。${kids?'':'（いまは子どもがいないので、このまま亡くなると人生は終わります）'}`:'亡くなったら、この人生はそこで終わります。'}いつでも切りかえられます。</p>
+ <div class="row"><button class="b sm ${on?'':'pri'}" type="button" data-endm="0" aria-pressed="${!on}">亡くなったら終わり</button><button class="b sm ${on?'pri':''}" type="button" data-endm="1" aria-pressed="${on}">エンドレス（子どもに引き継ぐ）</button></div></div>`}
+const _pl47=panelLife;panelLife=function(){const h=_pl47.apply(this,arguments);try{if(SUB.life!=='stat'||!S)return h;const i=h.indexOf('<h3>進路</h3>');const c=endModeHtml();return i<0?h+c:h.slice(0,i)+c+h.slice(i)}catch(e){console.error(e);return h}};
+// つながり画面でも、子どもがいれば案内
+const _kh47=koryuHtml;koryuHtml=function(){let h=_kh47.apply(this,arguments);try{if((S.kids||[]).length&&!S.endless)h+=`<p class="hint">「この子に託す」で次の世代に引き継ぐには、「人生」→「自分」→「能力」で人生の終わりを「エンドレス」にしてください。</p>`;else if((S.kids||[]).length&&S.endless&&age()<50)h+=`<p class="hint">50歳をすぎると、子どもの欄の「この子に託す」で次の世代に引き継げます。</p>`}catch(_){}return h};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-endm]');if(!b||!S)return;const v=+b.dataset.endm;if(!!S.endless===!!v)return;S.endless=v?1:0;if(!S.lineage)S.lineage=[];if(!S.gen)S.gen=1;
+ log(v?'人生の終わりを「エンドレス（子どもに引き継ぐ）」にした':'人生の終わりを「亡くなったら終わり」にした','life');toast(v?'エンドレスにしました':'亡くなったら終わりにしました');save();renderPanel()});
+// 亡くなったあとでも、子どもがいれば引き継ぎを選べるように
+const _se47=showEnding;showEnding=function(){const r=_se47.apply(this,arguments);try{if(S&&!S.endless&&(S.kids||[]).length){const el=$('#scrEnd'),hd=el&&el.querySelector('.head');if(hd&&!el.querySelector('.endheir')){const d=document.createElement('div');d.className='card endheir';d.innerHTML=`<h3>家系をつなぐ</h3><p class="hint">いまは「亡くなったら終わり」になっていますが、子どもとして人生を続けることもできます。お金・事務所・まち・研究も引き継がれます。</p><div class="row"><button class="b pri" type="button" data-endheir="1">エンドレスにして、子どもに引き継ぐ</button></div>`;hd.after(d)}}}catch(e){console.error(e)}return r};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-endheir]');if(!b||!S)return;S.endless=1;if(!S.lineage)S.lineage=[];showEnding()});
 </script>

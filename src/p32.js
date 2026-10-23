@@ -34,7 +34,7 @@ function prodTrend(k){if(!S.prodTr)S.prodTr={};let t=S.prodTr[k];const its=prodI
 function prodCost(c,sc){return Math.round(COS[c.k].c*PSCALE[sc].cm*Math.max(1,c.lv*.6)*Math.max(.2,S.cty.inc))}
 function prodStart(c,it,sc,auto){const cost=prodCost(c,sc);if(S.money<cost)return false;outc('co',cost);c.pr=c.pr||{};c.pr.act={it,sc,st:S.am,dur:PSCALE[sc].dur,cost,auto:!!auto};if(!auto)log(`「${c.name}」で${PROD[c.k].lbl}「${it}」の${PROD[c.k].verb}を始めた（${PSCALE[sc].n}・${yen(cost)}）`,'good');return true}
 function prodRelease(c){const a=c.pr.act,P=PROD[c.k];const last=(c.pr.hist||[])[0];
-  let q=35+c.lv*3+P.sk()*.25+(S.cfocus===c.id?8:0)+R(-18,18)-(last&&last.it===a.it?8:0);q=Math.round(clamp(q,1,100));
+  let rnd=R(-18,18);if(typeof prodCareful==='function'&&prodCareful(c)&&rnd<-10)rnd=-10;let q=35+c.lv*3+P.sk()*.25+(S.cfocus===c.id?8:0)+rnd-(last&&last.it===a.it?8:0)+(typeof prodExtra==='function'?prodExtra(c,a):0);q=Math.round(clamp(q,1,100));
   const tr=prodTrend(c.k)===a.it;const total=Math.round(a.cost*Math.pow(q/50,2)*(tr?1.6:1)*PSCALE[a.sc].mm*R(.7,1.3)*ecoMul());
   c.pr.sales=c.pr.sales||[];c.pr.sales.push({left:12,amt:total*.18,dec:.86});
   c.pr.hist=[{it:a.it,sc:a.sc,q,total,am:S.am,tr},...(c.pr.hist||[])].slice(0,5);c.pr.act=null;

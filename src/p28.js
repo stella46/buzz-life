@@ -20,7 +20,8 @@ function slotCard(i,s,mode){const cur=i===SLOT;const head=`<div class="hd"><span
   else if(mode==='new')btns=`<button class="b sm" type="button" data-slot="${i}" data-sm="over">上書きして始める</button>`;
   else btns=`<button class="b sm" type="button" data-slot="${i}" data-sm="cont">続ける</button><button class="b sm ghost" type="button" data-slot="${i}" data-sm="del">消す</button>`;
   return `<div class="card slotc2" id="slotc_${i}">${head}${body}<div class="row">${btns}</div></div>`}
-function showSlots(mode){const used=slotsUsed();let h=`<div class="mcat life">セーブスロット</div><h2>${mode==='new'?'どのスロットで始める？':mode==='cont'?'どの人生を続ける？':'セーブスロット'}</h2><p class="hint">${SLOT_N}つのスロットに、別々の人生を保存できる。月が進むたびに、遊んでいるスロットへ自動で保存される。実績・図鑑・引き継ぎスキルは全スロット共通。</p>`;
+let SLOT_MODE='manage';
+function showSlots(mode){SLOT_MODE=mode;const used=slotsUsed();let h=`<div class="mcat life">セーブスロット</div><h2>${mode==='new'?'どのスロットで始める？':mode==='cont'?'どの人生を続ける？':'セーブスロット'}</h2><p class="hint">${SLOT_N}つのスロットに、別々の人生を保存できる。月が進むたびに、遊んでいるスロットへ自動で保存される。実績・図鑑・引き継ぎスキルは全スロット共通。</p>`;
   let order=[...Array(SLOT_N).keys()];if(mode==='cont')order=used.sort((a,b)=>(b[1].at||0)-(a[1].at||0)).map(x=>x[0]);
   for(const i of order)h+=slotCard(i,slotInfo(i),mode);
   openModal(h+'<button class="b pri" type="button" data-act="close">閉じる</button>');$('#mcard').dataset.kind='slots'}
@@ -31,13 +32,13 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-slot]');if
   if(m==='over'){const c=$('#slotc_'+i);if(c)c.querySelector('.row').innerHTML=`<p class="hint">この人生は消えて、元に戻せない。</p><button class="b sm warnb" type="button" data-slot="${i}" data-sm="over2">上書きする</button><button class="b sm ghost" type="button" data-slot="${i}" data-sm="back">やめる</button>`;return}
   if(m==='over2'){try{localStorage.removeItem(slotKey(i))}catch(_){}setSlot(i);closeModal();showSetup();return}
   if(m==='del'){const c=$('#slotc_'+i);if(c)c.querySelector('.row').innerHTML=`<p class="hint">この人生を消す？元に戻せない。</p><button class="b sm warnb" type="button" data-slot="${i}" data-sm="del2">消す</button><button class="b sm ghost" type="button" data-slot="${i}" data-sm="back">やめる</button>`;return}
-  if(m==='del2'){if(S&&i===SLOT&&!$('#scrGame').hidden){toast('いま遊んでいる人生は、タイトルに戻ってから消してね');return}try{localStorage.removeItem(slotKey(i))}catch(_){}initTitle();showSlots('manage');return}
-  if(m==='back'){showSlots($('#mcard h2').textContent.includes('始める')?'new':'manage');return}});
+  if(m==='del2'){if(S&&i===SLOT&&!$('#scrGame').hidden){toast('いま遊んでいる人生は、タイトルに戻ってから消してね');return}try{localStorage.removeItem(slotKey(i))}catch(_){}initTitle();if(SLOT_MODE==='cont'&&!slotsUsed().length){closeModal();return}showSlots(SLOT_MODE);return}
+  if(m==='back'){showSlots(SLOT_MODE);return}});
 // タイトルの「はじめから」「つづきから」をスロット対応に
 document.addEventListener('click',e=>{const b=e.target.closest('#btnNew,#btnCont');if(!b)return;e.stopPropagation();e.preventDefault();snd('click');
   const used=slotsUsed();
-  if(b.id==='btnNew'){if(!used.length){setSlot(0);showSetup();return}if(!slotInfo(SLOT)){showSetup();return}showSlots('new');return}
-  if(!used.length)return;if(used.length===1){contSlot(used[0][0]);return}showSlots('cont')},true);
+  if(b.id==='btnNew'){showSlots('new');return}
+  if(!used.length)return;showSlots('cont')},true);
 const _initTitle28=initTitle;initTitle=function(){_initTitle28();const used=slotsUsed(),b=$('#btnCont');if(b){b.disabled=!used.length;b.textContent=used.length>1?`つづきから（${used.length}つの人生）`:used.length?'つづきから':'つづきから（セーブなし）'}contInfo()};
 contInfo=function(){let el=$('#contInfo');const b=$('#btnCont');if(!b)return;if(!el){el=document.createElement('p');el.id='contInfo';el.className='hint continfo';b.after(el)}
   const used=slotsUsed().sort((a,b)=>(b[1].at||0)-(a[1].at||0));el.hidden=!used.length;if(!used.length)return;const [i,s]=used[0];
@@ -50,7 +51,7 @@ const _showSetup28=showSetup;showSetup=function(){NOSAVE=false;return _showSetup
 
 // ----- かんたん引き継ぎ（別の端末・ブラウザへ） -----
 async function packAll(){const d={v:2,at:Date.now(),slot:SLOT,slots:{},meta:null};if(S&&S.alive&&!NOSAVE)save(true);
-  for(let i=0;i<SLOT_N;i++){try{const r=localStorage.getItem(slotKey(i));if(r)d.slots[i]=r}catch(_){}}try{d.meta=localStorage.getItem(META_K)}catch(_){}
+  for(let i=0;i<SLOT_N;i++){try{const r=localStorage.getItem(slotKey(i));if(r)d.slots[i]=r}catch(_){}}try{d.meta=localStorage.getItem(META_K)}catch(_){}try{d.labels=localStorage.getItem('nipporia-slotlabel')}catch(_){}
   const json=JSON.stringify(d);
   if(typeof CompressionStream!=='undefined'){try{const cs=new Blob([json]).stream().pipeThrough(new CompressionStream('gzip'));const buf=new Uint8Array(await new Response(cs).arrayBuffer());let bin='';for(let i=0;i<buf.length;i+=8192)bin+=String.fromCharCode.apply(null,buf.subarray(i,i+8192));return 'NIP2Z.'+btoa(bin)}catch(_){}}
   return 'NIP2.'+btoa(unescape(encodeURIComponent(json)))}
@@ -76,7 +77,7 @@ async function trImport(code){const d=await unpack(code);const msg=t=>{const m=$
 let TR_PENDING=null;
 function trApply(d){for(let i=0;i<SLOT_N;i++){try{localStorage.removeItem(slotKey(i))}catch(_){}}try{localStorage.removeItem(SLOT_INFO)}catch(_){}
   for(const [i,r] of Object.entries(d.slots||{})){try{localStorage.setItem(slotKey(+i),r)}catch(_){}}if(d.meta){try{localStorage.setItem(META_K,d.meta);const nm=JSON.parse(d.meta)||{};const base={};for(const k in META){const v=META[k];base[k]=Array.isArray(v)?[]:(v&&typeof v==='object')?{}:typeof v==='number'?0:v}META=Object.assign(base,nm)}catch(_){}}
-  setSlot(+d.slot||0);if(S&&!$('#scrGame').hidden){setSpeed(0)}S=null;showScreen('title');initTitle();closeModal();toast('引き継ぎました')}
+  try{if(d.labels)localStorage.setItem('nipporia-slotlabel',d.labels);else localStorage.removeItem('nipporia-slotlabel')}catch(_){}setSlot(+d.slot||0);if(S&&!$('#scrGame').hidden){setSpeed(0)}S=null;showScreen('title');initTitle();closeModal();toast('引き継ぎました')}
 document.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;const a=b.dataset.act;
   if(a==='trCopy'){const code=await packAll();try{await navigator.clipboard.writeText(code);$('#trBox').innerHTML=`<p class="hint">コピーしました（${num(code.length)}文字）。新しい端末で「コードを貼りつけ」を押してね。</p>`}catch(_){trShowCode(code)}return}
   if(a==='trFile'){const code=await packAll();const d=new Date();const nm=`buzz-save-${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}.txt`;const url=URL.createObjectURL(new Blob([code],{type:'text/plain'}));const l=document.createElement('a');l.href=url;l.download=nm;document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(url),3000);$('#trBox').innerHTML=`<p class="hint">「${nm}」を保存しました。新しい端末で「ファイルを開く」から選んでね。</p>`;return}

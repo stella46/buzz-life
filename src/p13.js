@@ -75,8 +75,8 @@ E('goal_done',{t:'目標達成！',cat:'人生',w:0,text:()=>`人生の目標「
 // ----- 時代の変化 -----
 GENRES.vr={n:'VR配信',w:{plan:.4,edit:.4,talk:.2},tal:'game',req:'era_vr'};
 GENRES.aico={n:'AIと共演',w:{plan:.5,talk:.3,edit:.2},tal:'comedy',req:'era_ai'};
-SNS.holo={n:'ホロミ',d:'立体映像の配信',reach:.9,disc:1.6,conv:.9,rpm:.6,flame:1,mon:5000,cap:2e6,era:2040};
-const ERAS=[[2035,'era_vr','VR配信が当たり前の時代に。新ジャンル「VR配信」が選べるようになった'],[2040,'era_holo','立体映像のSNS「ホロミ」が登場した'],[2048,'era_ai','AIと人間の共演が新しいエンタメに。新ジャンル「AIと共演」が選べるようになった']];
+SNS.holo={n:'ホロステージ',d:'立体映像の配信',reach:.9,disc:1.6,conv:.9,rpm:.6,flame:1,mon:5000,cap:2e6,era:2040};
+const ERAS=[[2035,'era_vr','VR配信が当たり前の時代に。新ジャンル「VR配信」が選べるようになった'],[2040,'era_holo','立体映像のSNS「ホロステージ」が登場した'],[2048,'era_ai','AIと人間の共演が新しいエンタメに。新ジャンル「AIと共演」が選べるようになった']];
 function newTrend(){const gs=Object.keys(GENRES).filter(g=>genreOk(g)),ss=Object.keys(SNS).filter(x=>(!SNS[x].era||S.y>=SNS[x].era)&&(x!=='tsubu'||chance(.5)));if(!ss.length)ss.push('milu');
   if(S.rumor&&S.am>=S.rumor.at&&chance(S.rumor.acc/100)){S.trend={g:S.rumor.g,s:S.rumor.s,until:S.am+RI(4,9)};ticker(`噂どおり「${GENRES[S.rumor.g].n}」が流行し始めた`);S.rumor=null;return}
   S.rumor=null;S.trend={g:pick(gs),s:pick(ss),until:S.am+RI(4,9)}}

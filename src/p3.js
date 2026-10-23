@@ -389,7 +389,7 @@ function renderPanel(){
       h+=`</div><div class="grp"><h3>投稿の方針</h3>
         <label class="slot"><span class="lb">ジャンル</span><select data-set="genre" id="genreSel">${Object.entries(GENRES).map(([k,g])=>`<option value="${k}" ${S.genre===k?'selected':''}>${g.n}（素質${Math.round(S.tal[k])}）${S.trend.g===k?' ★流行':''}</option>`).join('')}</select></label>
         <label class="slot"><span class="lb">スタイル</span><select data-set="style" id="styleSel">${Object.entries(STYLES).map(([k,s])=>`<option value="${k}" ${S.style===k?'selected':''}>${s.n}</option>`).join('')}</select></label>
-        <p class="hint">攻めるほど伸びやすいが、炎上しやすい。ツブヤは特に燃えやすい。</p></div>
+        <p class="hint">攻めるほど伸びやすいが、炎上しやすい。ひとことSNSは特に燃えやすい。</p></div>
         <div class="grp"><h3>投稿の質 ${Math.round(q)}</h3>${bar(q,'p')}<p class="hint">スキル・素質・機材・体調で決まる。今の流行：${SNS[S.trend.s].n}の「${GENRES[S.trend.g].n}」</p></div>`;
       if(S.rival)h+=`<div class="card"><div class="hd"><span>ライバル：${esc(S.rival.name)}</span><span class="muted small">${esc(S.rival.trait)}</span></div><div class="kv"><span>相手のフォロワー</span><span>${num(S.rival.f)}人</span><span>自分のフォロワー</span><span>${num(totalF())}人</span></div></div>`;
     }

@@ -68,7 +68,7 @@ E('era_sns',{t:'SNSの時代がやってきた',cat:'SNS',w:0,text:()=>`誰で�
   ch:[['アカウントを作る',()=>{openSns('milu');S.main='milu';S.genre=topTal();tl('SNSを始めた');return '新しい時代の波に乗った。「発信」タブから投稿の方針を決めよう。'}],['今はやめておく',()=>'あとからでも「発信」タブで始められる。']]});
 
 // 出来事の時代チェック（SNSより前の時代に、SNSやスマホの出来事が起きないように）
-const MODERN_RE=/SNS|スマホ|動画|配信|ネット|アプリ|フォロワー|バズ|炎上|オンライン|サブスク|インフルエンサー|コメント欄|DM|AI|VR|通知|ミルミル|パット|ツブヤ|案件|投稿|チャンネル|サーバー|アカウント/;
+const MODERN_RE=/SNS|スマホ|動画|配信|ネット|アプリ|フォロワー|バズ|炎上|オンライン|サブスク|インフルエンサー|コメント欄|DM|AI|VR|通知|ドウガ広場|パット|ひとことSNS|案件|投稿|チャンネル|サーバー|アカウント/;
 const _modern={};
 function isModern(e){if(_modern[e.id]==null){let s=e.t+' ';try{s+=String(e.text)+String(typeof e.ch==='function'?'':e.ch.map(c=>c[0]).join(' '))}catch(_){}_modern[e.id]=MODERN_RE.test(s)}return _modern[e.id]}
 function rollEvent(k){

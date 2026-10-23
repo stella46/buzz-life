@@ -184,7 +184,8 @@ html.mlock,html.mlock body{overflow:hidden;overscroll-behavior:none}.ov{overscro
 .warnb{border-color:var(--gold)!important;color:var(--gold)!important}
 .mtabs{margin-bottom:6px}.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin:6px 0 10px}
 .mtile{display:flex!important;flex-direction:column;align-items:flex-start;text-align:left;gap:2px;padding:10px 12px!important;min-height:64px}.mtile .mi{font-size:18px;line-height:1}.mtile .mt{font-weight:bold}.mtile .md{font-size:11px;opacity:.75}
-.chren input,#schName{background:var(--bg);color:var(--ink);border:2px solid var(--line);padding:8px 10px;width:100%;font:inherit;min-height:42px;box-sizing:border-box}
+.slottools{margin-top:4px;flex-wrap:wrap;gap:6px}.prow{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+.slotnm,.chren input,#schName{background:var(--bg);color:var(--ink);border:2px solid var(--line);padding:8px 10px;width:100%;font:inherit;min-height:42px;box-sizing:border-box}
 #townCv{width:100%;max-width:520px;aspect-ratio:4/3;image-rendering:pixelated;border:3px solid var(--line);cursor:pointer;display:block;box-shadow:4px 4px 0 var(--shadow)}
 .achl{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;max-height:300px;overflow:auto}
 .ach{background:var(--bg2);border:1px solid var(--line);padding:6px 8px;display:flex;flex-direction:column;gap:2px;font-size:.78rem;color:var(--muted)}
@@ -489,9 +490,9 @@ const GENRES={
 };
 // 架空のSNS
 const SNS={
-  milu:{n:'ミルミル',d:'長い動画',reach:1,disc:1,conv:1,rpm:.4,flame:1,mon:1000,cap:3e6},
-  patto:{n:'パッと',d:'短い縦動画',reach:.8,disc:2.2,conv:.55,rpm:.05,flame:1.2,mon:10000,cap:2.5e6},
-  tsubu:{n:'ツブヤ',d:'短文と画像',reach:.6,disc:.8,conv:.8,rpm:0,flame:2.2,mon:Infinity,cap:1.2e6}
+  milu:{n:'ドウガ広場',d:'長い動画',reach:1,disc:1,conv:1,rpm:.4,flame:1,mon:1000,cap:3e6},
+  patto:{n:'タテショート',d:'短い縦動画',reach:.8,disc:2.2,conv:.55,rpm:.05,flame:1.2,mon:10000,cap:2.5e6},
+  tsubu:{n:'ひとことSNS',d:'短文と画像',reach:.6,disc:.8,conv:.8,rpm:0,flame:2.2,mon:Infinity,cap:1.2e6}
 };
 const STYLES={safe:{n:'安全運転',disc:.85,fl:0},norm:{n:'ふつう',disc:1,fl:.002},edge:{n:'攻め',disc:1.35,fl:.012}};
 const EQ={
@@ -608,7 +609,7 @@ E('b_screen',{t:'動画に夢中',cat:'成長',w:.06,once:1,when:()=>age()>=2&&a
   text:()=>'タブレットの動画に夢中。気づけば何時間も見ている。',
   ch:[['もっと見る',()=>{ad('tal.game',3);ad('tal.talk',2);ad('health',-2);return '動画の口ぐせをまねするようになった。'}],['外で遊ぶ',()=>{ad('health',3);ad('social',2);return '公園で泥だらけになって遊んだ。'}]]});
 E('b_kidch',{t:'家族チャンネル開設',cat:'家族チャンネル',w:.08,once:1,when:()=>age()>=1&&age()<=8&&!S.kc.on&&kidChLikely()&&anyParentAlive(),
-  text:()=>`${parentName()}が「成長の記録を動画にしよう！」と言い出した。家族チャンネル「${S.last}家のにぎやか日記」がミルミルで始まった。`,
+  text:()=>`${parentName()}が「成長の記録を動画にしよう！」と言い出した。家族チャンネル「${S.last}家のにぎやか日記」がドウガ広場で始まった。`,
   ch:[['カメラに手をふる',()=>{startKidCh();ad('priv',-5);ad('happy',2);return '家族チャンネルが始まった。登録者が増えると家計が潤うが、プライバシーは減っていく。'}]]});
 
 // --- 小学生 ---
@@ -672,7 +673,7 @@ E('m13',{t:'SNSデビュー',cat:'人生',w:0,
   ch:()=>Object.entries(SNS).map(([k,s])=>[`${s.n}（${s.d}）`,()=>{openSns(k);S.main=k;convertTalent();S.genre=topTal();tl(s.n+'でSNSデビュー');return `${s.n}のアカウントを作った。ジャンルは「${GENRES[S.genre].n}」にした（SNSタブで変更できる）。\n同じ学年のライバル配信者「${S.rival.name}」の存在が気になる。`}])});
 E('m13k',{t:'家族チャンネルのこれから',cat:'家族チャンネル',w:0,when:()=>S.kc.on,
   text:()=>`家族チャンネルの登録者は${num(S.kc.f)}人。${S.kc.byName}「これからは自分でやってみる？」`,
-  ch:[['チャンネルを引き継ぐ',()=>{const g=Math.round(S.kc.f*.5);openSns('milu');S.f.milu+=g;S.kc.on=0;S.kc.was=1;ad('priv',-5);tl('家族チャンネルを引き継いだ');return `ミルミルに${num(g)}人のフォロワーを引き継いだ。昔の動画もそのまま残る。`}],
+  ch:[['チャンネルを引き継ぐ',()=>{const g=Math.round(S.kc.f*.5);openSns('milu');S.f.milu+=g;S.kc.on=0;S.kc.was=1;ad('priv',-5);tl('家族チャンネルを引き継いだ');return `ドウガ広場に${num(g)}人のフォロワーを引き継いだ。昔の動画もそのまま残る。`}],
       ['もうやめてもらう',()=>{S.kc.on=0;S.kc.was=1;ad('priv',5);ad('happy',2);return '新しい動画はもう撮られない。昔の動画はネットに残ったままだ。'}],
       ['全部消してもらう',()=>{S.kc.on=0;S.kc.was=0;ad('priv',20);ad('happy',4);relKc(-6);return `${S.kc.byName}は残念そうだったが、動画はすべて消された。`}]]});
 E('t_club',{t:'部活選び',cat:'学校',w:.3,once:1,when:()=>age()===13,
@@ -766,7 +767,7 @@ E('poor',{t:'お金が足りない',cat:'お金',w:0,text:()=>`残高が${yen(S.
 
 // --- SNS ---
 E('s100',{t:'フォロワー100人',cat:'SNS',w:1,once:1,when:()=>totalF()>=100,text:()=>'フォロワーが100人を超えた！ 知らない人が自分の投稿を見てくれている。',ch:[['やった！',()=>{ad('happy',5);return 'スクショを撮って保存した。'}]]});
-E('s1k',{t:'収益化の条件をクリア',cat:'SNS',w:1,once:1,when:()=>S.f.milu>=1000,text:()=>'ミルミルのフォロワーが1000人を超え、広告の収益を受け取れるようになった。',ch:[['最初の収益を待つ',()=>{ad('happy',8);tl('ミルミルで収益化');return '…初月の収益は缶ジュース数本分だった。それでもうれしい。'}]]});
+E('s1k',{t:'収益化の条件をクリア',cat:'SNS',w:1,once:1,when:()=>S.f.milu>=1000,text:()=>'ドウガ広場のフォロワーが1000人を超え、広告の収益を受け取れるようになった。',ch:[['最初の収益を待つ',()=>{ad('happy',8);tl('ドウガ広場で収益化');return '…初月の収益は缶ジュース数本分だった。それでもうれしい。'}]]});
 E('s10k',{t:'1万人突破',cat:'SNS',w:1,once:1,when:()=>totalF()>=10000,text:()=>'フォロワーが1万人を超えた。企業からPR案件の連絡が届くようになるかもしれない。',ch:[['お祝い配信をする',()=>{ad('happy',8);ad('f',RI(100,800));tl('フォロワー1万人');return 'コメント欄が「おめでとう」で埋まった。'}]]});
 E('s100k',{t:'10万人突破',cat:'SNS',w:1,once:1,when:()=>totalF()>=100000,text:()=>'フォロワーが10万人を超えた！ 運営から記念の楯が届いた。',ch:[['楯を飾る',()=>{ad('happy',15);ad('rep',3);tl('フォロワー10万人');return '部屋で一番目立つ場所に飾った。'}]]});
 E('s1m',{t:'100万人突破',cat:'SNS',w:1,once:1,when:()=>totalF()>=1000000,text:()=>`フォロワーが100万人を超えた。${ctry()}で知らない人はいない存在になった。`,ch:[['ここまで来た',()=>{ad('happy',20);tl('フォロワー100万人');return '街を歩くと声をかけられるようになった。'}]]});
@@ -809,11 +810,11 @@ E('s_fan',{t:'ファンレター',cat:'SNS',w:.03,cd:6,when:()=>totalF()>=3000,
   text:()=>'「つらい時期に、あなたの動画に救われました」という長いメッセージが届いた。',
   ch:[['大切に読む',()=>{ad('happy',6);ad('mental',6);return '続けてきてよかった、と心から思った。'}]]});
 E('s_short',{t:'短い動画のブーム',cat:'SNS',w:.03,once:1,when:()=>S.snsOpen&&!S.open.patto,
-  text:()=>'短い縦動画のSNS「パッと」が爆発的に流行っている。',
-  ch:[['パッとも始める',()=>{openSns('patto');return 'パッとのアカウントを作った。SNSタブでメインを切り替えられる。'}],['今のままでいく',()=>'流行に振り回されないことにした。']]});
+  text:()=>'短い縦動画のSNS「タテショート」が爆発的に流行っている。',
+  ch:[['タテショートも始める',()=>{openSns('patto');return 'タテショートのアカウントを作った。SNSタブでメインを切り替えられる。'}],['今のままでいく',()=>'流行に振り回されないことにした。']]});
 E('s_down',{t:'SNSの大移動',cat:'ニュース',w:.01,cd:48,when:()=>S.open.tsubu,
-  text:()=>'ツブヤの運営方針が急に変わり、ユーザーの大移動が起きている。',
-  ch:[['他のSNSに力を入れる',()=>{const m=Math.round(S.f.tsubu*.25);S.f.tsubu-=m;const to=S.open.milu?'milu':'patto';openSns(to);S.f[to]+=Math.round(m*.5);return `ツブヤのフォロワーの一部が${SNS[to].n}についてきてくれた。`}],['様子を見る',()=>{S.f.tsubu=Math.round(S.f.tsubu*.88);return 'ツブヤのフォロワーが1割ほど減った。'}]]});
+  text:()=>'ひとことSNSの運営方針が急に変わり、ユーザーの大移動が起きている。',
+  ch:[['他のSNSに力を入れる',()=>{const m=Math.round(S.f.tsubu*.25);S.f.tsubu-=m;const to=S.open.milu?'milu':'patto';openSns(to);S.f[to]+=Math.round(m*.5);return `ひとことSNSのフォロワーの一部が${SNS[to].n}についてきてくれた。`}],['様子を見る',()=>{S.f.tsubu=Math.round(S.f.tsubu*.88);return 'ひとことSNSのフォロワーが1割ほど減った。'}]]});
 E('s_tip',{t:'投げ銭ライブ',cat:'SNS',w:.03,cd:4,when:()=>S.snsOpen&&totalF()>=5000&&age()>=18,
   text:()=>'ライブ配信で投げ銭がたくさん飛んできた。',
   ch:[['お礼を言う',()=>{const v=Math.round(totalF()*R(.3,1.2));ad('money',v,'tip');ad('happy',3);return `投げ銭で${yen(v)}の収入になった。`}]]});
@@ -938,7 +939,7 @@ const DF=()=>DIFFS[S.diff]||DIFFS.normal;
 const RES=[
   {id:'live',n:'ライブ配信',c:20,d:'投げ銭が入りやすくなり、投稿の質+2'},
   {id:'mind',n:'メンタルケア',c:24,d:'投稿の疲れ-30%、炎上のダメージ軽減'},
-  {id:'shorts',n:'切り抜き戦略',c:30,d:'パッとでの伸び+25%'},
+  {id:'shorts',n:'切り抜き戦略',c:30,d:'タテショートでの伸び+25%'},
   {id:'collab',n:'コラボ術',c:30,d:'コラボの効果が1.5倍'},
   {id:'analytics',n:'分析ツール',c:40,d:'投稿の質+3、仕組み変更の影響が小さくなる',req:'live'},
   {id:'asmr',n:'ASMR・作業用',c:40,d:'新ジャンル「ASMR・作業用」'},
@@ -1764,7 +1765,7 @@ function renderPanel(){
       h+=`</div><div class="grp"><h3>投稿の方針</h3>
         <label class="slot"><span class="lb">ジャンル</span><select data-set="genre" id="genreSel">${Object.entries(GENRES).map(([k,g])=>`<option value="${k}" ${S.genre===k?'selected':''}>${g.n}（素質${Math.round(S.tal[k])}）${S.trend.g===k?' ★流行':''}</option>`).join('')}</select></label>
         <label class="slot"><span class="lb">スタイル</span><select data-set="style" id="styleSel">${Object.entries(STYLES).map(([k,s])=>`<option value="${k}" ${S.style===k?'selected':''}>${s.n}</option>`).join('')}</select></label>
-        <p class="hint">攻めるほど伸びやすいが、炎上しやすい。ツブヤは特に燃えやすい。</p></div>
+        <p class="hint">攻めるほど伸びやすいが、炎上しやすい。ひとことSNSは特に燃えやすい。</p></div>
         <div class="grp"><h3>投稿の質 ${Math.round(q)}</h3>${bar(q,'p')}<p class="hint">スキル・素質・機材・体調で決まる。今の流行：${SNS[S.trend.s].n}の「${GENRES[S.trend.g].n}」</p></div>`;
       if(S.rival)h+=`<div class="card"><div class="hd"><span>ライバル：${esc(S.rival.name)}</span><span class="muted small">${esc(S.rival.trait)}</span></div><div class="kv"><span>相手のフォロワー</span><span>${num(S.rival.f)}人</span><span>自分のフォロワー</span><span>${num(totalF())}人</span></div></div>`;
     }
@@ -2276,7 +2277,7 @@ function renderPanel(){
       h+=`</div><div class="grp"><h3>投稿の方針</h3>
         <label class="slot"><span class="lb">ジャンル</span><select data-set="genre" id="genreSel">${Object.entries(GENRES).filter(([k])=>genreOk(k)).map(([k,g])=>`<option value="${k}" ${S.genre===k?'selected':''}>${g.n}（素質${Math.round(S.tal[talKey(k)]||0)}）${S.trend.g===k?' ★流行':''}</option>`).join('')}</select></label>
         <label class="slot"><span class="lb">スタイル</span><select data-set="style" id="styleSel">${Object.entries(STYLES).map(([k,s])=>`<option value="${k}" ${S.style===k?'selected':''}>${s.n}</option>`).join('')}</select></label>
-        <p class="hint">攻めるほど伸びやすいが、炎上しやすい。ツブヤは特に燃えやすい。</p></div>
+        <p class="hint">攻めるほど伸びやすいが、炎上しやすい。ひとことSNSは特に燃えやすい。</p></div>
         <div class="grp"><h3>投稿の質 ${Math.round(q)}</h3>${bar(q,'p')}<p class="hint">スキル・素質・機材・スタッフ・研究・体調で決まる。今の流行：${SNS[S.trend.s].n}の「${GENRES[S.trend.g].n}」</p></div>`;
       if(S.rival)h+=`<div class="card"><div class="hd"><span>ライバル：${esc(S.rival.name)}</span><span class="muted small">${esc(S.rival.trait)}</span></div><div class="kv"><span>相手のフォロワー</span><span>${num(S.rival.f)}人</span><span>自分のフォロワー</span><span>${num(totalF())}人</span></div></div>`;
     }
@@ -3001,6 +3002,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v1.2.3','2026年10月23日',['SNSの名前を変更：ドウガ広場（長い動画）／タテショート（短い縦動画）／ひとことSNS（短文と画像）／ホロステージ（立体映像）','「事業」→「会社」で、SNSの運営会社を買収できるように。買収したSNSは好きな名前に変えられ、毎月会社の利益が入る（売ると9割で戻る）','セーブスロットに好きな名前をつけられるように（✎ 名前を変える）','「はじめから」「つづきから」のどちらでも、セーブスロットの一覧が出るように。「つづきから」の一覧で人生を消せる','プレイ時間を自分でリセットできるように：サイト全体・このセーブ・この人生・バージョンごと（「プレイ時間の記録」）、ほかのスロットは「セーブスロット」の「⏱ プレイ時間を0に」から','設定の「続きのセーブデータを消す」をなくし、セーブスロットの画面に移した']],
   ['v1.2.2','2026年10月23日',['「文字の種類」のボタンを、それぞれ実際のフォントで表示。見本の文字（ひらがな・カタカナ・漢字・英数字）と、どんな文字かの説明つき','スマホで「アップデート情報」などが動かしにくい・タップに反応しないことがあったのを改善：画面の「▲▼」の確認処理を軽くした／画面を開いている間はうしろのページが動かないようにした／スマホの画面の高さに合わせた／古い版の更新内容はたたんで表示']],
   ['v1.2.1','2026年10月23日',['ゲーム中のメニューの大きさを固定。タブを切りかえても枠の大きさが変わらず、中身だけがスクロールするように','見た目や支払いなどを切りかえても、メニューが開き直さず、スクロールの位置もそのまま']],
   ['v1.2','2026年10月23日',['【セーブスロット】5つのスロットに、別々の人生を保存できるように。「はじめから」でどのスロットで始めるか選べて、新しい人生で前の人生が上書きされなくなった（上書きするときは確認あり）','「つづきから」は、人生が2つ以上あるとき一覧から選べる（最後に遊んだ順）。メニューの「セーブ」→「セーブスロット」から、遊びながら別の人生に切りかえたり、消したりできる','実績・図鑑・引き継ぎスキルは、全スロット共通','【引き継ぎをかんたんに】「コードをコピー」「ファイルに保存」の1タップで、全スロットのセーブと実績をまとめて渡せる。新しい端末では「コードを貼りつけ」（コピーしてあれば自動で読み込む）か「ファイルを開く」だけ。コードは圧縮して短くした','前の版で書き出した「NIP1.」のコードも、空いているスロットに読み込める','チュートリアルは空いているスロットで始まるように（今のセーブを上書きしない）','保存の重さはこれまでと同じ（遊んでいる1つのスロットだけを保存し、一覧には小さなまとめだけを使う）']],
@@ -3468,8 +3470,8 @@ E('goal_done',{t:'目標達成！',cat:'人生',w:0,text:()=>`人生の目標「
 // ----- 時代の変化 -----
 GENRES.vr={n:'VR配信',w:{plan:.4,edit:.4,talk:.2},tal:'game',req:'era_vr'};
 GENRES.aico={n:'AIと共演',w:{plan:.5,talk:.3,edit:.2},tal:'comedy',req:'era_ai'};
-SNS.holo={n:'ホロミ',d:'立体映像の配信',reach:.9,disc:1.6,conv:.9,rpm:.6,flame:1,mon:5000,cap:2e6,era:2040};
-const ERAS=[[2035,'era_vr','VR配信が当たり前の時代に。新ジャンル「VR配信」が選べるようになった'],[2040,'era_holo','立体映像のSNS「ホロミ」が登場した'],[2048,'era_ai','AIと人間の共演が新しいエンタメに。新ジャンル「AIと共演」が選べるようになった']];
+SNS.holo={n:'ホロステージ',d:'立体映像の配信',reach:.9,disc:1.6,conv:.9,rpm:.6,flame:1,mon:5000,cap:2e6,era:2040};
+const ERAS=[[2035,'era_vr','VR配信が当たり前の時代に。新ジャンル「VR配信」が選べるようになった'],[2040,'era_holo','立体映像のSNS「ホロステージ」が登場した'],[2048,'era_ai','AIと人間の共演が新しいエンタメに。新ジャンル「AIと共演」が選べるようになった']];
 function newTrend(){const gs=Object.keys(GENRES).filter(g=>genreOk(g)),ss=Object.keys(SNS).filter(x=>(!SNS[x].era||S.y>=SNS[x].era)&&(x!=='tsubu'||chance(.5)));if(!ss.length)ss.push('milu');
   if(S.rumor&&S.am>=S.rumor.at&&chance(S.rumor.acc/100)){S.trend={g:S.rumor.g,s:S.rumor.s,until:S.am+RI(4,9)};ticker(`噂どおり「${GENRES[S.rumor.g].n}」が流行し始めた`);S.rumor=null;return}
   S.rumor=null;S.trend={g:pick(gs),s:pick(ss),until:S.am+RI(4,9)}}
@@ -3780,7 +3782,7 @@ E('era_sns',{t:'SNSの時代がやってきた',cat:'SNS',w:0,text:()=>`誰で�
   ch:[['アカウントを作る',()=>{openSns('milu');S.main='milu';S.genre=topTal();tl('SNSを始めた');return '新しい時代の波に乗った。「発信」タブから投稿の方針を決めよう。'}],['今はやめておく',()=>'あとからでも「発信」タブで始められる。']]});
 
 // 出来事の時代チェック（SNSより前の時代に、SNSやスマホの出来事が起きないように）
-const MODERN_RE=/SNS|スマホ|動画|配信|ネット|アプリ|フォロワー|バズ|炎上|オンライン|サブスク|インフルエンサー|コメント欄|DM|AI|VR|通知|ミルミル|パット|ツブヤ|案件|投稿|チャンネル|サーバー|アカウント/;
+const MODERN_RE=/SNS|スマホ|動画|配信|ネット|アプリ|フォロワー|バズ|炎上|オンライン|サブスク|インフルエンサー|コメント欄|DM|AI|VR|通知|ドウガ広場|パット|ひとことSNS|案件|投稿|チャンネル|サーバー|アカウント/;
 const _modern={};
 function isModern(e){if(_modern[e.id]==null){let s=e.t+' ';try{s+=String(e.text)+String(typeof e.ch==='function'?'':e.ch.map(c=>c[0]).join(' '))}catch(_){}_modern[e.id]=MODERN_RE.test(s)}return _modern[e.id]}
 function rollEvent(k){
@@ -6454,7 +6456,8 @@ function slotCard(i,s,mode){const cur=i===SLOT;const head=`<div class="hd"><span
   else if(mode==='new')btns=`<button class="b sm" type="button" data-slot="${i}" data-sm="over">上書きして始める</button>`;
   else btns=`<button class="b sm" type="button" data-slot="${i}" data-sm="cont">続ける</button><button class="b sm ghost" type="button" data-slot="${i}" data-sm="del">消す</button>`;
   return `<div class="card slotc2" id="slotc_${i}">${head}${body}<div class="row">${btns}</div></div>`}
-function showSlots(mode){const used=slotsUsed();let h=`<div class="mcat life">セーブスロット</div><h2>${mode==='new'?'どのスロットで始める？':mode==='cont'?'どの人生を続ける？':'セーブスロット'}</h2><p class="hint">${SLOT_N}つのスロットに、別々の人生を保存できる。月が進むたびに、遊んでいるスロットへ自動で保存される。実績・図鑑・引き継ぎスキルは全スロット共通。</p>`;
+let SLOT_MODE='manage';
+function showSlots(mode){SLOT_MODE=mode;const used=slotsUsed();let h=`<div class="mcat life">セーブスロット</div><h2>${mode==='new'?'どのスロットで始める？':mode==='cont'?'どの人生を続ける？':'セーブスロット'}</h2><p class="hint">${SLOT_N}つのスロットに、別々の人生を保存できる。月が進むたびに、遊んでいるスロットへ自動で保存される。実績・図鑑・引き継ぎスキルは全スロット共通。</p>`;
   let order=[...Array(SLOT_N).keys()];if(mode==='cont')order=used.sort((a,b)=>(b[1].at||0)-(a[1].at||0)).map(x=>x[0]);
   for(const i of order)h+=slotCard(i,slotInfo(i),mode);
   openModal(h+'<button class="b pri" type="button" data-act="close">閉じる</button>');$('#mcard').dataset.kind='slots'}
@@ -6465,13 +6468,13 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-slot]');if
   if(m==='over'){const c=$('#slotc_'+i);if(c)c.querySelector('.row').innerHTML=`<p class="hint">この人生は消えて、元に戻せない。</p><button class="b sm warnb" type="button" data-slot="${i}" data-sm="over2">上書きする</button><button class="b sm ghost" type="button" data-slot="${i}" data-sm="back">やめる</button>`;return}
   if(m==='over2'){try{localStorage.removeItem(slotKey(i))}catch(_){}setSlot(i);closeModal();showSetup();return}
   if(m==='del'){const c=$('#slotc_'+i);if(c)c.querySelector('.row').innerHTML=`<p class="hint">この人生を消す？元に戻せない。</p><button class="b sm warnb" type="button" data-slot="${i}" data-sm="del2">消す</button><button class="b sm ghost" type="button" data-slot="${i}" data-sm="back">やめる</button>`;return}
-  if(m==='del2'){if(S&&i===SLOT&&!$('#scrGame').hidden){toast('いま遊んでいる人生は、タイトルに戻ってから消してね');return}try{localStorage.removeItem(slotKey(i))}catch(_){}initTitle();showSlots('manage');return}
-  if(m==='back'){showSlots($('#mcard h2').textContent.includes('始める')?'new':'manage');return}});
+  if(m==='del2'){if(S&&i===SLOT&&!$('#scrGame').hidden){toast('いま遊んでいる人生は、タイトルに戻ってから消してね');return}try{localStorage.removeItem(slotKey(i))}catch(_){}initTitle();if(SLOT_MODE==='cont'&&!slotsUsed().length){closeModal();return}showSlots(SLOT_MODE);return}
+  if(m==='back'){showSlots(SLOT_MODE);return}});
 // タイトルの「はじめから」「つづきから」をスロット対応に
 document.addEventListener('click',e=>{const b=e.target.closest('#btnNew,#btnCont');if(!b)return;e.stopPropagation();e.preventDefault();snd('click');
   const used=slotsUsed();
-  if(b.id==='btnNew'){if(!used.length){setSlot(0);showSetup();return}if(!slotInfo(SLOT)){showSetup();return}showSlots('new');return}
-  if(!used.length)return;if(used.length===1){contSlot(used[0][0]);return}showSlots('cont')},true);
+  if(b.id==='btnNew'){showSlots('new');return}
+  if(!used.length)return;showSlots('cont')},true);
 const _initTitle28=initTitle;initTitle=function(){_initTitle28();const used=slotsUsed(),b=$('#btnCont');if(b){b.disabled=!used.length;b.textContent=used.length>1?`つづきから（${used.length}つの人生）`:used.length?'つづきから':'つづきから（セーブなし）'}contInfo()};
 contInfo=function(){let el=$('#contInfo');const b=$('#btnCont');if(!b)return;if(!el){el=document.createElement('p');el.id='contInfo';el.className='hint continfo';b.after(el)}
   const used=slotsUsed().sort((a,b)=>(b[1].at||0)-(a[1].at||0));el.hidden=!used.length;if(!used.length)return;const [i,s]=used[0];
@@ -6484,7 +6487,7 @@ const _showSetup28=showSetup;showSetup=function(){NOSAVE=false;return _showSetup
 
 // ----- かんたん引き継ぎ（別の端末・ブラウザへ） -----
 async function packAll(){const d={v:2,at:Date.now(),slot:SLOT,slots:{},meta:null};if(S&&S.alive&&!NOSAVE)save(true);
-  for(let i=0;i<SLOT_N;i++){try{const r=localStorage.getItem(slotKey(i));if(r)d.slots[i]=r}catch(_){}}try{d.meta=localStorage.getItem(META_K)}catch(_){}
+  for(let i=0;i<SLOT_N;i++){try{const r=localStorage.getItem(slotKey(i));if(r)d.slots[i]=r}catch(_){}}try{d.meta=localStorage.getItem(META_K)}catch(_){}try{d.labels=localStorage.getItem('nipporia-slotlabel')}catch(_){}
   const json=JSON.stringify(d);
   if(typeof CompressionStream!=='undefined'){try{const cs=new Blob([json]).stream().pipeThrough(new CompressionStream('gzip'));const buf=new Uint8Array(await new Response(cs).arrayBuffer());let bin='';for(let i=0;i<buf.length;i+=8192)bin+=String.fromCharCode.apply(null,buf.subarray(i,i+8192));return 'NIP2Z.'+btoa(bin)}catch(_){}}
   return 'NIP2.'+btoa(unescape(encodeURIComponent(json)))}
@@ -6510,7 +6513,7 @@ async function trImport(code){const d=await unpack(code);const msg=t=>{const m=$
 let TR_PENDING=null;
 function trApply(d){for(let i=0;i<SLOT_N;i++){try{localStorage.removeItem(slotKey(i))}catch(_){}}try{localStorage.removeItem(SLOT_INFO)}catch(_){}
   for(const [i,r] of Object.entries(d.slots||{})){try{localStorage.setItem(slotKey(+i),r)}catch(_){}}if(d.meta){try{localStorage.setItem(META_K,d.meta);const nm=JSON.parse(d.meta)||{};const base={};for(const k in META){const v=META[k];base[k]=Array.isArray(v)?[]:(v&&typeof v==='object')?{}:typeof v==='number'?0:v}META=Object.assign(base,nm)}catch(_){}}
-  setSlot(+d.slot||0);if(S&&!$('#scrGame').hidden){setSpeed(0)}S=null;showScreen('title');initTitle();closeModal();toast('引き継ぎました')}
+  try{if(d.labels)localStorage.setItem('nipporia-slotlabel',d.labels);else localStorage.removeItem('nipporia-slotlabel')}catch(_){}setSlot(+d.slot||0);if(S&&!$('#scrGame').hidden){setSpeed(0)}S=null;showScreen('title');initTitle();closeModal();toast('引き継ぎました')}
 document.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;const a=b.dataset.act;
   if(a==='trCopy'){const code=await packAll();try{await navigator.clipboard.writeText(code);$('#trBox').innerHTML=`<p class="hint">コピーしました（${num(code.length)}文字）。新しい端末で「コードを貼りつけ」を押してね。</p>`}catch(_){trShowCode(code)}return}
   if(a==='trFile'){const code=await packAll();const d=new Date();const nm=`buzz-save-${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}.txt`;const url=URL.createObjectURL(new Blob([code],{type:'text/plain'}));const l=document.createElement('a');l.href=url;l.download=nm;document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(url),3000);$('#trBox').innerHTML=`<p class="hint">「${nm}」を保存しました。新しい端末で「ファイルを開く」から選んでね。</p>`;return}
@@ -6574,4 +6577,78 @@ for(const [id,f] of [['l_propose',()=>!!S.partner],['l_wed',()=>!!S.partner],['l
 // 出来事を表示したときの一時データを覚えておき、選んだときに使う（あいだで別の処理が入っても止まらないように）
 const _se30=showEvent;showEvent=function(e){const r=_se30.apply(this,arguments);try{if(curEv){curEv._tmp=S.tmp;curEv._tmpT=S.tmpT;curEv._tmpSv=S.tmpSv}}catch(_){}return r};
 const _ch30=choose;choose=function(i){try{if(curEv&&'_tmp' in curEv){if(curEv._tmp!=null)S.tmp=curEv._tmp;if(curEv._tmpT!=null)S.tmpT=curEv._tmpT;if(curEv._tmpSv!=null)S.tmpSv=curEv._tmpSv}}catch(_){}return _ch30.apply(this,arguments)};
+
+// ===== v1.2.3：セーブスロットの名前・プレイ時間のリセット・SNSの名前と運営会社の買収 =====
+
+// ----- セーブスロットの名前 -----
+const SLOT_LBL='nipporia-slotlabel';
+function slotLabels(){try{return JSON.parse(localStorage.getItem(SLOT_LBL)||'{}')||{}}catch(_){return {}}}
+function slotName(i){return slotLabels()[i]||`スロット${i+1}`}
+function setSlotName(i,n){const l=slotLabels();if(n)l[i]=n;else delete l[i];try{localStorage.setItem(SLOT_LBL,JSON.stringify(l))}catch(_){}}
+slotCard=function(i,s,mode){const cur=i===SLOT;
+  const head=`<div class="hd"><span><b>${esc(slotName(i))}</b>${cur?' <span class="chip up">いまのスロット</span>':''}</span>${s&&s.at?`<span class="muted small">${fmtDate(s.at)}</span>`:''}</div>`;
+  const tools=`<div class="row slottools"><button class="b sm ghost" type="button" data-slot="${i}" data-sm="name">✎ 名前を変える</button>${s?`<button class="b sm ghost" type="button" data-slot="${i}" data-sm="treset">⏱ プレイ時間を0に</button>`:''}</div>`;
+  if(!s)return `<div class="card slotc2" id="slotc_${i}">${head}<p class="hint">空き</p><div class="row">${mode==='new'?`<button class="b sm pri" type="button" data-slot="${i}" data-sm="new">ここで始める</button>`:''}</div>${tools}</div>`;
+  const body=`<p class="mtext">${esc(s.name||'')}　${s.age}歳・${esc(s.cty||'')}・${s.y}年${s.m}月${s.gen>1?`・${s.gen}代目`:''}</p><p class="hint small">フォロワー ${num(s.f)}人・プレイ時間 ${fmtDur(s.ms||0)}</p>`;
+  let btns='';
+  if(mode==='new')btns=`<button class="b sm" type="button" data-slot="${i}" data-sm="over">上書きして始める</button>`;
+  else btns=`<button class="b sm pri" type="button" data-slot="${i}" data-sm="cont">この人生を続ける</button><button class="b sm ghost" type="button" data-slot="${i}" data-sm="del">🗑 消す</button>`;
+  return `<div class="card slotc2" id="slotc_${i}">${head}${body}<div class="row">${btns}</div>${tools}</div>`};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-slot]');if(!b)return;const i=+b.dataset.slot,m=b.dataset.sm,c=$('#slotc_'+i);
+  if(m==='name'&&c){const t=c.querySelector('.slottools');t.innerHTML=`<input id="slotNm_${i}" class="slotnm" maxlength="16" placeholder="スロット${i+1}" value="${esc(slotLabels()[i]||'')}"><button class="b sm pri" type="button" data-slot="${i}" data-sm="name2">決定</button><button class="b sm ghost" type="button" data-slot="${i}" data-sm="back">やめる</button>`;const inp=$('#slotNm_'+i);if(inp)inp.focus();return}
+  if(m==='name2'){const inp=$('#slotNm_'+i);setSlotName(i,(inp&&inp.value||'').trim().slice(0,16));showSlots(SLOT_MODE);toast('スロットの名前を変えました');return}
+  if(m==='treset'&&c){const t=c.querySelector('.slottools');t.innerHTML=`<p class="hint">このスロットのプレイ時間（セーブと人生）を0にする？</p><button class="b sm warnb" type="button" data-slot="${i}" data-sm="treset2">0にする</button><button class="b sm ghost" type="button" data-slot="${i}" data-sm="back">やめる</button>`;return}
+  if(m==='treset2'){if(S&&i===SLOT&&!$('#scrGame').hidden){S.playMs=0;S.lifeMs=0;save(true)}else{try{const k=slotKey(i),o=JSON.parse(localStorage.getItem(k));if(o){o.playMs=0;o.lifeMs=0;localStorage.setItem(k,JSON.stringify(o))}}catch(_){}}showSlots(SLOT_MODE);toast('プレイ時間を0にしました');return}});
+// スロットの名前を、ほかの表示にも
+contInfo=function(){let el=$('#contInfo');const b=$('#btnCont');if(!b)return;if(!el){el=document.createElement('p');el.id='contInfo';el.className='hint continfo';b.after(el)}
+  const used=slotsUsed().sort((a,b)=>(b[1].at||0)-(a[1].at||0));el.hidden=!used.length;if(!used.length)return;const [i,s]=used[0];
+  el.textContent=`最後に遊んだ：${slotName(i)}・${s.name} ${s.age}歳${s.at?`（${fmtDate(s.at)}）`:''}`};
+const _menuBody31=menuBody;menuBody=function(){return _menuBody31().replace(`「スロット${SLOT+1}」`,`「${esc(slotName(SLOT))}」`)};
+
+// ----- プレイ時間：それぞれ自分でリセットできる -----
+function playRow(label,ms,key){return `<span>${label}</span><span class="prow">${fmtDur(ms||0)} <button class="b sm ghost" type="button" data-preset="${key}">0にする</button></span>`}
+playHtml=function(){const vm=(META.verMs)||{};
+  let h=`<div class="kv">${playRow('サイト全体のプレイ時間',META.playMs,'site')}`;
+  if(S&&!$('#scrGame').hidden)h+=playRow(`このセーブ（${esc(slotName(SLOT))}）`,S.playMs,'save')+playRow('この人生',S.lifeMs,'life');
+  h+=`<span>最後にセーブした日時</span><span>${S&&S.savedAt?fmtDate(S.savedAt):'—'}</span></div>`;
+  h+=`<h3>バージョンごとのプレイ時間</h3><div class="kv">${Object.entries(vm).sort((a,b)=>b[1]-a[1]).map(([v,ms])=>playRow(esc(v),ms,'v:'+v)).join('')||'<span>まだない</span><span></span>'}</div>`;
+  h+=`<p class="hint">ほかのスロットのプレイ時間は、「セーブスロット」の画面から0にできる。</p><div id="presetBox"></div>`;return h};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-preset],[data-preset2]');if(!b)return;
+  if(b.dataset.preset){const k=b.dataset.preset;const nm=k==='site'?'サイト全体':k==='save'?'このセーブ':k==='life'?'この人生':k.slice(2)+' の';$('#presetBox').innerHTML=`<div class="card warn confirm-inline"><p class="mtext">${esc(nm)}のプレイ時間を0にする？元に戻せない。</p><div class="row"><button class="b sm warnb" type="button" data-preset2="${esc(k)}">0にする</button><button class="b sm ghost" type="button" data-preset2="">やめる</button></div></div>`;return}
+  const k=b.dataset.preset2;if(k){if(k==='site')META.playMs=0;else if(k==='save'&&S)S.playMs=0;else if(k==='life'&&S)S.lifeMs=0;else if(k.startsWith('v:')&&META.verMs)delete META.verMs[k.slice(2)];saveMeta();if(S&&!$('#scrGame').hidden)save(true);toast('0にしました')}
+  showPlay()});
+// 「続きのセーブデータを消す」は、セーブスロットの画面に移したので、設定からは外す
+delHtml=function(){return `<p class="hint">一つずつの人生を消すときは「セーブスロット」から。ここでは、すべてのスロットと実績・図鑑をまとめて消せる。</p><div class="mch" id="delBox"><button class="b" type="button" data-act="slots">セーブスロットを開く</button><button class="b" type="button" data-act="delAsk" data-k="all">すべてのセーブと実績・図鑑を消す</button></div><h3>もしものとき</h3>${backupHtml()}`};
+
+// ----- SNSの名前と、運営会社の買収 -----
+const SNS_DEF={};for(const k in SNS)SNS_DEF[k]=SNS[k].n;
+const SNS_CO={milu:{co:'ドウガ広場株式会社',p:8e10},patto:{co:'タテショート社',p:5e10},tsubu:{co:'ひとこと株式会社',p:3e10},holo:{co:'ホロステージ・テクノロジーズ',p:1.2e11}};
+function applySnsNames(){for(const k in SNS)SNS[k].n=(S&&S.snsName&&S.snsName[k])||SNS_DEF[k]||SNS[k].n;snsObserve()}
+let SNS_OBS=null;
+function snsMap(){const r=[];if(!S||!S.snsName)return r;for(const k in S.snsName)if(S.snsName[k]&&SNS_DEF[k]&&S.snsName[k]!==SNS_DEF[k]&&!S.snsName[k].includes(SNS_DEF[k]))r.push([SNS_DEF[k],S.snsName[k]]);return r}
+function snsFix(node){const mp=snsMap();if(!mp.length)return;const w=document.createTreeWalker(node,NodeFilter.SHOW_TEXT);let t;while((t=w.nextNode())){let v=t.nodeValue,c=false;for(const [a,b] of mp)if(v.includes(a)){v=v.split(a).join(b);c=true}if(c)t.nodeValue=v}}
+function snsObserve(){const on=snsMap().length>0;if(on&&!SNS_OBS){SNS_OBS=new MutationObserver(ms=>{for(const m of ms){for(const n of m.addedNodes)snsFix(n.nodeType===3?n.parentNode||document.body:n);if(m.type==='characterData'&&m.target.parentNode)snsFix(m.target.parentNode)}SNS_OBS.takeRecords()});SNS_OBS.observe(document.body,{childList:true,subtree:true,characterData:true});snsFix(document.body)}else if(!on&&SNS_OBS){SNS_OBS.disconnect();SNS_OBS=null}}
+const _render31=render;render=function(){applySnsNames();return _render31.apply(this,arguments)};
+const _newGame31=newGame;newGame=function(){const r=_newGame31.apply(this,arguments);applySnsNames();return r};
+const _log31=log;log=function(t,c){const mp=snsMap();if(mp.length&&typeof t==='string')for(const [a,b] of mp)t=t.split(a).join(b);return _log31(t,c)};
+function snsOwn(k){return !!(S&&S.snsOwn&&S.snsOwn[k])}
+function snsBuyHtml(){const c=ci2();let h=`<h3>SNSの運営会社</h3><p class="hint">SNSを運営している会社を買収すると、そのSNSの名前を自由に変えられる。会社の利益の一部が毎月入る。売ると9割で戻る。</p>`;
+  if(age()<20)return h+'<p class="hint">20歳から買収できる。</p>';
+  for(const k of Object.keys(SNS_CO)){const s=SNS[k];if(!s||(s.era&&S.y<s.era))continue;const co=SNS_CO[k],p=Math.round(co.p*c),own=snsOwn(k);
+    h+=`<div class="card"><div class="hd"><span>${esc(own&&S.snsName&&S.snsName[k]?S.snsName[k]+'の運営会社':co.co)}</span><span class="muted small">「${esc(s.n)}」（${esc(s.d)}）</span></div>`;
+    if(own)h+=`<p class="hint small">あなたの会社。毎月の利益 約${yen(p*.003)}</p><div class="row chren"><input id="snsNm_${k}" maxlength="12" placeholder="新しい名前（${esc(SNS_DEF[k])}）" value=""><button class="b sm" type="button" data-snsnm="${k}">名前を変える</button><button class="b sm ghost" type="button" data-snsnm="${k}" data-reset="1">元の名前に戻す</button></div><div class="row"><button class="b sm ghost" type="button" data-snssell="${k}">会社を売る（${yen(p*.9)}）</button></div>`;
+    else h+=`<div class="row"><button class="b sm" type="button" data-snsbuy="${k}" ${S.money<p?'disabled':''}>買収する ${yen(p)}</button></div>`;
+    h+='</div>'}
+  return h}
+const _coHtml31=coHtml;coHtml=function(){return _coHtml31()+snsBuyHtml()};
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!S)return;const d=b.dataset,c=ci2();
+  if(d.snsbuy){const k=d.snsbuy,p=Math.round(SNS_CO[k].p*c);if(S.money<p)return;outc('co',p);if(!S.snsOwn)S.snsOwn={};S.snsOwn[k]=S.am;tl(`「${SNS[k].n}」の運営会社を買収した`);log(`「${SNS[k].n}」の運営会社を${yen(p)}で買収した。名前を変えられるようになった`,'good');ad('rep',5);snd('buy');save(true);render();return}
+  if(d.snssell){const k=d.snssell,p=Math.round(SNS_CO[k].p*c*.9);delete S.snsOwn[k];inc('sell',p);tl(`「${SNS[k].n}」の運営会社を売却した`);log(`「${SNS[k].n}」の運営会社を${yen(p)}で売った`,'good');save(true);render();return}
+  if(d.snsnm){const k=d.snsnm;if(!snsOwn(k))return;if(!S.snsName)S.snsName={};const old=SNS[k].n;
+    if(d.reset){delete S.snsName[k]}else{const inp=$('#snsNm_'+k);const nm=(inp&&inp.value||'').trim().slice(0,12);if(!nm){toast('名前を入力してね');return}if(Object.keys(SNS).some(x=>x!==k&&SNS[x].n===nm)){toast('ほかのSNSと同じ名前は使えない');return}S.snsName[k]=nm}
+    applySnsNames();const so=old.split('').join('\u2060');tl(`「${so}」の名前を「${SNS[k].n}」に変えた`);log(`SNS「${so}」の名前を「${SNS[k].n}」に変えた`,'sns');save(true);render();return}});
+// 買収した会社の利益（毎月）
+const _mh31=monthHook11;monthHook11=function(){_mh31();try{if(S.snsOwn){let v=0;for(const k in S.snsOwn){const co=SNS_CO[k];if(co)v+=co.p*ci2()*.003*R(.6,1.4)}if(v)inc('platform',Math.round(v))}}catch(e){console.error(e)}};
+Object.assign(INC_LBL,{platform:'SNSの運営会社'});
+const _sp31=showPlay;showPlay=function(){_sp31();$('#mcard').dataset.kind='play'};
 </script>

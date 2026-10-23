@@ -55,9 +55,9 @@ const GENRES={
 };
 // 架空のSNS
 const SNS={
-  milu:{n:'ミルミル',d:'長い動画',reach:1,disc:1,conv:1,rpm:.4,flame:1,mon:1000,cap:3e6},
-  patto:{n:'パッと',d:'短い縦動画',reach:.8,disc:2.2,conv:.55,rpm:.05,flame:1.2,mon:10000,cap:2.5e6},
-  tsubu:{n:'ツブヤ',d:'短文と画像',reach:.6,disc:.8,conv:.8,rpm:0,flame:2.2,mon:Infinity,cap:1.2e6}
+  milu:{n:'ドウガ広場',d:'長い動画',reach:1,disc:1,conv:1,rpm:.4,flame:1,mon:1000,cap:3e6},
+  patto:{n:'タテショート',d:'短い縦動画',reach:.8,disc:2.2,conv:.55,rpm:.05,flame:1.2,mon:10000,cap:2.5e6},
+  tsubu:{n:'ひとことSNS',d:'短文と画像',reach:.6,disc:.8,conv:.8,rpm:0,flame:2.2,mon:Infinity,cap:1.2e6}
 };
 const STYLES={safe:{n:'安全運転',disc:.85,fl:0},norm:{n:'ふつう',disc:1,fl:.002},edge:{n:'攻め',disc:1.35,fl:.012}};
 const EQ={
@@ -174,7 +174,7 @@ E('b_screen',{t:'動画に夢中',cat:'成長',w:.06,once:1,when:()=>age()>=2&&a
   text:()=>'タブレットの動画に夢中。気づけば何時間も見ている。',
   ch:[['もっと見る',()=>{ad('tal.game',3);ad('tal.talk',2);ad('health',-2);return '動画の口ぐせをまねするようになった。'}],['外で遊ぶ',()=>{ad('health',3);ad('social',2);return '公園で泥だらけになって遊んだ。'}]]});
 E('b_kidch',{t:'家族チャンネル開設',cat:'家族チャンネル',w:.08,once:1,when:()=>age()>=1&&age()<=8&&!S.kc.on&&kidChLikely()&&anyParentAlive(),
-  text:()=>`${parentName()}が「成長の記録を動画にしよう！」と言い出した。家族チャンネル「${S.last}家のにぎやか日記」がミルミルで始まった。`,
+  text:()=>`${parentName()}が「成長の記録を動画にしよう！」と言い出した。家族チャンネル「${S.last}家のにぎやか日記」がドウガ広場で始まった。`,
   ch:[['カメラに手をふる',()=>{startKidCh();ad('priv',-5);ad('happy',2);return '家族チャンネルが始まった。登録者が増えると家計が潤うが、プライバシーは減っていく。'}]]});
 
 // --- 小学生 ---
@@ -238,7 +238,7 @@ E('m13',{t:'SNSデビュー',cat:'人生',w:0,
   ch:()=>Object.entries(SNS).map(([k,s])=>[`${s.n}（${s.d}）`,()=>{openSns(k);S.main=k;convertTalent();S.genre=topTal();tl(s.n+'でSNSデビュー');return `${s.n}のアカウントを作った。ジャンルは「${GENRES[S.genre].n}」にした（SNSタブで変更できる）。\n同じ学年のライバル配信者「${S.rival.name}」の存在が気になる。`}])});
 E('m13k',{t:'家族チャンネルのこれから',cat:'家族チャンネル',w:0,when:()=>S.kc.on,
   text:()=>`家族チャンネルの登録者は${num(S.kc.f)}人。${S.kc.byName}「これからは自分でやってみる？」`,
-  ch:[['チャンネルを引き継ぐ',()=>{const g=Math.round(S.kc.f*.5);openSns('milu');S.f.milu+=g;S.kc.on=0;S.kc.was=1;ad('priv',-5);tl('家族チャンネルを引き継いだ');return `ミルミルに${num(g)}人のフォロワーを引き継いだ。昔の動画もそのまま残る。`}],
+  ch:[['チャンネルを引き継ぐ',()=>{const g=Math.round(S.kc.f*.5);openSns('milu');S.f.milu+=g;S.kc.on=0;S.kc.was=1;ad('priv',-5);tl('家族チャンネルを引き継いだ');return `ドウガ広場に${num(g)}人のフォロワーを引き継いだ。昔の動画もそのまま残る。`}],
       ['もうやめてもらう',()=>{S.kc.on=0;S.kc.was=1;ad('priv',5);ad('happy',2);return '新しい動画はもう撮られない。昔の動画はネットに残ったままだ。'}],
       ['全部消してもらう',()=>{S.kc.on=0;S.kc.was=0;ad('priv',20);ad('happy',4);relKc(-6);return `${S.kc.byName}は残念そうだったが、動画はすべて消された。`}]]});
 E('t_club',{t:'部活選び',cat:'学校',w:.3,once:1,when:()=>age()===13,
@@ -332,7 +332,7 @@ E('poor',{t:'お金が足りない',cat:'お金',w:0,text:()=>`残高が${yen(S.
 
 // --- SNS ---
 E('s100',{t:'フォロワー100人',cat:'SNS',w:1,once:1,when:()=>totalF()>=100,text:()=>'フォロワーが100人を超えた！ 知らない人が自分の投稿を見てくれている。',ch:[['やった！',()=>{ad('happy',5);return 'スクショを撮って保存した。'}]]});
-E('s1k',{t:'収益化の条件をクリア',cat:'SNS',w:1,once:1,when:()=>S.f.milu>=1000,text:()=>'ミルミルのフォロワーが1000人を超え、広告の収益を受け取れるようになった。',ch:[['最初の収益を待つ',()=>{ad('happy',8);tl('ミルミルで収益化');return '…初月の収益は缶ジュース数本分だった。それでもうれしい。'}]]});
+E('s1k',{t:'収益化の条件をクリア',cat:'SNS',w:1,once:1,when:()=>S.f.milu>=1000,text:()=>'ドウガ広場のフォロワーが1000人を超え、広告の収益を受け取れるようになった。',ch:[['最初の収益を待つ',()=>{ad('happy',8);tl('ドウガ広場で収益化');return '…初月の収益は缶ジュース数本分だった。それでもうれしい。'}]]});
 E('s10k',{t:'1万人突破',cat:'SNS',w:1,once:1,when:()=>totalF()>=10000,text:()=>'フォロワーが1万人を超えた。企業からPR案件の連絡が届くようになるかもしれない。',ch:[['お祝い配信をする',()=>{ad('happy',8);ad('f',RI(100,800));tl('フォロワー1万人');return 'コメント欄が「おめでとう」で埋まった。'}]]});
 E('s100k',{t:'10万人突破',cat:'SNS',w:1,once:1,when:()=>totalF()>=100000,text:()=>'フォロワーが10万人を超えた！ 運営から記念の楯が届いた。',ch:[['楯を飾る',()=>{ad('happy',15);ad('rep',3);tl('フォロワー10万人');return '部屋で一番目立つ場所に飾った。'}]]});
 E('s1m',{t:'100万人突破',cat:'SNS',w:1,once:1,when:()=>totalF()>=1000000,text:()=>`フォロワーが100万人を超えた。${ctry()}で知らない人はいない存在になった。`,ch:[['ここまで来た',()=>{ad('happy',20);tl('フォロワー100万人');return '街を歩くと声をかけられるようになった。'}]]});
@@ -375,11 +375,11 @@ E('s_fan',{t:'ファンレター',cat:'SNS',w:.03,cd:6,when:()=>totalF()>=3000,
   text:()=>'「つらい時期に、あなたの動画に救われました」という長いメッセージが届いた。',
   ch:[['大切に読む',()=>{ad('happy',6);ad('mental',6);return '続けてきてよかった、と心から思った。'}]]});
 E('s_short',{t:'短い動画のブーム',cat:'SNS',w:.03,once:1,when:()=>S.snsOpen&&!S.open.patto,
-  text:()=>'短い縦動画のSNS「パッと」が爆発的に流行っている。',
-  ch:[['パッとも始める',()=>{openSns('patto');return 'パッとのアカウントを作った。SNSタブでメインを切り替えられる。'}],['今のままでいく',()=>'流行に振り回されないことにした。']]});
+  text:()=>'短い縦動画のSNS「タテショート」が爆発的に流行っている。',
+  ch:[['タテショートも始める',()=>{openSns('patto');return 'タテショートのアカウントを作った。SNSタブでメインを切り替えられる。'}],['今のままでいく',()=>'流行に振り回されないことにした。']]});
 E('s_down',{t:'SNSの大移動',cat:'ニュース',w:.01,cd:48,when:()=>S.open.tsubu,
-  text:()=>'ツブヤの運営方針が急に変わり、ユーザーの大移動が起きている。',
-  ch:[['他のSNSに力を入れる',()=>{const m=Math.round(S.f.tsubu*.25);S.f.tsubu-=m;const to=S.open.milu?'milu':'patto';openSns(to);S.f[to]+=Math.round(m*.5);return `ツブヤのフォロワーの一部が${SNS[to].n}についてきてくれた。`}],['様子を見る',()=>{S.f.tsubu=Math.round(S.f.tsubu*.88);return 'ツブヤのフォロワーが1割ほど減った。'}]]});
+  text:()=>'ひとことSNSの運営方針が急に変わり、ユーザーの大移動が起きている。',
+  ch:[['他のSNSに力を入れる',()=>{const m=Math.round(S.f.tsubu*.25);S.f.tsubu-=m;const to=S.open.milu?'milu':'patto';openSns(to);S.f[to]+=Math.round(m*.5);return `ひとことSNSのフォロワーの一部が${SNS[to].n}についてきてくれた。`}],['様子を見る',()=>{S.f.tsubu=Math.round(S.f.tsubu*.88);return 'ひとことSNSのフォロワーが1割ほど減った。'}]]});
 E('s_tip',{t:'投げ銭ライブ',cat:'SNS',w:.03,cd:4,when:()=>S.snsOpen&&totalF()>=5000&&age()>=18,
   text:()=>'ライブ配信で投げ銭がたくさん飛んできた。',
   ch:[['お礼を言う',()=>{const v=Math.round(totalF()*R(.3,1.2));ad('money',v,'tip');ad('happy',3);return `投げ銭で${yen(v)}の収入になった。`}]]});

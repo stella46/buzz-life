@@ -76,7 +76,7 @@ function researchPanel(){applyResCost();const done=resDoneAll(),tot=resTotal();
  return h}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-rescat],[data-resall],[data-rtk]');if(!b||!S)return;const d=b.dataset;if(d.rescat){RESCAT=d.rescat;renderPanel();return}if(d.resall){RESALL=RESALL?0:1;renderPanel();return}if(d.rtk)rtBuy(d.rtk)});
 // 研究のバッジ：研究ラインも数える
-const _rr48=researchReady;researchReady=function(){try{if(_rr48.apply(this,arguments))return true;return RTRACK.some(t=>rtOk(t[0])&&S.rp>=rtCost(t[0]))}catch(_){return false}};
+const _rr48=researchReady;researchReady=function(){try{return (_rr48.apply(this,arguments)||0)+RTRACK.filter(t=>rtOk(t[0])&&S.rp>=rtCost(t[0])).length}catch(_){return 0}};
 (function(){if(typeof ACH_TABS!=='undefined'&&!ACH_TABS.includes('研究'))ACH_TABS.splice(ACH_TABS.length-1,0,'研究');const A=(id,n,d,f)=>{ACH.push([id,n,d,f]);if(typeof ACH_CAT!=='undefined')ACH_CAT[id]='研究'};
  A('rt50','研究者','研究を合わせて100個完了する',()=>resDoneAll()>=100);A('rt200','大研究者','研究を合わせて200個完了する',()=>resDoneAll()>=200);
  ACH.push(['x_rt_all','？','（ひみつ）',()=>resDoneAll()>=resTotal(),1,'森羅万象','すべての研究を完了する','研究']);if(typeof ACH_CAT!=='undefined')ACH_CAT.x_rt_all='研究'})();

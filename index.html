@@ -203,6 +203,9 @@ html.mlock,html.mlock body{overflow:hidden;overscroll-behavior:none}.ov{overscro
 .slottools{margin-top:4px;flex-wrap:wrap;gap:6px}.prow{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
 .verpick{margin:6px 0 10px;padding:8px;border:1px solid var(--line,#ccc);border-radius:12px}.vp-t{font-size:.85em;font-weight:700;margin-bottom:6px;opacity:.8}.vp-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.b.vp{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:2px;text-decoration:none;color:inherit;white-space:normal}.b.vp span{font-size:.78em;opacity:.8;line-height:1.35}.b.vp.on{outline:2px solid var(--cyan);}@media(max-width:480px){.vp-row{grid-template-columns:1fr}}
 .pmsw{margin:4px 0 8px}.pmsw .seg button{font-size:.8rem}.slotc.rrow{grid-template-columns:minmax(0,1fr)}.slotc.rrow .ds{grid-column:1}.rrow .sel2{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.rsl{display:flex;gap:8px;align-items:center}.rsl input{flex:1;min-width:0}.rpct{min-width:3em;text-align:right}
+.etabox{margin:8px 0}.etat{width:100%;border-collapse:collapse;font-size:.82rem}.etat th,.etat td{border-bottom:1px dashed var(--line);padding:5px 4px;text-align:right;vertical-align:top}.etat th:first-child,.etat td:first-child{text-align:left}.etat td small{display:block;color:var(--muted);font-size:.72rem}
+.dchoice{display:grid;gap:8px;margin-top:10px}.dchoice .b{display:flex;flex-direction:column;align-items:flex-start;text-align:left;white-space:normal;gap:2px}.dchoice .b span{font-size:.78rem;opacity:.8}.dsub{font-size:.8rem;color:var(--muted);margin-top:6px}.deathtx{animation:dfade 2.4s ease}@keyframes dfade{from{opacity:0}to{opacity:1}}
+.famdebt .hd b{color:var(--gold)}
 details.bigacts,details.mfold{margin:10px 0;border:2px solid var(--line);border-radius:10px;padding:6px 10px;background:var(--bg2)}details.bigacts summary,details.mfold summary{cursor:pointer;font-weight:700;font-size:.9rem;padding:4px 0}details.bigacts[open] summary{color:var(--gold)}
 .reshd{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin:4px 0}.restabs{margin:8px 0}
 .rbar{display:flex;height:12px;border-radius:6px;overflow:hidden;margin:8px 0;border:1px solid var(--line);background:var(--bg2)}.rbar i{display:block;height:100%}.rbar .c0{background:#ff5c8a}.rbar .c1{background:#3fd6c9}.rbar .c2{background:#ffc94d}.rbar .c3{background:#8a7dff}.rbar .c4{background:#6fd36f}.rbar .c5{background:#ff9b4d}
@@ -2746,7 +2749,7 @@ function endMonth(){
   if(S.m===1){S.taxBase=S.yInc;S.yInc=0}
   if(S.m===3&&age()>=18&&S.taxBase>=(S.st==='work'?200000:480000)*c){if(S.flags.taxAuto){bill('tax','所得税（確定申告）',S.taxBase*.15*(has('tax_k')?.85:1));log('確定申告をした。税金の請求書が届いた','life')}else S.q.push('tax')}
   withTown(homeTown(),()=>{monthSys();monthHook();monthHook7();monthHook8();monthHook10();monthHook11()});
-  if(a<18&&S.money<0){S.money=0;log('足りない分は家族が払ってくれた','life')}
+  if(a<18&&S.money<0){S.famDebt=(S.famDebt||0)-S.money;log(`足りない${yen(-S.money)}は家族が立て替えてくれた（大人になったら返す）`,'life');S.money=0}
   drift();
   for(const key in S.f){if(!S.open[key])continue;const posted=S.mo.posts>0&&key===S.main;S.f[key]*=posted?.996:.99}
   rivalTick();
@@ -3036,6 +3039,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v2.5','2026年10月23日',['【推定プレイ時間】画面の上に、のこりのプレイ時間の目安をいつも表示するようにしました。「ふつうに進めた場合」「いろいろ操作した場合」「あなたのペース（実際にかかった時間から計算）」の3つです。「予定」タブの「時間の進み方」では、10年あたりと、この人生ののこりの目安を表で見られます。','【家族への返済】18歳になるまでにお金が足りなくなったとき、家族が立て替えてくれた分は、大人になってから返すようになりました。利息はなく、毎月の収入の1割ほど（最低1万円）を自動で返します。一度にまとめて返すこともできます。','【人生の終わりの選択】亡くなるときに、どうするかを選べるようになりました。この人生を終える／子どもに引き継ぐ（子どもがいるとき）／いまの年齢のまま続ける／時をさかのぼって続ける、の中から選べます。','時をさかのぼる場合は、10歳ごとに保管された人生（最大4つ）から選び、いまのお金を持ったままやり直せます。']],
   ['v2.4','2026年10月23日',['【研究】研究ラインを16本（各16段）追加し、研究が全部で約300個になりました。映像と企画の技、広がる仕組み、経営の深化、巨大工学、人類の未来などがあります。','【研究の画面】「⭐ おすすめ」タブを追加しました。いまの遊び方に合わせて、効果が大きそうな研究を5つ選んで表示します。研究ラインは1行にまとめ、次の段だけを表示するので、たくさんスクロールしなくても選べます。','【大計画】113種類を追加し、全部で213種類になりました。「インフラ」「人口」「銀河」の分類を追加し、京・垓の計画も登場します。','【人口】インフラを整えると、人類をふやす大計画を始められます。全世界に進出していれば、人口がふえるほど届けられる人数も広がり、とてつもない数のフォロワーを目指せます。','【大計画の画面】いま始められるものと建設中のものを上に表示し、まだ先の計画と完成した計画はたたむようにしました。','【とんでもなく高額なアクション】発信・会社・まち・お店・事務所・サブスク事業・お金・つながりの画面に、けた外れのお金を使うアクションを追加しました（たとえば、宇宙から24時間の生配信、業界まるごと買収、未来都市への大改造など）。','【事業】持てる会社を30社まで、自分のサブスクを30個まで運営できるようになりました。','実績を9個追加しました。']],
   ['v2.3','2026年10月23日',['【人生の終わりのモード】「亡くなったら終わり」と「エンドレス（子どもに引き継ぐ）」を、遊んでいる途中でも切りかえられるようになりました。「人生」→「自分」→「能力」から変更できます。','「亡くなったら終わり」で人生を終えたときも、子どもがいれば、その場でエンドレスにして子どもに引き継げるようにしました。']],
   ['v2.2.1','2026年10月23日',['タイトルロゴを、これまでのタイトル文字と同じくらいの大きさにしました。','タイトルロゴをより高画質にしました。']],
@@ -3359,7 +3363,7 @@ function ad(k,v,cat){if(k==='money'&&cat==='medical'&&v<0&&S.subs&&S.subs.insura
   if(k in P_KEYS)S.p[k]=clamp(S.p[k]+v);
   else if(k in SK_KEYS)S.sk[k]=clamp(S.sk[k]+v);
   else if(k==='money'){if(!cat)v=Math.round(v*(S.cty?S.cty.inc:1));
-    if(v<0&&age()<18&&S.money+v<0){const cover=-(S.money+v);v=-Math.max(0,S.money);if(cover>0)log(`足りない${yen(cover)}は家族が払ってくれた`,'life')}
+    if(v<0&&age()<18&&S.money+v<0){const cover=-(S.money+v);v=-Math.max(0,S.money);if(cover>0){S.famDebt=(S.famDebt||0)+cover;log(`足りない${yen(cover)}は家族が立て替えてくれた（大人になったら返す）`,'life')}}
     if(v>0)inc(cat==='loss'?'loss':(cat||'ev'),v);else if(v<0)outc(cat||'ev',-v)}
   else if(k==='f'){const key=S.open[S.main]?S.main:'milu';if(!S.open[key])return;S.f[key]=Math.max(0,S.f[key]+v)}
   else if(k.startsWith('tal.')){const t=talKey(k.slice(4)),c0=S.tal[t]||0;S.tal[t]=Math.max(0,Math.min(TAL_MAX,c0+(v>0&&c0>=100?v*.6:v)))}
@@ -8680,7 +8684,7 @@ function researchPanel(){applyResCost();const done=resDoneAll(),tot=resTotal();
  return h}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-rescat],[data-resall],[data-rtk]');if(!b||!S)return;const d=b.dataset;if(d.rescat){RESCAT=d.rescat;renderPanel();return}if(d.resall){RESALL=RESALL?0:1;renderPanel();return}if(d.rtk)rtBuy(d.rtk)});
 // 研究のバッジ：研究ラインも数える
-const _rr48=researchReady;researchReady=function(){try{if(_rr48.apply(this,arguments))return true;return RTRACK.some(t=>rtOk(t[0])&&S.rp>=rtCost(t[0]))}catch(_){return false}};
+const _rr48=researchReady;researchReady=function(){try{return (_rr48.apply(this,arguments)||0)+RTRACK.filter(t=>rtOk(t[0])&&S.rp>=rtCost(t[0])).length}catch(_){return 0}};
 (function(){if(typeof ACH_TABS!=='undefined'&&!ACH_TABS.includes('研究'))ACH_TABS.splice(ACH_TABS.length-1,0,'研究');const A=(id,n,d,f)=>{ACH.push([id,n,d,f]);if(typeof ACH_CAT!=='undefined')ACH_CAT[id]='研究'};
  A('rt50','研究者','研究を合わせて100個完了する',()=>resDoneAll()>=100);A('rt200','大研究者','研究を合わせて200個完了する',()=>resDoneAll()>=200);
  ACH.push(['x_rt_all','？','（ひみつ）',()=>resDoneAll()>=resTotal(),1,'森羅万象','すべての研究を完了する','研究']);if(typeof ACH_CAT!=='undefined')ACH_CAT.x_rt_all='研究'})();
@@ -8852,4 +8856,73 @@ const _kh50=koryuHtml;koryuHtml=function(){return _kh50.apply(this,arguments)+bi
 const _pe50=prodExtra;prodExtra=function(c,a){let v=_pe50(c,a);if(S.flags.bigQ){v+=S.flags.bigQ;S.flags.bigQ=0}return v};
 const _pr50=prodRelease;prodRelease=function(c){const r=_pr50.apply(this,arguments);try{if(S.flags.bigHit){const s=c.pr&&c.pr.sales&&c.pr.sales[c.pr.sales.length-1];if(s){s.amt*=5;s.left=Math.max(s.left,18)}S.flags.bigHit=0;log(`「${c.name}」の新作が、世界同時発売で飛ぶように売れている`,'good')}}catch(e){console.error(e)}return r};
 (function(){const A=(id,n,d,f)=>{ACH.push([id,n,d,f]);if(typeof ACH_CAT!=='undefined')ACH_CAT[id]='お金'};A('big1','けた外れ','とんでもなく高額なアクションを実行する',()=>(S.flags.bigN||0)>=1);A('big20','けた外れの日常','とんでもなく高額なアクションを20回実行する',()=>(S.flags.bigN||0)>=20)})();
+
+// ===== v2.5：推定プレイ時間（ふつう／操作多め／あなたのペース）・家族への返済・人生の終わりの選択 =====
+
+// ----- 推定プレイ時間 -----
+function sysCount(){let n=0;if(S.snsOpen)n++;if(anyShop&&anyShop())n++;n+=Math.min(4,(S.cos||[]).length);if((S.towns2||[]).length)n++;if((S.svcs||[]).length)n++;if(S.office&&S.office.lv)n++;if((S.mega||[]).some(m=>!m.done))n++;if((S.kids||[]).length)n++;if(S.spouse||S.partner)n++;if(S.role==='mayor'||S.role==='adviser')n++;return n}
+function etaCalc(){const L=lifeLeftYears(),evy=EVY*EVS;const normal=12*1.5+evy;const ops=Math.min(90,10+5*sysCount());const heavy=normal+12*ops;
+ const pace=S.paceEma&&S.paceN>=6?S.paceEma*12/1000:null;return {L,normal,heavy,pace}}
+function fmtMin(sec){const m=Math.max(1,Math.round(sec/60));return m>=120?`${(m/60).toFixed(m>=600?0:1)}時間`:`${m}分`}
+function etaText(){if(!S||!S.alive||age()<0)return '';const c=etaCalc();let pre='';const per=S.unit==='season'?3:S.unit==='week'?.25:1;
+ if(skipping)pre='イベントまで・';else if(speed>0){const sm=1.5/speed/per,ev=(S.autoEv!==0&&speed>=2)?1.8:EVY;pre=`${['','▶','▶▶','','▶▶▶'][speed]||'▶'}なら約${fmtMin((12*sm+ev*EVS)*c.L)}・`}
+ return `⏱ のこり ${pre}ふつう約${fmtMin(c.normal*c.L)}｜操作多め約${fmtMin(c.heavy*c.L)}${c.pace?`｜あなたのペース約${fmtMin(c.pace*c.L)}`:''}`}
+function etaBox(){const c=etaCalc();return `<div class="etabox"><h3>推定プレイ時間</h3><table class="etat"><tr><th></th><th>10年</th><th>この人生のこり（約${c.L}年）</th></tr>
+ <tr><td>ふつうに進めた場合<small>▶で進め、出来事を読む</small></td><td>${fmtMin(c.normal*10)}</td><td>${fmtMin(c.normal*c.L)}</td></tr>
+ <tr><td>いろいろ操作した場合<small>会社・まち・投稿などを毎月さわる（いまの人生に合わせて計算）</small></td><td>${fmtMin(c.heavy*10)}</td><td>${fmtMin(c.heavy*c.L)}</td></tr>
+ <tr><td>あなたのペース<small>この人生で実際にかかった時間から計算</small></td><td>${c.pace?fmtMin(c.pace*10):'計測中'}</td><td>${c.pace?fmtMin(c.pace*c.L):'計測中'}</td></tr></table></div>`}
+const _sopt51=speedOptsHtml;speedOptsHtml=function(){return _sopt51.apply(this,arguments)+etaBox()};
+// あなたのペース：1か月にかかった実際の時間（放置した分はのぞく）
+const _mh51=monthHook11;monthHook11=function(){_mh51();try{const now=Date.now();if(S.paceT){const d=now-S.paceT;if(d>0&&d<5*60000){S.paceEma=S.paceEma?S.paceEma*.9+d*.1:d;S.paceN=(S.paceN||0)+1}}S.paceT=now}catch(_){}};
+
+// ----- 家族への返済（18歳までに立て替えてもらった分） -----
+function famRepay(){if(!S.famDebt||S.famDebt<=0||age()<18)return;if(!anyParentAlive()){log(`家族に立て替えてもらった${yen(S.famDebt)}は、返さなくていいと遺言にあった`,'life');S.famDebt=0;return}
+ const inc=Object.values((S.mo&&S.mo.inc)||{}).reduce((a,b)=>a+b,0);const pay=Math.min(S.famDebt,Math.max(Math.round(10000*Math.max(.3,S.cty.inc)),Math.round(inc*.1)));
+ if(S.money<pay){if(!S.flags.famLate||S.am-S.flags.famLate>=12){S.flags.famLate=S.am;log('今月は家族に返すお金が足りなかった。「余裕ができたらでいいよ」と言ってくれた','life')}return}
+ outc('family',pay);S.famDebt-=pay;if(S.famDebt<=0){S.famDebt=0;tl('家族に立て替えてもらったお金を返し終えた');log('家族に立て替えてもらったお金を、すべて返し終えた','good');ad('happy',3);for(const p of (parents()||[]))rel(p,5)}}
+const _mh51b=monthHook11;monthHook11=function(){_mh51b();try{if(age()===18&&S.famDebt>0&&!S.flags.famTold){S.flags.famTold=1;S.q.push('fam_repay')}famRepay()}catch(e){console.error(e)}};
+E('fam_repay',{t:'家族への返済',cat:'家族',w:0,text:()=>`18歳になった。\n子どものころ、お金が足りなかったときに家族が立て替えてくれた分が、合わせて${yen(S.famDebt)}ある。\n利息はない。これから毎月少しずつ返していく（収入の1割ほど・最低1万円）。`,
+ ch:()=>{const l=[['少しずつ返していく',()=>{ad('mental',1);return '「無理しないでね」と言われた。'}]];if(S.money>=S.famDebt)l.unshift([`いますぐ全部返す（${yen(S.famDebt)}）`,()=>{outc('family',S.famDebt);S.famDebt=0;ad('happy',3);for(const p of (parents()||[]))rel(p,8);return '家族はおどろきながらも、うれしそうだった。'}]);return l}});
+try{Object.assign(OUT_LBL,{family:'家族への返済'})}catch(_){}
+// お金の画面と、子どものおこづかい画面に表示
+const _pm51=panelMoney;panelMoney=function(){let h=_pm51.apply(this,arguments);try{if(S.famDebt>0){const kid=age()<18;h=`<div class="card famdebt"><div class="hd"><span>家族に立て替えてもらったお金</span><b>${yen(S.famDebt)}</b></div><p class="hint">${kid?'お金が足りないときは家族が払ってくれますが、その分は大人（18歳）になってから返します（利息はなし）。':'毎月、収入の1割ほど（最低1万円）を自動で返しています。利息はありません。'}</p>${!kid&&S.money>=S.famDebt?`<button class="b sm" type="button" data-famall="1">残りを全部返す</button>`:''}</div>`+h}}catch(e){console.error(e)}return h};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-famall]');if(!b||!S||!(S.famDebt>0)||S.money<S.famDebt)return;outc('family',S.famDebt);S.famDebt=0;log('家族に立て替えてもらったお金を、すべて返し終えた','good');for(const p of (parents()||[]))rel(p,5);save();renderPanel()});
+
+// ----- 人生の終わりの選択 -----
+// 10歳ごとに、その時点の人生を保管（さかのぼるため・最大4つ）
+function snapKey(){return CFG.save+'-snap'}
+function snaps(){try{return JSON.parse(localStorage.getItem(snapKey())||'[]')}catch(_){return []}}
+function snapPut(){if(!S||!S.alive)return;let L=snaps().filter(x=>x.age!==age());L.push({age:age(),y:S.y,m:S.m,d:JSON.stringify(S)});L.sort((a,b)=>a.age-b.age);while(L.length>4)L.shift();
+ for(let i=0;i<3;i++){try{localStorage.setItem(snapKey(),JSON.stringify(L));return}catch(_){L.shift();if(!L.length)return}}}
+function snapClear(){try{localStorage.removeItem(snapKey())}catch(_){}}
+const _mh51c=monthHook11;monthHook11=function(){_mh51c();try{const a=age();if(a>=10&&a%10===0&&S.am%12===0)snapPut()}catch(e){console.error(e)}};
+const _ng51=newGame;newGame=function(){snapClear();return _ng51.apply(this,arguments)};
+const _cac51=continueAsChild;continueAsChild=function(){snapClear();return _cac51.apply(this,arguments)};
+// 生き返ったあと2年は、急に亡くならない
+const _dc51=deathCheck;deathCheck=function(){if(S.flags&&S.flags.lifeGuard&&S.am<S.flags.lifeGuard)return false;return _dc51.apply(this,arguments)};
+const _die51=die;let DIE_NOW=0;
+die=function(){if(DIE_NOW||!S||!S.alive)return _die51.apply(this,arguments);try{setSpeed(0)}catch(_){}skipping=false;
+ const sn=snaps().filter(x=>x.age<age()),kids=(S.kids||[]).length;
+ let h=`<div class="mcat life">人生の終わり</div><h2>${esc(S.name)}、${age()}歳</h2><p class="mtext deathtx">静かに、まぶたが重くなっていく。\nこれまでの日々が、ゆっくりと思い出される。\n\nこの先を、どうしますか？</p><div class="dchoice">`;
+ h+=`<button class="b" type="button" data-dch="end"><b>この人生を終える</b><span>${S.endless&&kids?'子どもに引き継ぐか、終わりの画面で選べます':'人生の記録を見て、おしまいにします'}</span></button>`;
+ if(kids&&!S.endless)h+=`<button class="b" type="button" data-dch="heir"><b>エンドレスにして子どもに引き継ぐ</b><span>お金・事務所・まち・研究も引き継がれます</span></button>`;
+ h+=`<button class="b" type="button" data-dch="same"><b>いまの年齢のまま続ける</b><span>いまの資産のまま、体を回復させて続けます（2年間は亡くなりません）</span></button>`;
+ if(sn.length)h+=`<div class="dsub">時をさかのぼって続ける（資産はいまのまま）</div>`+sn.slice().reverse().map(x=>`<button class="b" type="button" data-dch="back" data-age="${x.age}"><b>${x.age}歳（${x.y}年）に戻る</b><span>そのころの人生から、いまのお金を持ったままやり直します</span></button>`).join('');
+ else h+=`<p class="hint">10歳ごとに人生が保管され、その年齢まで時をさかのぼることもできるようになります（この人生ではまだ保管がありません）。</p>`;
+ openModal(h+'</div>');try{snd('end')}catch(_){}};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-dch]');if(!b||!S)return;const k=b.dataset.dch;closeModal();
+ if(k==='end'||k==='heir'){if(k==='heir'){S.endless=1;if(!S.lineage)S.lineage=[]}snapClear();DIE_NOW=1;try{_die51()}finally{DIE_NOW=0}return}
+ if(k==='same'){S.p.health=Math.max(S.p.health,70);S.p.mental=Math.max(S.p.mental,50);if(S.flags.cancer)S.flags.cancer=null;S.flags.lifeGuard=S.am+24;S.flags.revive=(S.flags.revive||0)+1;log(`${age()}歳、もう一度目をひらいた。人生は続く`,'good');tl('奇跡的に回復した');save(true);render();return}
+ if(k==='back'){const x=snaps().find(s=>s.age===+b.dataset.age);if(!x)return;const cur={money:S.money,inv:S.inv,debt:S.debt,playMs:S.playMs,lifeMs:S.lifeMs,rev:(S.flags.revive||0)+1};let o;try{o=migrate(JSON.parse(x.d))}catch(err){console.error(err);toast('さかのぼれませんでした');return}
+  S=o;S.money=cur.money;S.inv=cur.inv;S.debt=cur.debt;S.playMs=cur.playMs;S.lifeMs=cur.lifeMs;S.flags.revive=cur.rev;S.flags.lifeGuard=S.am+12;S.alive=true;S.paceT=0;
+  log(`時をさかのぼり、${age()}歳（${S.y}年）からやり直すことにした。お金はそのまま`,'good');tl(`${age()}歳まで時をさかのぼった`);try{localStorage.setItem(snapKey(),JSON.stringify(snaps().filter(s=>s.age<=age())))}catch(_){}
+  save(true);showScreen('game');setTab('act');render()}});
+(function(){const A=(id,n,d,f,cat)=>{ACH.push([id,n,d,f]);if(typeof ACH_CAT!=='undefined')ACH_CAT[id]=cat};A('revive1','もう一度','人生の終わりから、続けることを選ぶ',()=>(S.flags.revive||0)>=1,'人生');A('famrepay','恩返し','家族に立て替えてもらったお金を返し終える',()=>S.flags&&S.famDebt===0&&age()>=18&&S.flags.famTold,'家族')})();
+// 終わりの選択の画面が出ているあいだは、ほかの出来事を後回しに
+{const d0=die;die=function(){const was=S&&S.alive&&!DIE_NOW;const r=d0.apply(this,arguments);if(was&&S.alive)S.flags.dying=1;return r}}
+const DYING_=()=>!!(S&&S.flags&&S.flags.dying);
+const _se51=showEvent;showEvent=function(e){if(DYING_()){try{if(e&&e.id&&!S.q.includes(e.id))S.q.unshift(e.id)}catch(_){}return}return _se51.apply(this,arguments)};
+document.addEventListener('click',e=>{if(e.target.closest('[data-dch]')&&S)S.flags.dying=0},true);
+// 選ばずに閉じたときは、次に進もうとしたときにもう一度たずねる
+const _turn51=turn;turn=function(){if(S&&S.alive&&DYING_()&&!modalOpen()){die();return}return _turn51.apply(this,arguments)};
 </script>

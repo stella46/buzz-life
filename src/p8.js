@@ -258,7 +258,7 @@ function endMonth(){
   if(S.m===1){S.taxBase=S.yInc;S.yInc=0}
   if(S.m===3&&age()>=18&&S.taxBase>=(S.st==='work'?200000:480000)*c){if(S.flags.taxAuto){bill('tax','所得税（確定申告）',S.taxBase*.15*(has('tax_k')?.85:1));log('確定申告をした。税金の請求書が届いた','life')}else S.q.push('tax')}
   withTown(homeTown(),()=>{monthSys();monthHook();monthHook7();monthHook8();monthHook10();monthHook11()});
-  if(a<18&&S.money<0){S.money=0;log('足りない分は家族が払ってくれた','life')}
+  if(a<18&&S.money<0){S.famDebt=(S.famDebt||0)-S.money;log(`足りない${yen(-S.money)}は家族が立て替えてくれた（大人になったら返す）`,'life');S.money=0}
   drift();
   for(const key in S.f){if(!S.open[key])continue;const posted=S.mo.posts>0&&key===S.main;S.f[key]*=posted?.996:.99}
   rivalTick();

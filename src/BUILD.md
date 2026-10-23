@@ -1,7 +1,7 @@
 # ビルド手順（Buzz人生シミュレーター）
-ソースは p1.html（画面とCSS）＋ p2〜p31.js（スクリプト）。この順でつなげて1枚のHTMLにする。
+ソースは p1.html（画面とCSS）＋ p2〜p32.js（スクリプト）。この順でつなげて1枚のHTMLにする。
 
-    { cat p1.html; echo '<script>'; cat p2.js p4.js p6.js p3.js p7.js p8.js p9.js p10.js p11.js p12.js p13.js p14.js p15.js p16.js p17.js p18.js p19.js p20.js p21.js p22.js p23.js p24.js p25.js p26.js p27.js p28.js p29.js p30.js p31.js; echo '</script>'; } > nipporia.html
+    { cat p1.html; echo '<script>'; cat p2.js p4.js p6.js p3.js p7.js p8.js p9.js p10.js p11.js p12.js p13.js p14.js p15.js p16.js p17.js p18.js p19.js p20.js p21.js p22.js p23.js p24.js p25.js p26.js p27.js p28.js p29.js p30.js p31.js p32.js; echo '</script>'; } > nipporia.html
 
 - 後のファイルほど優先（同じ名前の function は後のものが使われる）
 - p2：データ・基本の出来事 / p4：国・難易度・研究・まち・実績・BGM / p6：出来事（v0.2） / p3：エンジン・画面（v0.1） / p7：v0.2の差し替え / p8：v0.3（行動の中身・請求書・経営・5タブ） / p9：設定・削除・アップデート情報（CHANGELOG） / p10：セーブ保管・過去バージョン / p11：出来事（v0.4） / p12：子ども時代（v0.5） / p13：v0.6（人生の選択・目標・ファン層・アルバムほか） / p14：v0.7（時代・実際の出来事・会社・新しいまち・遊び方） / p15：v0.8（研究追加・スキルツリー2種・感想フォーム・舞台説明） / p16：v0.9（推定プレイ時間・感想フォーム改・バージョン画面）。感想の送り先は p16.js の FB_URL（feedback/feedback_sheet.gs をスプレッドシートに置いてウェブアプリとして公開したURL）
@@ -28,3 +28,4 @@
 - p29：v1.2.1 メニューの大きさ固定（fixedsize＋menufix、タブ切りかえは中身だけ入れかえ）
 - p30：v1.2.2 文字の種類を実フォントで見本表示、▲▼の確認を軽量化、モーダル中は背景固定（html.mlock）、dvh、古い更新情報をたたむ
 - p31：v1.2.3 スロット名（nipporia-slotlabel）、プレイ時間のリセット、SNS名の変更（S.snsName・表示の置きかえ）と運営会社の買収（S.snsOwn）
+- p32：v1.3 会社で作るもの（PROD・c.pr・おまかせ／自分で）、まちの施設と会社の連携（SYN）、ゲームセンター、実績の追加とひみつの実績（ACHの5番目=1、6・7番目に本当の名前と条件）

@@ -44,4 +44,4 @@
 - p51：v2.5 推定プレイ時間3種（etaText・etaBox・S.paceEma）、家族への返済（S.famDebt：p12 の ad と p8 の月末で記録）、人生の終わりの選択（die をラップ、10歳ごとの保管 CFG.save+'-snap'、S.flags.dying／lifeGuard）
 - p52：v2.6 年齢に合った出来事（分類ごとに when をラップ）、まるごとおまかせ（S.omk）、秘書のひとこと（secTip）、表示のカスタマイズ（localStorage buzz-ui-hide）、さがす（FIND）
 - p53：v2.7 研究ポイント3倍（turn をラップ、使った分は S._rpSp で差し引かない）、研究ラインの費用の伸び1.2倍、人生の道のり（ROAD 11段階・🧭道のり・秘書と連動）
-- p54：タイトルロゴの切りかえ（開発者のみ）。全員向けは CFG.logo（'image'／'text'）。デバッグ画面の「情報」で、その端末だけ試せる（buzz-dev-logo）
+- p54：タイトルロゴの切りかえ。CFG.logo（'image'＝画像ロゴ／'text'＝元の文字タイトル）。いまは 'text'。変更はコードのみ

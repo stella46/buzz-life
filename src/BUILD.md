@@ -1,7 +1,7 @@
 # ビルド手順（Buzz人生シミュレーター）
-ソースは p1.html（画面とCSS）＋ p2〜p47.js（p37 はなし）（スクリプト）。この順でつなげて1枚のHTMLにする。
+ソースは p1.html（画面とCSS）＋ p2〜p50.js（p37 はなし）（スクリプト）。この順でつなげて1枚のHTMLにする。
 
-    { cat p1.html; echo '<script>'; cat p2.js p4.js p6.js p3.js p7.js p8.js p9.js p10.js p11.js p12.js p13.js p14.js p15.js p16.js p17.js p18.js p19.js p20.js p21.js p22.js p23.js p24.js p25.js p26.js p27.js p28.js p29.js p30.js p31.js p32.js p33.js p34.js p35.js p36.js p38.js p39.js p40.js p41.js p42.js p43.js p44.js p45.js p46.js p47.js; echo '</script>'; } > nipporia.html
+    { cat p1.html; echo '<script>'; cat p2.js p4.js p6.js p3.js p7.js p8.js p9.js p10.js p11.js p12.js p13.js p14.js p15.js p16.js p17.js p18.js p19.js p20.js p21.js p22.js p23.js p24.js p25.js p26.js p27.js p28.js p29.js p30.js p31.js p32.js p33.js p34.js p35.js p36.js p38.js p39.js p40.js p41.js p42.js p43.js p44.js p45.js p46.js p47.js p48.js p49.js p50.js; echo '</script>'; } > nipporia.html
 
 - 後のファイルほど優先（同じ名前の function は後のものが使われる）
 - p2：データ・基本の出来事 / p4：国・難易度・研究・まち・実績・BGM / p6：出来事（v0.2） / p3：エンジン・画面（v0.1） / p7：v0.2の差し替え / p8：v0.3（行動の中身・請求書・経営・5タブ） / p9：設定・削除・アップデート情報（CHANGELOG） / p10：セーブ保管・過去バージョン / p11：出来事（v0.4） / p12：子ども時代（v0.5） / p13：v0.6（人生の選択・目標・ファン層・アルバムほか） / p14：v0.7（時代・実際の出来事・会社・新しいまち・遊び方） / p15：v0.8（研究追加・スキルツリー2種・感想フォーム・舞台説明） / p16：v0.9（推定プレイ時間・感想フォーム改・バージョン画面）。感想の送り先は p16.js の FB_URL（feedback/feedback_sheet.gs をスプレッドシートに置いてウェブアプリとして公開したURL）
@@ -38,3 +38,6 @@
 - p45：v2.1 大計画100種類、事業・人生タブのグループ化（SUBGRP）、v2.0の保管
 - p46：v2.2 予定の決め方の切りかえ（S.pmode：classic／routine／ratio／hybrid、今月だけ S.once、割合 S.ratio.rows と端数の持ち越し carry）。turn と panelPlan をラップ
 - p47：v2.3 人生の終わりのモード（S.endless）を途中で切りかえ（人生→能力）、終わりの画面でも子どもがいればエンドレスにして引き継げる
+- p48：v2.4 研究ライン16本×16段（RTRACK・S.rtk、効果は各関数をラップ）、研究画面（おすすめ・分類タブ・研究できるものだけ）
+- p49：v2.4 大計画113追加（インフラ40・人口8・銀河ほか。京・垓）、人口 S.popAdd（全世界進出後は届く人数に反映）、大計画画面のたたみ表示
+- p50：v2.4 とんでもなく高額なアクション（BIG・S.bigcd）、会社30社・サブスク30個（p14・p34・p24b の定数）

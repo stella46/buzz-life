@@ -125,7 +125,7 @@ const COS={
   media:{n:'メディア・出版社',c:6e7,r:.0075,v:.9,d:'評判が高いほど伸びる'},
   space:{n:'宇宙ベンチャー',c:5e8,r:.011,v:2.2,d:'2040年から。夢は大きく、リスクも大きい',year:2040}
 };
-const CO_MAX=15;
+const CO_MAX=30;
 function coProfit(c,commit){const d=COS[c.k],ci=Math.max(.2,S.cty.inc);let m=d.r*(1+(c.lv-1)*.04)*(S.cfocus===c.id?1.2:1)*ecoMul()*coPerk();
   if(d.fan)m*=1+Math.min(.6,Math.log10(totalF()+1)/10);if(d.town)m*=1+.08*(allTowns().length-1);if(c.k==='media')m*=.7+S.p.rep/150;
   let p=c.cap*m*ci;if(commit)p*=1+R(-d.v,d.v)*.9;return Math.round(p)}

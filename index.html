@@ -203,6 +203,8 @@ html.mlock,html.mlock body{overflow:hidden;overscroll-behavior:none}.ov{overscro
 .slottools{margin-top:4px;flex-wrap:wrap;gap:6px}.prow{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
 .verpick{margin:6px 0 10px;padding:8px;border:1px solid var(--line,#ccc);border-radius:12px}.vp-t{font-size:.85em;font-weight:700;margin-bottom:6px;opacity:.8}.vp-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.b.vp{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:2px;text-decoration:none;color:inherit;white-space:normal}.b.vp span{font-size:.78em;opacity:.8;line-height:1.35}.b.vp.on{outline:2px solid var(--cyan);}@media(max-width:480px){.vp-row{grid-template-columns:1fr}}
 .pmsw{margin:4px 0 8px}.pmsw .seg button{font-size:.8rem}.slotc.rrow{grid-template-columns:minmax(0,1fr)}.slotc.rrow .ds{grid-column:1}.rrow .sel2{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.rsl{display:flex;gap:8px;align-items:center}.rsl input{flex:1;min-width:0}.rpct{min-width:3em;text-align:right}
+details.bigacts,details.mfold{margin:10px 0;border:2px solid var(--line);border-radius:10px;padding:6px 10px;background:var(--bg2)}details.bigacts summary,details.mfold summary{cursor:pointer;font-weight:700;font-size:.9rem;padding:4px 0}details.bigacts[open] summary{color:var(--gold)}
+.reshd{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin:4px 0}.restabs{margin:8px 0}
 .rbar{display:flex;height:12px;border-radius:6px;overflow:hidden;margin:8px 0;border:1px solid var(--line);background:var(--bg2)}.rbar i{display:block;height:100%}.rbar .c0{background:#ff5c8a}.rbar .c1{background:#3fd6c9}.rbar .c2{background:#ffc94d}.rbar .c3{background:#8a7dff}.rbar .c4{background:#6fd36f}.rbar .c5{background:#ff9b4d}
 .oncebox{margin:10px 0;padding:8px 10px;border:2px dashed var(--line);border-radius:10px}.oncebox.on{border-style:solid;border-color:var(--cyan)}.oncebox h3{margin-top:0}
 .subtabs.sgrp{border-bottom:0;padding-bottom:4px}.stab.sg{font-weight:700;padding:7px 16px;font-size:.92rem;border-radius:999px}.subtabs.sub2{margin-top:2px}.subtabs.sub2 .stab{font-size:.8rem;padding:5px 10px}
@@ -3034,6 +3036,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v2.4','2026年10月23日',['【研究】研究ラインを15本（各16段）追加し、研究が全部で約300個になりました。映像と企画の技、広がる仕組み、経営の深化、巨大工学、人類の未来などがあります。','【研究の画面】「⭐ おすすめ」タブを追加しました。いまの遊び方に合わせて、効果が大きそうな研究を5つ選んで表示します。研究ラインは1行にまとめ、次の段だけを表示するので、たくさんスクロールしなくても選べます。','【大計画】113種類を追加し、全部で213種類になりました。「インフラ」「人口」「銀河」の分類を追加し、京・垓の計画も登場します。','【人口】インフラを整えると、人類をふやす大計画を始められます。全世界に進出していれば、人口がふえるほど届けられる人数も広がり、とてつもない数のフォロワーを目指せます。','【大計画の画面】いま始められるものと建設中のものを上に表示し、まだ先の計画と完成した計画はたたむようにしました。','【とんでもなく高額なアクション】発信・会社・まち・お店・事務所・サブスク事業・お金・つながりの画面に、けた外れのお金を使うアクションを追加しました（たとえば、宇宙から24時間の生配信、業界まるごと買収、未来都市への大改造など）。','【事業】持てる会社を30社まで、自分のサブスクを30個まで運営できるようになりました。','実績を11個追加しました。']],
   ['v2.3','2026年10月23日',['【人生の終わりのモード】「亡くなったら終わり」と「エンドレス（子どもに引き継ぐ）」を、遊んでいる途中でも切りかえられるようになりました。「人生」→「自分」→「能力」から変更できます。','「亡くなったら終わり」で人生を終えたときも、子どもがいれば、その場でエンドレスにして子どもに引き継げるようにしました。']],
   ['v2.2.1','2026年10月23日',['タイトルロゴを、これまでのタイトル文字と同じくらいの大きさにしました。','タイトルロゴをより高画質にしました。']],
   ['v2.2','2026年10月23日',['【予定の決め方】予定の決め方を4つから選べるようになりました。「予定」タブの上にあるボタンで、いつでも切りかえられます。','・いつもの枠：これまでどおり、枠ごとに行動を選びます。','・いつもの予定＋今月だけ：ふだんの予定は毎月そのままくり返されます。変えたい月だけ「今月だけ予定を変える」を使えば、翌月は自動でふだんの予定に戻ります。','・割合で決める：「投稿50%・休み20%」のように、時間の使い方をつまみで配分します。端数は月ごとに順番に回るので、長い目で見ると割合どおりになります。','・割合＋今月だけ：ふだんは割合で、変えたい月だけ「今月だけ」を使えます。']],
@@ -3878,7 +3881,7 @@ const COS={
   media:{n:'メディア・出版社',c:6e7,r:.0075,v:.9,d:'評判が高いほど伸びる'},
   space:{n:'宇宙ベンチャー',c:5e8,r:.011,v:2.2,d:'2040年から。夢は大きく、リスクも大きい',year:2040}
 };
-const CO_MAX=15;
+const CO_MAX=30;
 function coProfit(c,commit){const d=COS[c.k],ci=Math.max(.2,S.cty.inc);let m=d.r*(1+(c.lv-1)*.04)*(S.cfocus===c.id?1.2:1)*ecoMul()*coPerk();
   if(d.fan)m*=1+Math.min(.6,Math.log10(totalF()+1)/10);if(d.town)m*=1+.08*(allTowns().length-1);if(c.k==='media')m*=.7+S.p.rep/150;
   let p=c.cap*m*ci;if(commit)p*=1+R(-d.v,d.v)*.9;return Math.round(p)}
@@ -6249,13 +6252,13 @@ function svcHtml(){const c=ci2();let h=`<h3>自分のサブスク事業</h3><p c
     h+=`<div class="card"><div class="hd"><span>${esc(s.name||t.n)}</span><span>${num(s.users)}人</span></div><div class="kv"><span>月額</span><span>${yen(t.price*P.m*c)}（${P.n}）</span><span>品質</span><span>${Math.round(s.q)}</span><span>先月の利益</span><span class="${prof>=0?'up':'dn'}">${prof>=0?'+':''}${yen(prof)}</span></div>
     <div class="seg">${Object.entries(SVC_PRICE).map(([k,p])=>`<button type="button" class="${(s.pr||'std')===k?'on':''}" data-svcpr="${i}" data-v="${k}">${p.n}</button>`).join('')}</div>
     <div class="row"><button class="b sm" type="button" data-svc="${i}" data-k="up" ${S.money<t.dev*.15*c?'disabled':''}>アップデート ${yen(t.dev*.15*c)}</button><button class="b sm" type="button" data-svc="${i}" data-k="ad" ${S.money<t.dev*.05*c?'disabled':''}>宣伝する ${yen(t.dev*.05*c)}</button><button class="b sm ghost" type="button" data-svc="${i}" data-k="sell">事業を売る（${yen(svcValue(s))}）</button></div></div>`}
-  if((S.svcs||[]).length<10){h+=`<h3>新しいサービスを開発する</h3><div>`;for(const t of SVC_T.map(r=>SVCT[r[0]])){if(!svcOk(t))continue;const done=(S.svcs||[]).some(s=>s.t===t.k);
+  if((S.svcs||[]).length<30){h+=`<h3>新しいサービスを開発する</h3><div>`;for(const t of SVC_T.map(r=>SVCT[r[0]])){if(!svcOk(t))continue;const done=(S.svcs||[]).some(s=>s.t===t.k);
     h+=`<div class="shop"><div><div>${esc(t.n)} <span class="muted small">開発費 ${yen(t.dev*c)}</span></div><div class="muted small">月額 ${yen(t.price*c)}・原価 1人${yen(t.cost*c)}${t.g?`・${esc(GENRES[t.g].n)}の発信と相性がいい`:'・どのジャンルでも'}</div></div><button class="b sm" type="button" data-svcnew="${t.k}" ${done||S.money<t.dev*c?'disabled':''}>${done?'運営中':'開発する'}</button></div>`}h+='</div>'}
-  else h+='<p class="hint">サービスは10個まで運営できます。</p>';
+  else h+='<p class="hint">サービスは30個まで運営できます。</p>';
   return h}
 function svcValue(s){const e=svcEst(s);return Math.max(0,Math.round((e.rev-e.cost)*24))}
 document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!S)return;const d=b.dataset;const c=ci2();
-  if(d.svcnew){const t=SVCT[d.svcnew];if(!t||S.money<t.dev*c||(S.svcs||[]).length>=10)return;outc('svcbiz',Math.round(t.dev*c));if(!S.svcs)S.svcs=[];S.svcs.push({t:t.k,users:0,q:55+Math.min(30,(S.sk.plan+S.p.know)/8),pr:'std',age:0,mkt:totalF()*.01});tl(`サブスク「${t.n}」を始めた`);log(`「${t.n}」を開発して、サービスを始めた`,'good');snd('buy');save(true);render();return}
+  if(d.svcnew){const t=SVCT[d.svcnew];if(!t||S.money<t.dev*c||(S.svcs||[]).length>=30)return;outc('svcbiz',Math.round(t.dev*c));if(!S.svcs)S.svcs=[];S.svcs.push({t:t.k,users:0,q:55+Math.min(30,(S.sk.plan+S.p.know)/8),pr:'std',age:0,mkt:totalF()*.01});tl(`サブスク「${t.n}」を始めた`);log(`「${t.n}」を開発して、サービスを始めた`,'good');snd('buy');save(true);render();return}
   if(d.svcpr!=null){const s=S.svcs[+d.svcpr];if(s){s.pr=d.v;save();renderPanel()}return}
   if(d.svc!=null){const s=S.svcs[+d.svc];if(!s)return;const t=SVCT[s.t];
     if(d.k==='up'){const cost=Math.round(t.dev*.15*c);if(S.money<cost)return;outc('svcbiz',cost);s.q=clamp(s.q+R(8,15),5,100);log(`${t.n}をアップデートした（品質 ${Math.round(s.q)}）`,'good')}
@@ -6875,7 +6878,7 @@ devButton();
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act="settings"],[data-act="grpEtc"]');if(!b)return;setTimeout(()=>{const m=$('#mcard');if(!m||m.querySelector('.devlink'))return;const cl=m.querySelector(':scope>[data-act="close"].pri,:scope>.b.pri[data-act="close"]');const a=document.createElement('button');a.type='button';a.className='devlink';a.textContent='開発者';a.addEventListener('click',devLogin);(cl||m).insertAdjacentElement(cl?'beforebegin':'beforeend',a)},0)});
 
 // ===== v1.4：会社の経営を本格的に（開発費・従業員・オフィスと支社・レイアウト・名前・買収・合併） =====
-const CO_MAX2=15;
+const CO_MAX2=30;
 // ----- 作るものの開発費（現実に近い金額。物価で変わる） -----
 const PCOST={game:[3e7,3e8,3e9],it:[2e7,2e8,2e9],food:[5e6,3e7,2e8],apparel:[1e7,8e7,5e8],media:[5e6,5e7,5e8],estate:[3e8,3e9,3e10],space:[5e9,5e10,3e11]};
 const PSTAFF={game:[3,30,200],it:[3,20,150],food:[2,10,50],apparel:[2,10,60],media:[2,10,80],estate:[5,30,200],space:[20,200,2000]};
@@ -8599,4 +8602,254 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-endm]');if
 // 亡くなったあとでも、子どもがいれば引き継ぎを選べるように
 const _se47=showEnding;showEnding=function(){const r=_se47.apply(this,arguments);try{if(S&&!S.endless&&(S.kids||[]).length){const el=$('#scrEnd'),hd=el&&el.querySelector('.head');if(hd&&!el.querySelector('.endheir')){const d=document.createElement('div');d.className='card endheir';d.innerHTML=`<h3>家系をつなぐ</h3><p class="hint">いまは「亡くなったら終わり」になっていますが、子どもとして人生を続けることもできます。お金・事務所・まち・研究も引き継がれます。</p><div class="row"><button class="b pri" type="button" data-endheir="1">エンドレスにして、子どもに引き継ぐ</button></div>`;hd.after(d)}}}catch(e){console.error(e)}return r};
 document.addEventListener('click',e=>{const b=e.target.closest('[data-endheir]');if(!b||!S)return;S.endless=1;if(!S.lineage)S.lineage=[];showEnding()});
+
+// ===== v2.4：研究を約300に（段階式の研究ライン）＋迷わない研究画面 =====
+// ライン：[キー,分類,名前,1段の効果の説明,必要な研究,16段の名前]
+const RTRACK=[
+ ['q','sns','映像と企画の技','投稿の質 +1',null,['構図の基本','光の使い方','音声の磨き方','テロップ術','間の取り方','編集のリズム','色の設計','物語の組み立て','視線の誘導','サムネイル心理','演出の妙','没入感の作り方','共感の設計','余韻の作り方','名作の分析','究極の一本']],
+ ['sg','sns','広がる仕組み','SNSの伸び +3%',null,['拡散の仕組み','タグの戦略','投稿時間の最適化','おすすめに載るコツ','切り抜きの活用','コメント欄の育て方','ファンの口コミ','インフルエンサー連携','話題の波の読み方','国をこえる拡散','多言語の字幕','バズの方程式','同時多発キャンペーン','文化の橋わたし','世界トレンドの設計','拡散の極意']],
+ ['mon','sns','収益化の研究','SNSの収入・投げ銭 +3%','analytics',['広告の仕組み','スポンサーの探し方','投げ銭の演出','限定コンテンツ','会員特典の設計','グッズ連動','ライブ課金','電子チケット','ファン経済学','価格の心理学','ブランド提携','権利ビジネス','世界の決済','仮想通貨の活用','ファン証券','収益化の極意']],
+ ['cap','future','届く範囲の拡張','届けられる人数の上限 +2%','global',['回線の増強','配信サーバーの分散','自動翻訳','同時通訳AI','衛星配信','地下でも届く電波','海の上の基地局','空飛ぶ中継局','宇宙中継網','月への回線','火星への中継','光より速い通信の理論','量子通信','星間ネットワーク','銀河放送','どこでも届く声']],
+ ['co','biz','経営の深化','会社の利益 +3%','company',['会計の基本','組織づくり','人材育成','業務の効率化','データ経営','ブランド経営','グローバル経営','サプライチェーン','M&A戦略','イノベーション経営','持続可能な経営','未来予測経営','AI経営','惑星規模の物流','宇宙企業の経営','経営の極意']],
+ ['emp','biz','大きな組織','社員の雇用上限 +5%','hr',['採用の仕組み','教育制度','評価制度','リモートワーク','多様な働き方','社内大学','人材の世界採用','AI人事','100万人の組織論','国をこえる組織','都市規模の社屋','社員の住む街','惑星の支社','宇宙での採用','銀河規模の組織','組織の極意']],
+ ['shop','biz','商いの道','お店のお客さん +3%','cafe',['接客の心得','品ぞろえ','季節の売り場','常連の育て方','行列のつくり方','観光客の呼びこみ','ネット予約','配達サービス','ご当地名物','ブランド化','フランチャイズ','世界の味','無人店舗','空中店舗','宇宙の売店','商いの極意']],
+ ['megaC','future','巨大工学','大計画の費用 -1.5%',null,['設計の標準化','建設ロボット','3Dプリント建築','新しい素材','自己修復コンクリート','超伝導','軽くて強い骨組み','海底工事','宇宙での組み立て','月の資源の利用','小惑星の資源','無重力工場','分子レベルの製造','ナノ機械','星を使う工学','工学の極意']],
+ ['megaT','future','工期の短縮','大計画の工期 -1.5%',null,['工程管理','24時間工事','同時並行の建設','ドローン運搬','自動運転の重機','予測シミュレーション','モジュール工法','宇宙エレベーター輸送','核融合エンジン','軌道上の工場','自己複製ロボット','時間の圧縮理論','瞬間移動の応用','未来の建設会社','銀河の工事現場','工期の極意']],
+ ['pop','future','人類の未来','人口がふえる大計画の効果 +5%',null,['家族を支える制度','子育ての科学','医療の普及','食の安全','住まいの未来','教育の普及','高齢者の暮らし','都市の設計','緑の都市','海に住む知恵','空に住む知恵','月で暮らす知恵','火星で暮らす知恵','宇宙で生まれる子ども','星々の社会','人類の極意']],
+ ['hl','life','健康の科学','毎月の健康の回復 +0.04','health_k',['睡眠の科学','栄養学','運動生理学','姿勢の改善','腸の研究','免疫の研究','予防医学','遺伝子の研究','再生医療','細胞の若返り','人工臓器','ナノ医療','宇宙医学','寿命の研究','永い命の理論','健康の極意']],
+ ['mn','life','心の科学','毎月のメンタルの回復 +0.04','mind',['ストレスの仕組み','呼吸法','瞑想の科学','感情の整理','人間関係の心理','ほめる力','休み方の研究','創造性の科学','幸福学','心の回復力','チームの心理','共感の神経科学','夢の研究','意識の研究','心と宇宙','心の極意']],
+ ['rp','life','学びの研究','研究ポイントのたまり方 +4%',null,['読書術','記憶術','ノート術','速読','論理的思考','統計学','プログラミング','機械学習','研究の進め方','論文の読み方','世界の研究者ネットワーク','AIとの共同研究','量子コンピュータ','超知能の研究','知の宇宙','学びの極意']],
+ ['town','town','まちの未来','まちの発展が毎月少し進む','town',['道路の整備','公園づくり','商店街の再生','駅前開発','歩きやすいまち','防災のまちづくり','スマートシティ','自動運転のまち','空中歩道','地下都市','海上の街区','緑の摩天楼','気候を整えるドーム','月のまちの設計','宇宙のまちの設計','まちの極意']],
+ ['tal','biz','タレント育成','所属タレントのフォロワーの伸び +0.3%/月',null,['発声の練習','カメラの前の立ち方','キャラクターづくり','台本の読み方','アドリブ力','ファン対応','自己プロデュース','ブランディング','海外向けの発信','多言語トーク','ステージ演出','世界ツアーの準備','メディア戦略','伝説の育て方','星々のステージ','育成の極意']],
+ ['fam','life','家族の科学','子どもや家族との絆が深まりやすい・幸福 +0.03/月','parent_k',['話の聞き方','家族の時間','遊びの力','家庭の教育','反抗期の理解','進路の相談','家族旅行の計画','三世代の暮らし','家族の歴史','家族の健康','思いやりの連鎖','家族の未来','家族の物語','世代をこえる知恵','家族の宇宙','家族の極意']]
+];
+const RT_COST=(L)=>Math.round(30*Math.pow(1.3,L));
+const RT_CATN=Object.assign({},RES_CAT,{future:'未来・宇宙'});
+function rt(k){return (S&&S.rtk&&S.rtk[k])||0}
+function rtOf(k){return RTRACK.find(t=>t[0]===k)}
+function rtCost(k){return Math.round(RT_COST(rt(k))*(lg('g10')?.85:1))}
+function rtOk(k){const t=rtOf(k);return t&&(!t[4]||has(t[4]))&&rt(k)<t[5].length}
+function rtBuy(k){const t=rtOf(k);if(!t||!rtOk(k))return;const c=rtCost(k);if(S.rp<c)return;S.rp-=c;if(!S.rtk)S.rtk={};const nm=t[5][rt(k)];S.rtk[k]=rt(k)+1;log(`研究「${nm}」が完了した（${t[2]} ${S.rtk[k]}段）`,'good');snd('buy');try{checkAch('m')}catch(_){}save();render()}
+function rtDoneN(){return RTRACK.reduce((a,t)=>a+rt(t[0]),0)}
+function resTotal(){return RES.length+RTRACK.reduce((a,t)=>a+t[5].length,0)}
+function resDoneAll(){return RES.filter(r=>has(r.id)).length+rtDoneN()}
+
+// ----- 効果 -----
+const _pq48=postQuality;postQuality=function(){return _pq48.apply(this,arguments)+rt('q')};
+const _dm48=discMul;discMul=function(){return _dm48.apply(this,arguments)*(1+.03*rt('sg'))};
+const _ssm48=shopSegMul;shopSegMul=function(i){return _ssm48.apply(this,arguments)*(1+.03*rt('shop'))};
+const _cp48=coProfit;coProfit=function(c,commit){const p=_cp48.apply(this,arguments);return rt('co')?Math.round(p*(1+.03*rt('co'))):p};
+const _mc48=megaCost;megaCost=function(m){return Math.round(_mc48.apply(this,arguments)*(1-.015*rt('megaC')))};
+const _ms48=megaStart;megaStart=function(k){const n0=(S.mega||[]).length;const r=_ms48.apply(this,arguments);try{if((S.mega||[]).length>n0&&rt('megaT')){const x=S.mega[S.mega.length-1];x.dur=Math.max(3,Math.round(x.dur*(1-.015*rt('megaT'))))}}catch(_){}return r};
+const _cc48=coCap;coCap=function(c){const v=_cc48.apply(this,arguments);return rt('emp')?Math.round(v*(1+.05*rt('emp'))):v};
+const _inc48=inc;inc=function(cat,v){if(v>0&&(cat==='sns'||cat==='tip')&&rt('mon'))v=Math.round(v*(1+.03*rt('mon')));return _inc48.call(this,cat,v)};
+const _wm48=worldMul;worldMul=function(){return _wm48.apply(this,arguments)*(typeof S!=='undefined'&&S?(1+.02*rt('cap')):1)};
+const _mh48=monthHook11;monthHook11=function(){_mh48();try{if(!S||age()<6)return;if(rt('hl'))ad('health',.04*rt('hl'));if(rt('mn'))ad('mental',.04*rt('mn'));if(rt('fam')){ad('happy',.03*rt('fam'));for(const p of [S.spouse,S.partner].filter(Boolean))rel(p,.05*rt('fam'))}
+ if(rt('rp')&&age()>=10)S.rp+=.04*rt('rp')*Math.max(.3,S.rpRate||.5);if(rt('tal')&&S.office)for(const t of (S.office.talents||[]))t.f=Math.round((t.f||0)*(1+.003*rt('tal')));if(rt('town')){const T=homeTown();if(T)T.bonus=(T.bonus||0)+.02*rt('town')}}catch(e){console.error(e)}};
+
+// ----- おすすめ（いまの遊び方に合わせて） -----
+function resCands(){const L=[];applyResCost();
+ for(const r of RES){if(has(r.id))continue;const ok=!r.req||has(r.req),yr=r.year&&S.y<r.year;if(!ok||yr)continue;L.push({t:'r',id:r.id,n:r.n,d:r.d,c:r.c,cat:r.cat})}
+ for(const t of RTRACK){if(!rtOk(t[0]))continue;L.push({t:'t',id:t[0],n:t[5][rt(t[0])],d:t[3]+`（${t[2]} ${rt(t[0])+1}段目）`,c:rtCost(t[0]),cat:t[1]})}return L}
+function resScore(x){let s=0;const id=x.id,cos=(S.cos||[]).length,shops=S.town&&S.town.tiles.some(t=>SHOP[t.t]);
+ if(x.cat==='sns'&&S.snsOpen)s+=3;if(['q','sg'].includes(id)&&S.snsOpen)s+=3;if(id==='mon'&&totalF()>=1e4)s+=2;if(id==='cap'&&S.world&&S.world.r.length)s+=4;
+ if(x.cat==='biz'&&(cos||shops))s+=2;if(id==='co'&&cos)s+=4;if(id==='emp'&&cos&&S.cos.some(c=>c.emp&&c.emp.n>=coCap(c)*.9))s+=5;if(id==='shop'&&shops)s+=3;
+ if((id==='megaC'||id==='megaT')&&(S.mega||[]).length)s+=3;if(id==='megaC'&&S.money>=1e11)s+=2;if(id==='pop'&&(S.mega||[]).some(m=>MEGA[m.k]&&MEGA[m.k].cat==='人口'))s+=4;
+ if(id==='hl'&&S.p.health<60)s+=4;if(id==='mn'&&S.p.mental<60)s+=4;if(id==='fam'&&(S.kids||[]).length)s+=2;if(id==='rp')s+=1.5;if(id==='town'&&(S.role==='mayor'||allTowns().length>1))s+=2;
+ if(x.cat==='town'&&allTowns().length>1)s+=1;if(x.cat==='life'&&age()>=50)s+=1;
+ s+=x.c<=S.rp?3:-Math.min(3,(x.c-S.rp)/Math.max(10,x.c)*3);s-=x.c/2000;return s}
+function resRec(n){return resCands().sort((a,b)=>resScore(b)-resScore(a)).slice(0,n)}
+let RESCAT='rec',RESALL=0;
+function resBtn(x){return x.t==='r'?`<button class="b sm ${S.rp>=x.c?'pri':''}" type="button" data-res="${x.id}" ${S.rp<x.c?'disabled':''}>研究する</button>`:`<button class="b sm ${S.rp>=x.c?'pri':''}" type="button" data-rtk="${x.id}" ${S.rp<x.c?'disabled':''}>研究する</button>`}
+function resRow(x){return `<div class="rnode ${S.rp>=x.c?'ready':'lock'}"><div class="rb"><div>${esc(x.n)} <span class="muted small">${num(x.c)}pt</span></div><div class="muted small">${esc(x.d)}${S.rp<x.c?`（あと${num(Math.ceil(x.c-S.rp))}pt・${rpEta(x.c)}）`:''}</div></div>${resBtn(x)}</div>`}
+function researchPanel(){applyResCost();const done=resDoneAll(),tot=resTotal();
+ let h=`<div class="reshd"><div><b>研究ポイント ${num(Math.floor(S.rp))}</b><span class="muted small">（月に約${(S.rpRate||0).toFixed(1)}pt）</span></div><div class="muted small">完了 ${done} / ${tot}</div></div><div class="tbar"><i style="width:${(done/tot*100).toFixed(1)}%"></i></div>`;
+ const tabs=[['rec','⭐ おすすめ'],...Object.entries(RT_CATN),['lv','ずっと続く']];
+ h+=`<div class="seg wrapseg restabs">${tabs.map(([k,n])=>`<button type="button" class="${RESCAT===k?'on':''}" data-rescat="${k}">${n}</button>`).join('')}</div>`;
+ if(RESCAT==='rec'){const L=resRec(5);h+=`<p class="hint">いまの遊び方に合わせて、効果が大きそうな研究を選んでいます。迷ったら上から順に。</p>`;h+=L.length?`<div class="rtree">${L.map(resRow).join('')}</div>`:'<p class="hint">いま研究できるものはありません。</p>';
+  const cheap=resCands().filter(x=>x.c<=S.rp).length;h+=`<p class="hint">いますぐ研究できるもの：${cheap}件。分類のタブから全部見られます。</p>`;return h}
+ if(RESCAT==='lv'){h+=`<p class="hint">研究ポイントが余ったら。何段でも重ねられる（20段まで）。</p><div class="rtree">${RLV.map(([k,n,d])=>`<div class="rnode ready"><div class="rb"><div>${n} <b>${rlv(k)}段</b> <span class="muted small">${rlvCost(k)}pt</span></div><div class="muted small">${d}</div></div><button class="b sm" type="button" data-rlv="${k}" ${S.rp<rlvCost(k)||rlv(k)>=20?'disabled':''}>研究する</button></div>`).join('')}</div>`;return h}
+ // 研究ライン（1行に1ライン。次の段だけ表示）
+ const tr=RTRACK.filter(t=>t[1]===RESCAT);if(tr.length){h+=`<h3>研究ライン</h3><div class="rtree">`;for(const t of tr){const L=rt(t[0]),mx=t[5].length,ok=!t[4]||has(t[4]),c=rtCost(t[0]);
+  h+=`<div class="rnode ${L>=mx?'done':ok&&S.rp>=c?'ready':'lock'}"><div class="rb"><div>${esc(t[2])} <b>${L}/${mx}段</b>${L<mx?` <span class="muted small">次：${esc(t[5][L])}・${num(c)}pt</span>`:''}</div><div class="muted small">1段ごとに ${esc(t[3])}${!ok?`（先に「${esc((RES.find(x=>x.id===t[4])||{}).n||'')}」）`:''}</div><div class="tbar"><i style="width:${(L/mx*100).toFixed(0)}%"></i></div></div>${L>=mx?'<span class="chip up">完了</span>':ok?`<button class="b sm ${S.rp>=c?'pri':''}" type="button" data-rtk="${t[0]}" ${S.rp<c?'disabled':''}>研究する</button>`:''}</div>`}h+='</div>'}
+ // ひとつずつの研究（ふだんは研究できるものだけ）
+ const list=RES.filter(r=>r.cat===RESCAT);if(list.length){const av=list.filter(r=>!has(r.id)&&(!r.req||has(r.req))&&!(r.year&&S.y<r.year)),dn=list.filter(r=>has(r.id)).length;
+  h+=`<h3>ひとつずつの研究 <span class="muted small">${dn}/${list.length}</span></h3>`;
+  const show=RESALL?list:av;h+=show.length?`<div class="rtree">${show.map(r=>{const d=has(r.id),ok=!r.req||has(r.req),yr=r.year&&S.y<r.year;return `<div class="rnode ${d?'done':ok&&!yr?'ready':'lock'}"><div class="rb"><div>${d?'✓ ':''}${esc(r.n)} <span class="muted small">${r.c}pt</span></div><div class="muted small">${esc(r.d)}${!ok?`（先に「${esc((RES.find(x=>x.id===r.req)||{}).n||'')}」）`:''}${yr?`（${r.year}年から）`:''}</div></div>${d?'<span class="chip up">完了</span>':ok&&!yr?`<button class="b sm" type="button" data-res="${r.id}" ${S.rp<r.c?'disabled':''}>研究する</button>`:''}</div>`}).join('')}</div>`:'<p class="hint">この分類で、いま研究できるものはありません。</p>';
+  h+=`<div class="row"><button class="b sm ghost" type="button" data-resall="1">${RESALL?'研究できるものだけ表示':'完了・まだ先のものも表示'}</button></div>`}
+ return h}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-rescat],[data-resall],[data-rtk]');if(!b||!S)return;const d=b.dataset;if(d.rescat){RESCAT=d.rescat;renderPanel();return}if(d.resall){RESALL=RESALL?0:1;renderPanel();return}if(d.rtk)rtBuy(d.rtk)});
+// 研究のバッジ：研究ラインも数える
+const _rr48=researchReady;researchReady=function(){try{if(_rr48.apply(this,arguments))return true;return RTRACK.some(t=>rtOk(t[0])&&S.rp>=rtCost(t[0]))}catch(_){return false}};
+(function(){if(typeof ACH_TABS!=='undefined'&&!ACH_TABS.includes('研究'))ACH_TABS.splice(ACH_TABS.length-1,0,'研究');const A=(id,n,d,f)=>{ACH.push([id,n,d,f]);if(typeof ACH_CAT!=='undefined')ACH_CAT[id]='研究'};
+ A('rt50','研究者','研究を合わせて100個完了する',()=>resDoneAll()>=100);A('rt200','大研究者','研究を合わせて200個完了する',()=>resDoneAll()>=200);
+ ACH.push(['x_rt_all','？','（ひみつ）',()=>resDoneAll()>=resTotal(),1,'森羅万象','すべての研究を完了する','研究']);if(typeof ACH_CAT!=='undefined')ACH_CAT.x_rt_all='研究'})();
+
+// ===== v2.4：大計画をさらに追加（インフラ・人口・銀河。京・垓の計画も） =====
+(function(){const L=[];const add=(...r)=>L.push(r);
+ // インフラ（8分野×5段階）
+ const INF=[['en','エネルギー',['まちぐるみの太陽光','国じゅうの風力発電','海の波力発電所','核融合発電所','宇宙太陽光発電'],{income:1}],
+  ['wt','水',['雨水をためるまち','巨大な浄水場','海水を真水にする大工場','大陸をつなぐ水道','空気から水をつくる塔'],{soc:1}],
+  ['fd','食料',['植物工場','海の牧場','砂漠の農場','培養肉の大工場','宇宙農園'],{soc:1}],
+  ['hs','住まい',['10万戸の住宅','空中住宅','海上住宅','地下住宅','百億人の住まい'],{happy:5}],
+  ['tr','交通',['自動運転バス網','リニアの全国網','大陸横断鉄道','空飛ぶタクシー網','真空チューブ列車'],{dev:20}],
+  ['cm','通信',['光回線の全国網','次世代の基地局','海底ケーブル網','衛星通信網','量子通信網'],{f:.03}],
+  ['md','医療',['地域の総合病院','遠隔医療の網','ロボット手術センター','再生医療センター','病気のない世界計画'],{med:1}],
+  ['ed','教育',['オンライン学校','世界の大学連合','AI家庭教師','百億人の教室','宇宙学校'],{rp:20}]];
+ const IC=[3e11,2e12,1.5e13,1e14,1e15],ID=[36,60,84,108,144],IY=[1990,2005,2025,2045,2065],IR=[8,12,18,25,35];
+ for(const [k,cn,names,f0] of INF)names.forEach((n,i)=>{const fx={rep:IR[i]};for(const [a,b] of Object.entries(f0))fx[a]=a==='income'?Math.round(IC[i]/400):a==='dev'?b*(i+1):a==='rp'?b*(i+1):a==='f'?b:a==='happy'?b+i*2:b;
+  add(`inf_${k}${i+1}`,n,'インフラ',IC[i],ID[i],IY[i],`${cn}の整備（${i+1}段階目）。人口をふやす計画の土台になる`+(f0.income?'。毎月の収入':''),fx,i?`inf_${k}${i}`:undefined)});
+ // 人口（インフラがそろうと、人類をふやせる）
+ add('pop1','子育て応援の国づくり','人口',5e11,48,1980,'出産と子育てを国ぐるみで支える。人口が5000万人ふえる',{rep:10,pop:5e7,happy:5},'inf_hs1');
+ add('pop2','世界の子育て支援','人口',3e12,72,1995,'世界中の家族を支える。人口が3億人ふえる',{rep:18,pop:3e8,soc:1},'inf_md2');
+ add('pop3','十億人ふえる世界','人口',2e13,96,2020,'食料と住まいを用意して、人口が10億人ふえる',{rep:25,pop:1e9},'inf_fd3');
+ add('pop4','海と地下の新しい国々','人口',1e14,120,2040,'海の上と地下に国をつくり、人口が30億人ふえる',{rep:35,pop:3e9},'inf_hs4');
+ add('pop5','百億人の地球','人口',5e14,144,2055,'水も電気も足りる地球に。人口が50億人ふえ、そのあとも毎月少しずつふえる',{rep:45,pop:5e9,popM:2e6},'inf_wt5');
+ add('pop6','二百億人の地球','人口',3e15,180,2070,'空中都市と緑の摩天楼で、人口が100億人ふえる',{rep:55,pop:1e10,popM:5e6},'pop5');
+ add('pop7','月の百万人都市','人口',8e14,120,2065,'月に人が移り住む。人口が100万人ふえ、月にもファンができる',{rep:30,pop:1e6,popM:2e4},'mooncity');
+ add('pop8','火星の十億人','人口',2e16,240,2090,'火星に十億人のまちをつくる',{rep:70,pop:1e9,popM:1e6,title:'火星の父'},'marscity');
+ // 銀河（京・垓の計画）
+ add('mercury','水星の鉱山','銀河',3e15,120,2080,'水星の豊かな金属を掘る。毎月ばく大な収入',{rep:30,income:3e13},'asteroid');
+ add('colony1','宇宙コロニー第1号','銀河',2e14,120,2060,'1000万人が住める回転する宇宙都市',{rep:30,pop:1e7,popM:1e4},'station');
+ add('colony100','宇宙コロニー百基','銀河',5e15,180,2080,'百基のコロニーに10億人が暮らす',{rep:50,pop:1e9,popM:1e6},'colony1');
+ add('gasgiant','木星のガス採掘','銀河',3e16,180,2090,'巨大なガス惑星から燃料をくみ上げる。毎月の収入',{rep:40,income:3e14},'mercury');
+ add('terraform','火星を緑の星に','銀河',1e17,360,2100,'火星を人が住める星に変える。人口が50億人ふえる',{rep:90,pop:5e9,popM:5e6,title:'星をつくった人'},'pop8');
+ add('venusc','金星の空中都市','銀河',3e16,240,2095,'金星の雲の上に浮かぶまち。人口が20億人ふえる',{rep:60,pop:2e9},'venus');
+ add('titan','タイタンの開拓','銀河',5e16,240,2100,'土星の衛星に基地と海の研究所をつくる',{rep:50,rp:600,pop:1e8},'jupiter');
+ add('starship','恒星間移民船','銀河',2e17,300,2110,'何世代もかけて隣の星へ向かう巨大な船',{rep:80,pop:1e7,title:'星の旅人'},'solarsail');
+ add('alpha','隣の星系への移住','銀河',5e17,360,2140,'隣の星系に新しい世界をつくる。人口が100億人ふえる',{rep:100,pop:1e10,popM:1e7},'starship');
+ add('starlift','恒星の資源の採取','銀河',5e17,300,2130,'恒星から直接資源を取り出す。毎月とてつもない収入',{rep:60,income:5e15},'gasgiant');
+ add('ringworld','リングワールド','銀河',1e18,480,2150,'恒星をぐるりと囲む輪の大地。人口が1兆人ふえる',{rep:150,pop:1e12,popM:1e9,title:'輪の世界の主'},'alpha');
+ add('galnet','銀河ネットワーク','銀河',3e18,360,2150,'銀河のどこにでも一瞬で届く通信網。フォロワーが大きくふえる',{rep:80,f:.5,rp:1000},'ringworld');
+ add('blackhole','ブラックホール発電','銀河',2e19,480,2160,'ブラックホールからエネルギーを取り出す。毎月想像をこえる収入',{rep:120,income:2e17},'starlift');
+ add('dysonsph','ダイソン球','銀河',1e19,600,2170,'恒星をまるごと包んで、すべての光を使う',{rep:150,income:1e17,pop:1e11,title:'恒星を包んだ者'},'dyson');
+ add('galfed','銀河連邦の設立','銀河',5e19,600,2200,'星々の人々と一つの連邦をつくる',{rep:200,pop:1e12,title:'銀河連邦の初代代表'},'galnet');
+ add('universe','宇宙の果てを見る','銀河',1e20,720,2200,'1垓円をかけて、宇宙の果てまで観測する',{rep:250,rp:5000,title:'宇宙の果てを見た者'},'galfed');
+ add('bigbang','宇宙のはじまりの再現','銀河',5e20,720,2250,'小さな宇宙のはじまりを、実験室で再現する',{rep:300,rp:10000,title:'創世の研究者'},'universe');
+ // 社会・夢・ぜいたく・エンタメ・ふしぎ（大きな規模）
+ add('basicinc','みんなに生活費','社会',5e13,60,2030,'国じゅうの人に毎月の生活費を配る',{rep:60,soc:1,happy:15});
+ add('nopoverty','世界から貧困をなくす','社会',5e14,180,2040,'世界中の人が安心して暮らせるように',{rep:100,soc:1,happy:10},'basicinc');
+ add('worldpeace','戦争のない世界','社会',1e15,240,2050,'争いをなくすための仕組みを世界中に',{rep:120,soc:1,title:'平和の人'},'peace');
+ add('freemed','世界の医療を無料に','社会',3e14,120,2040,'だれでも無料で治療を受けられる世界',{rep:80,soc:1,med:1},'inf_md3');
+ add('freeedu','世界の教育を無料に','社会',2e14,120,2035,'だれでも無料で学べる世界',{rep:70,soc:1,rp:100},'inf_ed2');
+ add('climate','気候を元に戻す','地球',3e15,240,2050,'温暖化を止め、昔の気候を取りもどす',{rep:120,soc:1,happy:10},'renew');
+ add('icefix','北極の氷の復活','地球',5e14,180,2045,'とけた氷を取りもどす',{rep:50,soc:1},'glacier');
+ add('oceanclean','すべての海をきれいに','地球',8e14,180,2040,'海のごみをすべて回収する',{rep:70,soc:1},'coral');
+ add('newcont','新しい大陸','地球',5e15,300,2070,'海の上に大陸をつくる。新しいまちとして持てる。人口が10億人ふえる',{rep:80,pop:1e9,town:'新大陸アトラ'},'inf_hs4');
+ add('mindup','心で話す装置','夢',5e15,240,2080,'言葉を使わずに気持ちを伝える',{rep:60,f:.1,rp:500});
+ add('immortal','不老不死の研究','夢',5e16,360,2090,'人の寿命の限界をこえる研究',{rep:100,life:1,title:'永遠を目指した人'},'ageless');
+ add('weatherw','世界の天気を整える','夢',2e16,240,2080,'災害が起きないように天気を整える',{rep:90,soc:1},'weather');
+ add('timetrip','時間旅行の実験','ふしぎ',1e18,480,2150,'過去や未来へ行けるかを本気で試す',{rep:150,rp:3000,title:'時をかけた人'},'timelab');
+ add('pworld','並行世界への扉','ふしぎ',3e18,480,2160,'もうひとつの世界への扉をひらく',{rep:180,rp:4000,title:'扉をひらいた人'},'parallel');
+ add('aliencity','宇宙人との交流都市','ふしぎ',5e17,360,2140,'星の外の人たちと暮らすまち',{rep:150,f:.3,pop:1e9},'hello');
+ add('myplanet','自分の惑星','ぜいたく',5e16,240,2100,'宇宙のどこかに、自分だけの惑星を持つ',{rep:20,happy:30,title:'惑星の持ち主'},'starship');
+ add('moonface','月に記念の絵を描く','ぜいたく',3e15,120,2080,'月の表面に、地球から見える大きな絵を描く',{rep:10,f:.1,happy:15},'moonbase');
+ add('ringhouse','土星の輪の別荘','ぜいたく',2e16,180,2100,'土星の輪が見える別荘',{rep:10,happy:25},'titan');
+ add('galexpo','銀河万博','エンタメ',1e17,240,2120,'銀河中から人が集まる博覧会',{rep:100,f:.3},'colony100');
+ add('spaceolym','宇宙オリンピック','エンタメ',5e16,180,2100,'無重力の競技が行われる大会',{rep:80,f:.2},'colony1');
+ add('galmovie','銀河映画祭','エンタメ',1e16,120,2090,'星々の作品が集まる映画祭',{rep:50,f:.15},'spacelive');
+ add('univfes','全宇宙音楽フェス','エンタメ',5e17,240,2150,'星々のアーティストが集まる',{rep:120,f:.4},'galexpo');
+
+ add('lunarrail','月面鉄道','宇宙',2e15,96,2070,'月のまちとまちを結ぶ鉄道',{rep:20,dev:30},'mooncity');
+ add('marsrail','火星の大陸鉄道','宇宙',5e15,120,2090,'火星の都市を結ぶ鉄道',{rep:25,dev:40},'marscity');
+ add('spacehosp','宇宙病院','宇宙',5e14,72,2050,'無重力を生かした治療ができる病院',{rep:20,med:1},'station');
+ add('orbitring','地球を囲む軌道リング','宇宙',5e16,240,2090,'地球のまわりをぐるりと囲む巨大な輪',{rep:60,income:5e13},'elevator');
+ add('moonfarm','月の農場','宇宙',1e15,84,2060,'月で野菜と穀物を育てる',{rep:15,soc:1},'moonbase');
+ add('astercity','小惑星をくりぬいた都市','宇宙',3e16,180,2090,'小惑星の中に5億人が住めるまちをつくる',{rep:45,pop:5e8},'asteroid');
+ add('comet','彗星に乗る探査','宇宙',2e15,120,2060,'彗星に着陸して、太陽系の旅に出る',{rep:25,rp:200});
+ add('sunshield','太陽の日よけ','宇宙',1e16,180,2080,'宇宙に巨大な日よけを置いて、地球を冷やす',{rep:60,soc:1},'climate');
+ add('desertriver','砂漠に川をつくる','地球',2e15,120,2060,'砂漠に大きな川を流して、緑の大地に',{rep:50,soc:1,pop:2e8},'inf_wt4');
+ add('seawall','海面上昇を防ぐ大堤防','地球',1e15,120,2040,'世界の海岸のまちを守る',{rep:45,soc:1});
+ add('jungle','熱帯雨林の再生','地球',5e14,120,2030,'失われた森をよみがえらせる',{rep:35,soc:1,happy:5});
+ add('skybridge','大陸を結ぶ空中橋','地球',8e15,180,2080,'海の上空をわたる超巨大な橋',{rep:40,dev:60},'inf_tr4');
+ add('robotcity','ロボットだけで動く都市','夢',3e15,120,2060,'働くのはロボット。人はやりたいことだけをするまち',{rep:30,happy:15,income:1e12},'robot');
+ add('dreamnet','夢でつながるネット','夢',1e16,180,2090,'眠っている間に、夢の中で人と会える',{rep:40,f:.2},'dreamcam');
+ add('animalgov','動物と人の会議','夢',5e15,120,2070,'動物の声も聞いて、地球のことを決める',{rep:40,soc:1},'animal');
+ add('seedbank','すべての生き物の種の保存','夢',3e14,60,2020,'地球の生き物の種をすべて未来に残す',{rep:30,soc:1});
+ add('spacelib','人類の知の図書館','社会',1e16,180,2080,'人類のすべての知識を、宇宙にも残す図書館',{rep:60,rp:800},'library');
+ add('ai4all','だれでも使える賢いAI','社会',5e15,120,2060,'世界中の人に、自分専用のAIを',{rep:60,soc:1,rp:300},'mind');
+ add('nodisaster','災害ゼロの世界','社会',5e15,180,2070,'地震も台風も、被害が出ない世界に',{rep:80,soc:1},'rescue');
+ add('goldmoon','月に黄金の像','ぜいたく',1e16,120,2080,'月面に、地球から見える黄金の像を',{rep:5,happy:20,f:.05},'moonbase');
+ add('spaceyacht','宇宙ヨット','ぜいたく',5e15,60,2060,'星のあいだを旅する、自分だけのヨット',{rep:8,happy:20},'station');
+ add('privstation','自分専用の宇宙ステーション','ぜいたく',8e15,96,2060,'宇宙に自分の家を',{rep:10,happy:25},'station');
+ add('moonstadium','月面スタジアム','エンタメ',5e15,96,2075,'低い重力で、地球ではできない試合を',{rep:40,f:.15,income:5e12},'mooncity');
+ add('planetpark','惑星まるごとテーマパーク','エンタメ',3e16,180,2110,'ひとつの惑星が、まるごと遊園地',{rep:60,f:.25,income:1e14},'myplanet');
+ add('ghostship','幽霊船の謎を追う','ふしぎ',5e13,36,2000,'世界中の海で目撃される幽霊船を追う',{rep:5,f:.03});
+ add('legendbeast','伝説の生き物を探す','ふしぎ',3e13,48,1990,'山奥にいるという伝説の生き物を探す',{rep:5,f:.03});
+ for(const r of L){if(MEGA[r[0]])continue;MEGA_RAW.push(r);const [k,n,cat,c,dur,yr,d,fx,req]=r;MEGA[k]={k,n,cat,c,dur,yr,d,fx,req}}
+ for(const c of ['インフラ','人口','銀河'])if(!MEGA_CATS.includes(c))MEGA_CATS.push(c)})();
+
+// ----- 人口 -----
+function worldPop(){return WORLD_POP+((S&&S.popAdd)||0)}
+const _mcp49=megaComplete;megaComplete=function(m){const r=_mcp49.apply(this,arguments);try{const fx=m.fx||{};if(fx.pop){const v=Math.round(fx.pop*(1+.05*rt('pop')));S.popAdd=(S.popAdd||0)+v;log(`世界の人口が${num(v)}人ふえた（いま約${num(worldPop())}人）`,'good');if(typeof hlAdd==='function')hlAdd(`👶 人口 +${num(v)}人`)}}catch(e){console.error(e)}return r};
+const _mh49=monthHook11;monthHook11=function(){_mh49();try{for(const x of (S.mega||[])){if(!x.done)continue;const m=MEGA[x.k];if(m&&m.fx&&m.fx.popM)S.popAdd=(S.popAdd||0)+m.fx.popM*(1+.05*rt('pop'))}}catch(e){console.error(e)}};
+// 全世界に届くようになったら、人口がふえるほど届く人数もふえる
+const _wm49=worldMul;worldMul=function(){const m=_wm49.apply(this,arguments);try{if(S&&S.world&&S.world.r.includes('global')&&S.popAdd)return m*worldPop()/WORLD_POP}catch(_){}return m};
+
+// ----- 大計画の画面（始められるもの・建設中を上に、まだ先のものはたたむ） -----
+megaHtml=function(){const all=Object.values(MEGA),done=all.filter(m=>megaDone(m.k)).length;
+ let h=`<h3>大計画 <span class="chip">${done} / ${all.length}</span></h3><p class="hint">持っているお金：<b>${yen(S.money)}</b>${S.popAdd?`／世界の人口 約${num(worldPop())}人`:''}</p><div class="seg wrapseg">${MEGA_CATS.map(c=>`<button type="button" class="${MEGACAT===c?'on':''}" data-megacat="${c}">${c}<small> ${all.filter(m=>m.cat===c&&megaDone(m.k)).length}/${all.filter(m=>m.cat===c).length}</small></button>`).join('')}</div>`;
+ const run=(S.mega||[]).filter(x=>!x.done);if(run.length)h+=`<p class="small">建設中：${run.map(x=>esc((MEGA[x.k]||{}).n||'')+`（あと${Math.max(0,x.st+x.dur-S.am)}か月）`).join('、')}</p>`;
+ const list=all.filter(x=>x.cat===MEGACAT).sort((a,b)=>a.c-b.c);
+ const row=m=>{const x=megaOf(m.k),lockY=S.y<m.yr,lockR=m.req&&!megaDone(m.req);let st='';if(x&&x.done)st='<span class="chip up">完成</span>';else if(x)st=`<span class="chip">建設中 あと${Math.max(0,x.st+x.dur-S.am)}か月</span>`;
+  return `<div class="shop"><div><div>${esc(m.n)} ${st}</div><div class="muted small">${esc(m.d)}<br><b>${yen(megaCost(m))}</b>・約${Math.round(m.dur/12*10)/10}年${lockY?`（${m.yr}年から）`:''}${lockR?`（先に「${esc((MEGA[m.req]||{}).n||'')}」）`:''}</div>${x&&!x.done?`<div class="tbar"><i style="width:${Math.min(100,(S.am-x.st)/x.dur*100).toFixed(0)}%"></i></div>`:''}</div>${x?'':`<button class="b sm" type="button" data-mega="${m.k}" ${lockY||lockR||S.money<megaCost(m)||age()<20?'disabled':''}>始める</button>`}</div>`};
+ const now=list.filter(m=>{const x=megaOf(m.k);return (x&&!x.done)||(!x&&S.y>=m.yr&&!(m.req&&!megaDone(m.req)))}),fin=list.filter(m=>megaDone(m.k)),later=list.filter(m=>!now.includes(m)&&!fin.includes(m));
+ h+=now.length?now.map(row).join(''):'<p class="hint">この分類で、いま始められる計画はありません。</p>';
+ if(later.length)h+=`<details class="mfold"><summary>まだ先の計画（${later.length}件）</summary>${later.map(row).join('')}</details>`;
+ if(fin.length)h+=`<details class="mfold"><summary>完成した計画（${fin.length}件）</summary>${fin.map(row).join('')}</details>`;
+ return h};
+(function(){const A=(id,n,d,f)=>{ACH.push([id,n,d,f]);if(typeof ACH_CAT!=='undefined')ACH_CAT[id]='大計画'};
+ A('pop_1e9','十億の命','大計画で世界の人口を10億人ふやす',()=>(S.popAdd||0)>=1e9);A('pop_1e11','千億の星の民','世界の人口を1000億人ふやす',()=>(S.popAdd||0)>=1e11);
+ A('mega_kei','京の計画','1京円以上の大計画を完成させる',()=>(S.mega||[]).some(x=>x.done&&MEGA[x.k]&&MEGA[x.k].c>=1e16));
+ ACH.push(['x_mega_gai','？','（ひみつ）',()=>megaDoneAny('universe'),1,'垓の果て','1垓円の大計画を完成させる','大計画']);if(typeof ACH_CAT!=='undefined')ACH_CAT.x_mega_gai='大計画'})();
+
+// ===== v2.4：あらゆる場面に「とんでもなく高額なアクション」 =====
+function bigRoom(f){const key=S.main,cap=SNS[key].cap;return Math.max(0,cap-S.f[key])*f}
+function bigF(f){if(!S.snsOpen||!S.open[S.main])return 0;const g=Math.round(bigRoom(f));S.f[S.main]+=g;S.mo.newF=(S.mo.newF||0)+g;return g}
+function bigCo(){return (S.cos||[]).find(c=>c.id===S.cfocus)||(typeof myCoTop==='function'?myCoTop():(S.cos||[])[0])}
+function bigShops(fn){let n=0;for(const T of allTowns())for(const t of (T.tiles||[]))if(SHOP[t.t]){fn(t);n++}return n}
+// [キー,場所,名前,説明,費用(円・物価で調整),くり返せるまでの月,条件,効果]
+const BIG=[
+ ['adjack','sns','世界の広告枠をすべて買う','1か月、世界中の広告があなたのチャンネル一色に。届く人数の残りの2%がファンに',1e10,12,null,()=>`登録者が${num(bigF(.02))}人ふえた。`],
+ ['satlive','sns','宇宙から24時間の生配信特番','宇宙から丸一日の生配信。残りの4%がファンに・評判+5',1e11,24,null,()=>{const g=bigF(.04);ad('rep',5);return `世界中が見守った。登録者が${num(g)}人ふえた。`}],
+ ['skyad','sns','夜空に映す広告','衛星を並べて、夜空にチャンネル名を映す。残りの6%がファンに（評判は少し下がる）',1e12,36,null,()=>{const g=bigF(.06);ad('rep',-2);return `話題になったが、「星が見えない」との声も。登録者が${num(g)}人ふえた。`}],
+ ['fanisle','sns','ファンのための島に招待','島をひとつ買い取り、ファンを招いて夢の1週間を。熱心なファンが大きくふえる',5e12,60,null,()=>{S.fanCore=clamp((S.fanCore||.05)+.08,.02,.6);const g=bigF(.03);ad('happy',8);return `一生の思い出になったと、ファンが涙した。登録者が${num(g)}人ふえた。`}],
+ ['galfan','sns','銀河ファンミーティング','宇宙コロニーに、星々のファンを集める。残りの15%がファンに',1e16,120,()=>megaDoneAny('colony1'),()=>`銀河じゅうから歓声が届いた。登録者が${num(bigF(.15))}人ふえた。`],
+ ['rdlab','co','世界最大の研究所を建てる','フォーカス中の会社に研究所を。次の作品の評価+15・会社の価値+10%',1e12,36,()=>(S.cos||[]).length>0,()=>{const c=bigCo();if(!c)return '';S.flags.bigQ=15;c.val=Math.round(c.val*1.1);return `「${c.name}」に巨大な研究所ができた。`}],
+ ['cobonus','co','全社員に特別ボーナス','すべての会社の社員に特別ボーナス。社員のやる気が最高に',1e10,12,()=>(S.cos||[]).length>0,()=>{for(const c of S.cos){coInit(c);c.emp.mor=100}ad('rep',3);return 'すべての社員のやる気が最高になった。'}],
+ ['colaunch','co','全世界同時発売','次に完成する作品を、世界中で同時に発売する。売上が5倍の勢いに',5e12,24,()=>(S.cos||[]).length>0,()=>{S.flags.bigHit=1;return '次の作品は、世界同時発売になる。'}],
+ ['coindustry','co','業界まるごと買収','同じ分野の会社を次々に買い取る。会社の価値+50%・利益の土台+30%・同じ分野のライバル企業はいなくなる',1e14,60,()=>(S.cos||[]).length>0,()=>{const c=bigCo();if(!c)return '';c.val=Math.round(c.val*1.5);c.cap=Math.round(c.cap*1.3);if(S.rcos)S.rcos=S.rcos.filter(r=>r.k!==c.k);ad('rep',-3);return `「${c.name}」が業界の頂点に立った。`}],
+ ['redev','town','まち全体の超再開発','ふるさとのまちを、まるごと新しく。発展度が大きく上がる',1e12,24,null,()=>{const T=homeTown();if(T)T.bonus=(T.bonus||0)+30;ad('rep',3);return 'まちが見ちがえるほど新しくなった。'}],
+ ['futurecity','town','未来都市への大改造','空飛ぶ車と緑のビルが並ぶ未来都市に。発展度が大幅に上がる',1e14,60,null,()=>{const T=homeTown();if(T)T.bonus=(T.bonus||0)+100;ad('rep',10);return 'ふるさとは、世界がうらやむ未来都市になった。'}],
+ ['freehouse','town','すべての住民に家を','まちの住民みんなに、新しい家をプレゼント。支持と幸福が上がる',5e13,60,null,()=>{for(const T of allTowns())T.support=clamp((T.support||50)+20);ad('happy',10);ad('rep',8);return 'まちじゅうが、お祝いムードに包まれた。'}],
+ ['shopchain','shop','全店舗を世界チェーンに','持っているお店すべてを世界展開。1年間お客さんが大きくふえ、評価も上がる',5e11,24,()=>bigShops(()=>{})>0,()=>{const n=bigShops(t=>{t.stars=Math.min(5,(t.stars||3)+1);t.boost=2;t.boostEnd=S.am+12});return `${n}軒のお店が、世界中に支店を出した。`}],
+ ['shopchef','shop','世界一の職人を全店に','すべてのお店に、世界一の職人を招く。評価が最高に',1e11,12,()=>bigShops(()=>{})>0,()=>{const n=bigShops(t=>{t.stars=5});return `${n}軒のお店の評価が、最高になった。`}],
+ ['taltour','office','所属タレントの世界ツアー','所属タレント全員で世界をまわる。タレントのフォロワーが1.5倍に',1e11,24,()=>S.office&&(S.office.talents||[]).length>0,()=>{for(const t of S.office.talents)t.f=Math.round((t.f||0)*1.5);ad('rep',4);return '世界中で、所属タレントの名前が知られるようになった。'}],
+ ['taldome','office','事務所専用のドーム','事務所だけの巨大ドームを建てる。タレントのフォロワー+20%・評判+5',1e12,60,()=>S.office&&S.office.lv>0,()=>{for(const t of (S.office.talents||[]))t.f=Math.round((t.f||0)*1.2);ad('rep',5);return '事務所のドームが完成した。毎週どこかで公演がある。'}],
+ ['svcfree','svc','全サービス1年無料キャンペーン','自分のサブスクを1年間無料に。会員が2倍に',1e11,24,()=>(S.svcs||[]).length>0,()=>{for(const s of S.svcs)s.users=Math.round((s.users||0)*2+1000);return 'たくさんの人が、サービスを使い始めた。'}],
+ ['svcworld','svc','全サービスを世界同時展開','自分のサブスクを、世界中で同時に始める。会員1.5倍・新しいお客さんがふえる',1e12,36,()=>(S.svcs||[]).length>0,()=>{for(const s of S.svcs){s.users=Math.round((s.users||0)*1.5+5000);s.mkt=(s.mkt||0)+Math.max(1e5,(s.users||0))}return 'サービスが、世界中で使われるようになった。'}],
+ ['donate','money','世界最大の財団に寄付','とてつもない額を寄付する。評判+30・幸福+10',1e13,24,null,()=>{ad('rep',30);ad('happy',10);return '世界中から感謝の声が届いた。'}],
+ ['buyart','money','歴史的な名画をすべて買い取る','世界中の名画を買い取り、美術館で無料公開する',5e12,60,null,()=>{ad('rep',15);ad('happy',8);return '美術館には、毎日長い行列ができている。'}],
+ ['worldtrip','life','家族と友達みんなで世界一周','大切な人をみんな招いて、豪華客船で世界一周',5e9,24,null,()=>{for(const [n] of pplAll())rel(n,15);ad('happy',15);ad('mental',10);return '一生忘れられない旅になった。'}],
+ ['spacewed','life','宇宙で結婚記念式','パートナーと宇宙ステーションで記念の式を',1e11,120,()=>!!S.spouse,()=>{rel(S.spouse,30);ad('happy',30);return '地球を見下ろしながら、ふたりで誓いを新たにした。'}],
+ ['kidsuniv','life','子どもの名前の大学を建てる','子どもの名前がついた大学を建てる',1e11,120,()=>(S.kids||[]).length>0,()=>{for(const c of S.kids)c.bond=(c.bond||50)+15;ad('happy',10);ad('rep',5);return '子どもたちは、少し照れくさそうに喜んだ。'}],
+ ['young','life','最先端の若返り治療','世界最高の医療チームによる若返り治療',1e13,60,null,()=>{ad('health',30);ad('mental',10);S.medBuff=Math.min(6,(S.medBuff||0)+1);return '体が軽くなり、何歳も若返った気がする。'}],
+ ['isle','life','家族で無人島を貸し切り','家族だけで、無人島で1か月のんびり過ごす',1e10,12,null,()=>{ad('happy',10);ad('mental',15);for(const [n,k] of pplAll())if(k==='spouse'||k==='fam')rel(n,8);return '何もしない時間が、最高のぜいたくだった。'}]];
+function bigCost(b){return Math.round(b[4]*Math.max(.2,S.cty.inc))}
+function bigCd(b){const l=(S.bigcd||{})[b[0]];return l==null?0:Math.max(0,l+b[5]-S.am)}
+function bigHtml(area){if(age()<18)return '';const L=BIG.filter(b=>b[1]===area&&(!b[6]||b[6]()));if(!L.length)return '';const min=Math.min(...L.map(bigCost));if(S.money<min*.05)return '';
+ return `<details class="bigacts"><summary>💎 とんでもなく高額なアクション（${L.length}）</summary>${L.map(b=>{const c=bigCost(b),cd=bigCd(b);return `<div class="shop"><div><div>${esc(b[2])}</div><div class="muted small">${esc(b[3])}<br><b>${yen(c)}</b>${cd?`・あと${cd}か月で、もう一度できる`:''}</div></div><button class="b sm" type="button" data-big="${b[0]}" ${S.money<c||cd?'disabled':''}>実行する</button></div>`}).join('')}</details>`}
+function bigDo(k){const b=BIG.find(x=>x[0]===k);if(!b||(b[6]&&!b[6]())||bigCd(b))return;const c=bigCost(b);if(S.money<c)return;outc('big',c);S.bigcd=S.bigcd||{};S.bigcd[k]=S.am;let msg='';try{msg=b[7]()||''}catch(e){console.error(e)}
+ log(`${b[2]}（${yen(c)}）${msg?'：'+msg:''}`,'good');tl(b[2]);if(typeof hlAdd==='function')hlAdd('💎 '+b[2]);if(typeof popBig==='function')popBig('💎 '+b[2],esc(msg),yen(c));S.flags.bigN=(S.flags.bigN||0)+1;snd('buy');save();render()}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-big]');if(!b||!S)return;bigDo(b.dataset.big)});
+try{Object.assign(OUT_LBL,{big:'高額なアクション'})}catch(_){}
+// 画面に追加
+const _ps50=panelSns;panelSns=function(){return _ps50.apply(this,arguments)+(S.snsOpen?bigHtml('sns'):'')};
+const _pb50=panelBiz;panelBiz=function(){const h=_pb50.apply(this,arguments);const m={co:'co',town:'town',shop:'shop',office:'office',svc:'svc'}[SUB.biz];return m?h+bigHtml(m):h};
+const _pm50=panelMoney;panelMoney=function(){const h=_pm50.apply(this,arguments);return SUB.money==='spend'?h+bigHtml('money'):h};
+const _kh50=koryuHtml;koryuHtml=function(){return _kh50.apply(this,arguments)+bigHtml('life')};
+// 作品への効果
+const _pe50=prodExtra;prodExtra=function(c,a){let v=_pe50(c,a);if(S.flags.bigQ){v+=S.flags.bigQ;S.flags.bigQ=0}return v};
+const _pr50=prodRelease;prodRelease=function(c){const r=_pr50.apply(this,arguments);try{if(S.flags.bigHit){const s=c.pr&&c.pr.sales&&c.pr.sales[c.pr.sales.length-1];if(s){s.amt*=5;s.left=Math.max(s.left,18)}S.flags.bigHit=0;log(`「${c.name}」の新作が、世界同時発売で飛ぶように売れている`,'good')}}catch(e){console.error(e)}return r};
+(function(){const A=(id,n,d,f)=>{ACH.push([id,n,d,f]);if(typeof ACH_CAT!=='undefined')ACH_CAT[id]='お金'};A('big1','けた外れ','とんでもなく高額なアクションを実行する',()=>(S.flags.bigN||0)>=1);A('big20','けた外れの日常','とんでもなく高額なアクションを20回実行する',()=>(S.flags.bigN||0)>=20)})();
 </script>

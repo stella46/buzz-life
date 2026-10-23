@@ -1,7 +1,6 @@
 
 // ===== v2.1：タイトルロゴ（見た目の設定に合わせて切りかえ） =====
-function applyLogo(){const img=$('#logoImg'),w=$('#logoWrap');if(!img||!w)return;const st=(typeof sceneStyle==='function'?sceneStyle():'hybrid');const dot=st==='classic'||st==='pixel';
-  const src=dot?'logo-dot.png':'logo.webp';if(img.getAttribute('src')!==src)img.setAttribute('src',src);w.classList.toggle('dot',dot);w.style.setProperty('--logomask',`url(${src})`)}
+function applyLogo(){/* v2.2.1：ロゴは高画質版のみ（見た目の設定で切りかえない） */}
 (function(){const img=$('#logoImg');if(!img)return;img.addEventListener('load',()=>document.body.classList.add('haslogo'));img.addEventListener('error',()=>{document.body.classList.remove('haslogo');const w=$('#logoWrap');if(w)w.hidden=true});if(img.complete&&img.naturalWidth)document.body.classList.add('haslogo');applyLogo()})();
 const _applyGfx42=applyGfx;applyGfx=function(){const r=_applyGfx42.apply(this,arguments);try{applyLogo()}catch(_){}return r};
 

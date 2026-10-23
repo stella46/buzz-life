@@ -129,7 +129,7 @@ const _pq14=postQuality;postQuality=function(){let q=_pq14();const T=ofType();if
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act="scout"]');if(!b||!S||!S.office)return;const n0=S.office.talents.length;setTimeout(()=>{const T=ofType();if(!T||S.office.talents.length<=n0)return;const t=S.office.talents[S.office.talents.length-1];if(T.g&&chance(.7)){t.genre=T.g}t.f=Math.round(t.f*T.sq);try{renderPanel()}catch(_){}},0)},true);
 
 // ----- サブスクリプション（契約する側）を追加 -----
-const SUB_CAT={sns:'発信',learn:'学び',health:'健康',life:'暮らし',lux:'ぜいたく',odd:'ふしぎ',money:'お金'};
+const SUB_CAT={tal:'素質',sns:'発信',learn:'学び',health:'健康',life:'暮らし',lux:'ぜいたく',odd:'ふしぎ',money:'お金'};
 Object.assign(SUBS.editsoft,{c:'sns'});Object.assign(SUBS.gymsub,{c:'health'});Object.assign(SUBS.eikaiwa,{c:'learn'});Object.assign(SUBS.voice,{c:'learn'});Object.assign(SUBS.music,{c:'life'});Object.assign(SUBS.insurance,{c:'money'});
 Object.assign(SUBS,{
  sozai:{c:'sns',n:'素材サイト見放題',p:3000,age:13,d:'編集が少しずつ上がる',f:()=>ad('edit',.25)},

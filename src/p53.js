@@ -3,7 +3,7 @@
 // 研究が約300個に増えたので、研究ポイントのたまり方を3倍に
 const RP_MUL=3;
 const _rtb53=rtBuy;rtBuy=function(k){const r0=S.rp;const r=_rtb53.apply(this,arguments);if(S.rp<r0)S._rpSp=(S._rpSp||0)+(r0-S.rp);return r};
-const _turn53=turn;turn=function(){if(!S||!S.alive)return _turn53.apply(this,arguments);const r0=S.rp;S._rpSp=0;const res=_turn53.apply(this,arguments);try{const g=(S.rp-r0)+(S._rpSp||0);if(g>0&&age()>=10)S.rp+=g*(RP_MUL-1)}catch(_){}S._rpSp=0;return res};
+const _turn53=turn;turn=function(){if(!S||!S.alive)return _turn53.apply(this,arguments);const r0=S.rp;S._rpSp=0;const res=_turn53.apply(this,arguments);try{const g=(S.rp-r0)+(S._rpSp||0);if(g>0&&age()>=10)S.rp+=g*(RP_MUL*(1+.04*(typeof rt==='function'?rt('rp'):0))-1)}catch(_){}S._rpSp=0;return res};
 
 // ----- 人生の道のり（遊びの順番の目安） -----
 // [段階名, 目安, [[目標, 達成の条件, 行き先, ヒント], ...]]

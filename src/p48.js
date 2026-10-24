@@ -41,7 +41,7 @@ const _cc48=coCap;coCap=function(c){const v=_cc48.apply(this,arguments);return r
 const _inc48=inc;inc=function(cat,v){if(v>0&&(cat==='sns'||cat==='tip')&&rt('mon'))v=Math.round(v*(1+.03*rt('mon')));return _inc48.call(this,cat,v)};
 const _wm48=worldMul;worldMul=function(){return _wm48.apply(this,arguments)*(typeof S!=='undefined'&&S?(1+.02*rt('cap')):1)};
 const _mh48=monthHook11;monthHook11=function(){_mh48();try{if(!S||age()<6)return;if(rt('hl'))ad('health',.04*rt('hl'));if(rt('mn'))ad('mental',.04*rt('mn'));if(rt('fam')){ad('happy',.03*rt('fam'));for(const p of [S.spouse,S.partner].filter(Boolean))rel(p,.05*rt('fam'))}
- if(rt('rp')&&age()>=10)S.rp+=.04*rt('rp')*Math.max(.3,S.rpRate||.5);if(rt('tal')&&S.office)for(const t of (S.office.talents||[]))t.f=Math.round((t.f||0)*(1+.003*rt('tal')));if(rt('town')){const T=homeTown();if(T)T.bonus=(T.bonus||0)+.02*rt('town')}}catch(e){console.error(e)}};
+ if(rt('tal')&&S.office)for(const t of (S.office.talents||[]))t.f=Math.round((t.f||0)*(1+.003*rt('tal')));if(rt('town')){const T=homeTown();if(T)T.bonus=(T.bonus||0)+.02*rt('town')}}catch(e){console.error(e)}};
 
 // ----- おすすめ（いまの遊び方に合わせて） -----
 function resCands(){const L=[];applyResCost();

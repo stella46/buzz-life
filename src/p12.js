@@ -38,7 +38,7 @@ function ad(k,v,cat){if(k==='money'&&cat==='medical'&&v<0&&S.subs&&S.subs.insura
   if(k in P_KEYS)S.p[k]=clamp(S.p[k]+v);
   else if(k in SK_KEYS)S.sk[k]=clamp(S.sk[k]+v);
   else if(k==='money'){if(!cat)v=Math.round(v*(S.cty?S.cty.inc:1));
-    if(v<0&&age()<18&&S.money+v<0){const cover=-(S.money+v);v=-Math.max(0,S.money);if(cover>0){S.famDebt=(S.famDebt||0)+cover;log(`足りない${yen(cover)}は家族が立て替えてくれた（大人になったら返す）`,'life')}}
+    if(v<0&&age()<18&&S.money+v<0){const cover=-(S.money+v);v=-Math.max(0,S.money);if(cover>0){if(cat&&cat!=='medical'&&cat!=='ev'){S.famDebt=(S.famDebt||0)+cover;log(`足りない${yen(cover)}は家族が立て替えてくれた（大人になったら返す）`,'life')}else log(`足りない${yen(cover)}は家族が払ってくれた`,'life')}}
     if(v>0)inc(cat==='loss'?'loss':(cat||'ev'),v);else if(v<0)outc(cat||'ev',-v)}
   else if(k==='f'){const key=S.open[S.main]?S.main:'milu';if(!S.open[key])return;S.f[key]=Math.max(0,S.f[key]+v)}
   else if(k.startsWith('tal.')){const t=talKey(k.slice(4)),c0=S.tal[t]||0;S.tal[t]=Math.max(0,Math.min(TAL_MAX,c0+(v>0&&c0>=100?v*.6:v)))}

@@ -3047,6 +3047,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v2.8.2','2026年10月24日',['研究ポイントが、人生の後半に急にふえすぎてしまう問題を直しました。','家族に立て替えてもらうお金に、出来事でかかったお金（家族の出費）まで数えられていた問題を直しました。立て替えになるのは、子どものころに自分で使ったお金だけです。']],
   ['v2.8.1','2026年10月24日',['【データの移動】渡すときに、どの人生（セーブスロット）を渡すか選べるようになりました。実績・図鑑・引き継ぎスキルを渡すかどうかも選べます。','受け取るときは、人生ごとに、この端末のどのスロットに入れるかを選べるようになりました。実績などは「合わせる（両方の記録を残す）」「置きかえる」「受け取らない」から選べます。']],
   ['v2.8','2026年10月24日',['【遊び方】遊び方の説明を全面的に新しくしました。「遊びの順番」「つながり」「世界進出とランキング」「大計画」「便利な機能」「人生の終わりと次の世代」などの項目を追加しました。','【データの移動】「引き継ぎ」を「データの移動」という名前にして、できること・できないこと、いっしょに移るもの・移らないものを表で表示するようにしました。昔の版（v1.2.3・v2.0など）のデータも、最新版へ移せます。','タイトルの「実績・引き継ぎ」は「実績・引き継ぎスキル」に名前を変えました。データの移動は「設定・セーブ」にあります。','【感想・不具合】タイトルに「📝 感想・不具合を送る」ボタンを置きました。「🐞 不具合を報告する」と「💬 感想・アイデアを送る」に分け、画面と起きたことを選ぶだけで送れるようにしました。遊んでいる版や端末の情報は自動で添えられます。','「出典・クレジット」は「設定・セーブ」に移しました。']],
   ['v2.7.1','2026年10月23日',['タイトル画面を、元の文字のタイトルに戻しました。']],
@@ -3376,7 +3377,7 @@ function ad(k,v,cat){if(k==='money'&&cat==='medical'&&v<0&&S.subs&&S.subs.insura
   if(k in P_KEYS)S.p[k]=clamp(S.p[k]+v);
   else if(k in SK_KEYS)S.sk[k]=clamp(S.sk[k]+v);
   else if(k==='money'){if(!cat)v=Math.round(v*(S.cty?S.cty.inc:1));
-    if(v<0&&age()<18&&S.money+v<0){const cover=-(S.money+v);v=-Math.max(0,S.money);if(cover>0){S.famDebt=(S.famDebt||0)+cover;log(`足りない${yen(cover)}は家族が立て替えてくれた（大人になったら返す）`,'life')}}
+    if(v<0&&age()<18&&S.money+v<0){const cover=-(S.money+v);v=-Math.max(0,S.money);if(cover>0){if(cat&&cat!=='medical'&&cat!=='ev'){S.famDebt=(S.famDebt||0)+cover;log(`足りない${yen(cover)}は家族が立て替えてくれた（大人になったら返す）`,'life')}else log(`足りない${yen(cover)}は家族が払ってくれた`,'life')}}
     if(v>0)inc(cat==='loss'?'loss':(cat||'ev'),v);else if(v<0)outc(cat||'ev',-v)}
   else if(k==='f'){const key=S.open[S.main]?S.main:'milu';if(!S.open[key])return;S.f[key]=Math.max(0,S.f[key]+v)}
   else if(k.startsWith('tal.')){const t=talKey(k.slice(4)),c0=S.tal[t]||0;S.tal[t]=Math.max(0,Math.min(TAL_MAX,c0+(v>0&&c0>=100?v*.6:v)))}
@@ -8662,7 +8663,7 @@ const _cc48=coCap;coCap=function(c){const v=_cc48.apply(this,arguments);return r
 const _inc48=inc;inc=function(cat,v){if(v>0&&(cat==='sns'||cat==='tip')&&rt('mon'))v=Math.round(v*(1+.03*rt('mon')));return _inc48.call(this,cat,v)};
 const _wm48=worldMul;worldMul=function(){return _wm48.apply(this,arguments)*(typeof S!=='undefined'&&S?(1+.02*rt('cap')):1)};
 const _mh48=monthHook11;monthHook11=function(){_mh48();try{if(!S||age()<6)return;if(rt('hl'))ad('health',.04*rt('hl'));if(rt('mn'))ad('mental',.04*rt('mn'));if(rt('fam')){ad('happy',.03*rt('fam'));for(const p of [S.spouse,S.partner].filter(Boolean))rel(p,.05*rt('fam'))}
- if(rt('rp')&&age()>=10)S.rp+=.04*rt('rp')*Math.max(.3,S.rpRate||.5);if(rt('tal')&&S.office)for(const t of (S.office.talents||[]))t.f=Math.round((t.f||0)*(1+.003*rt('tal')));if(rt('town')){const T=homeTown();if(T)T.bonus=(T.bonus||0)+.02*rt('town')}}catch(e){console.error(e)}};
+ if(rt('tal')&&S.office)for(const t of (S.office.talents||[]))t.f=Math.round((t.f||0)*(1+.003*rt('tal')));if(rt('town')){const T=homeTown();if(T)T.bonus=(T.bonus||0)+.02*rt('town')}}catch(e){console.error(e)}};
 
 // ----- おすすめ（いまの遊び方に合わせて） -----
 function resCands(){const L=[];applyResCost();
@@ -9035,7 +9036,7 @@ const _pp52=panelPlan;panelPlan=function(){let h=_pp52.apply(this,arguments);try
 // 研究が約300個に増えたので、研究ポイントのたまり方を3倍に
 const RP_MUL=3;
 const _rtb53=rtBuy;rtBuy=function(k){const r0=S.rp;const r=_rtb53.apply(this,arguments);if(S.rp<r0)S._rpSp=(S._rpSp||0)+(r0-S.rp);return r};
-const _turn53=turn;turn=function(){if(!S||!S.alive)return _turn53.apply(this,arguments);const r0=S.rp;S._rpSp=0;const res=_turn53.apply(this,arguments);try{const g=(S.rp-r0)+(S._rpSp||0);if(g>0&&age()>=10)S.rp+=g*(RP_MUL-1)}catch(_){}S._rpSp=0;return res};
+const _turn53=turn;turn=function(){if(!S||!S.alive)return _turn53.apply(this,arguments);const r0=S.rp;S._rpSp=0;const res=_turn53.apply(this,arguments);try{const g=(S.rp-r0)+(S._rpSp||0);if(g>0&&age()>=10)S.rp+=g*(RP_MUL*(1+.04*(typeof rt==='function'?rt('rp'):0))-1)}catch(_){}S._rpSp=0;return res};
 
 // ----- 人生の道のり（遊びの順番の目安） -----
 // [段階名, 目安, [[目標, 達成の条件, 行き先, ヒント], ...]]

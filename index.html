@@ -203,6 +203,7 @@ html.mlock,html.mlock body{overflow:hidden;overscroll-behavior:none}.ov{overscro
 .slottools{margin-top:4px;flex-wrap:wrap;gap:6px}.prow{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
 .verpick{margin:6px 0 10px;padding:8px;border:1px solid var(--line,#ccc);border-radius:12px}.vp-t{font-size:.85em;font-weight:700;margin-bottom:6px;opacity:.8}.vp-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.b.vp{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:2px;text-decoration:none;color:inherit;white-space:normal}.b.vp span{font-size:.78em;opacity:.8;line-height:1.35}.b.vp.on{outline:2px solid var(--cyan);}@media(max-width:480px){.vp-row{grid-template-columns:1fr}}
 .pmsw{margin:4px 0 8px}.pmsw .seg button{font-size:.8rem}.slotc.rrow{grid-template-columns:minmax(0,1fr)}.slotc.rrow .ds{grid-column:1}.rrow .sel2{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.rsl{display:flex;gap:8px;align-items:center}.rsl input{flex:1;min-width:0}.rpct{min-width:3em;text-align:right}
+.trrow{display:flex;flex-direction:column;gap:4px;padding:6px 0;border-top:1px dashed var(--line);font-size:.86rem}.trrow select{max-width:100%}.trsel{margin:6px 0}
 .trinfo{margin:6px 0 10px}.trt{width:100%;border-collapse:collapse;font-size:.82rem;margin:6px 0}.trt th,.trt td{border-bottom:1px dashed var(--line);padding:6px 4px;text-align:left;vertical-align:top}.trt td small{display:block;color:var(--muted);font-size:.74rem}.trt td.ok{color:var(--cyan);font-weight:800;text-align:center;width:2em}.trt td.ng{color:var(--pink);font-weight:800;text-align:center;width:2em}
 .fbhub .mtile{min-height:96px}.fbenv{word-break:break-all;opacity:.8}
 body.logo-text #gameTitle,body.haslogo.logo-text #gameTitle{position:static!important;width:auto!important;height:auto!important;overflow:visible;clip:auto;white-space:normal}
@@ -3046,6 +3047,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v2.8.1','2026年10月24日',['【データの移動】渡すときに、どの人生（セーブスロット）を渡すか選べるようになりました。実績・図鑑・引き継ぎスキルを渡すかどうかも選べます。','受け取るときは、人生ごとに、この端末のどのスロットに入れるかを選べるようになりました。実績などは「合わせる（両方の記録を残す）」「置きかえる」「受け取らない」から選べます。']],
   ['v2.8','2026年10月24日',['【遊び方】遊び方の説明を全面的に新しくしました。「遊びの順番」「つながり」「世界進出とランキング」「大計画」「便利な機能」「人生の終わりと次の世代」などの項目を追加しました。','【データの移動】「引き継ぎ」を「データの移動」という名前にして、できること・できないこと、いっしょに移るもの・移らないものを表で表示するようにしました。昔の版（v1.2.3・v2.0など）のデータも、最新版へ移せます。','タイトルの「実績・引き継ぎ」は「実績・引き継ぎスキル」に名前を変えました。データの移動は「設定・セーブ」にあります。','【感想・不具合】タイトルに「📝 感想・不具合を送る」ボタンを置きました。「🐞 不具合を報告する」と「💬 感想・アイデアを送る」に分け、画面と起きたことを選ぶだけで送れるようにしました。遊んでいる版や端末の情報は自動で添えられます。','「出典・クレジット」は「設定・セーブ」に移しました。']],
   ['v2.7.1','2026年10月23日',['タイトル画面を、元の文字のタイトルに戻しました。']],
   ['v2.7','2026年10月23日',['【研究ポイント】研究がふえたので、研究ポイントのたまり方を3倍にし、研究ラインの段が上がるときの必要ポイントの伸びもゆるやかにしました。','【人生の道のり】画面の上の「🧭道のり」から、遊びの順番の目安を見られるようになりました。「子ども時代」から「銀河へ」まで11の段階に分かれていて、いまの段階と次の目標がわかります。「行く」でその画面へ移動できます。','秘書のアオイも、特にやることがないときは「道のり」の次の目標をすすめるようにしました。']],
@@ -9156,8 +9158,8 @@ document.addEventListener('click',e=>{if(e.target.closest('[data-dbg="off"]'))se
 ・エンドレス：子どもとして人生を続けます。お金・事務所・まち・研究も引き継がれます。50歳をすぎると、生きているうちに「この子に託す」こともできます。`);
  G('save','セーブとデータの移動',`・セーブ：月が進むたびに自動で保存されます。セーブスロットは5つあり、別々の人生を保存できます。
 ・データの移動（機種変更・別のブラウザ）：タイトルの「設定・セーブ」→「📲データの移動」、またはゲーム中のメニューの「セーブ」から。
-　すべてのスロット・実績・図鑑・引き継ぎスキル・プレイ時間をまとめて、コードかファイルにします。
-　新しい端末で「コードを貼りつけ」か「ファイルを開く」を選ぶだけです。
+　渡したい人生（セーブスロット）と、実績・図鑑・引き継ぎスキルを選んで、コードかファイルにします。
+　新しい端末で「コードを貼りつけ」か「ファイルを開く」を選び、人生ごとに入れるスロットを選びます。
 ・昔の版（v1.2.3など）で遊んだデータも、その版の「引き継ぎ」（昔の名前）でコードを作れば、最新版に移せます。
 ・最新版のデータを昔の版に移すことはできません。`);
  G('fb','感想・不具合を送る',`タイトルの「📝感想・不具合を送る」、またはゲーム中のメニューから送れます。
@@ -9180,7 +9182,7 @@ Object.assign(TAB_GUIDE,{act:'act',sns:'sns',money:'money',biz:'biz',life:'life'
  <tr><td>とても古い版（v0.x・v1.0〜1.1）のコード（NIP1.〜）を読み込む<small>空いているスロットに、1つの人生として入ります</small></td><td class="ok">○</td></tr>
  <tr><td>最新版のデータを、昔の版へ移す</td><td class="ng">×</td></tr></table>
  <table class="trt"><tr><th>いっしょに移るもの</th><th>移らないもの（端末ごとの設定）</th></tr><tr><td>セーブスロット（いま${used}つの人生）・スロットの名前／実績（いま${ach}個）・図鑑・称号／引き継ぎスキル／プレイ時間の記録</td><td>音量・見た目・文字の設定／表示のカスタマイズ／時をさかのぼるための保管</td></tr></table>
- <p class="hint">受け取る側のデータは、送ったデータに<b>置きかわります</b>（受け取る前に確認が出ます）。</p>`;
+ <p class="hint">渡すときは、渡す人生（セーブスロット）を選べます。受け取るときは、人生ごとに入れるスロットを選べます。実績などは「合わせる（両方の記録を残す）」「置きかえる」「受け取らない」から選べます。</p>`;
  const hint=h2.nextElementSibling;if(hint&&hint.classList.contains('hint'))hint.replaceWith(box);else h2.after(box)}catch(e){console.error(e)}}}
 // タイトルの「実績・引き継ぎ」の名前を「実績・引き継ぎスキル」に、データの移動は「設定・セーブ」へ
 (function(){const b=document.querySelector('[data-act="grpRec"]');if(b)b.textContent='実績・引き継ぎスキル'})();
@@ -9238,4 +9240,44 @@ try{FIND.push(['感想・不具合を送る','タイトル・メニュー',null,
 
 // 不具合の報告は、見出しを「不具合報告」に
 {const _ft55=fbText;fbText=function(it){const t=_ft55.apply(this,arguments);try{const f=it.f||{};const onlyBug=f.bug&&!['good','bad','want','other'].some(k=>f[k]&&((f[k].c&&f[k].c.length)||f[k].t));if(onlyBug)return t.replace('Buzz人生シミュレーター 感想','Buzz人生シミュレーター 不具合報告')}catch(_){}return t}}
+
+// ===== v2.8.1：データの移動で、渡すセーブスロットと受け取り先を選べるように =====
+function trSlotLine(i,inf){return `${esc(slotName(i))}：${esc(inf.name||'')}（${inf.age}歳・${inf.y}年${inf.cty?'・'+esc(inf.cty):''}）`}
+function trSelHtml(){const used=slotsUsed();return `<fieldset class="fbset trsel" id="trSel"><legend>渡すものを選ぶ</legend>
+ ${used.length?used.map(([i,inf])=>`<label class="omki"><input type="checkbox" data-trs="${i}" checked><span><b>${trSlotLine(i,inf)}</b></span></label>`).join(''):'<p class="hint">セーブされている人生はありません。</p>'}
+ <label class="omki"><input type="checkbox" id="trMeta" checked><span><b>実績・図鑑・引き継ぎスキル・プレイ時間の記録</b><small>どの人生でも共通のデータ</small></span></label></fieldset>`}
+{const _sT56=showTransfer;showTransfer=function(){const r=_sT56.apply(this,arguments);try{const m=$('#mcard');const hs=[...m.querySelectorAll('h3')].find(h=>/渡す/.test(h.textContent));if(hs)hs.insertAdjacentHTML('afterend',trSelHtml())}catch(e){console.error(e)}return r}}
+// 渡すとき：選んだものだけをコードにする
+{const _pa56=packAll;packAll=async function(){const box=$('#trSel');if(!box)return _pa56.apply(this,arguments);const sel=[...box.querySelectorAll('[data-trs]:checked')].map(x=>+x.dataset.trs),meta=$('#trMeta').checked;
+ const d={v:2,at:Date.now(),slot:sel.includes(SLOT)?SLOT:(sel[0]||0),slots:{},meta:null,part:1};if(S&&S.alive&&!NOSAVE)save(true);
+ for(const i of sel){try{const r=localStorage.getItem(slotKey(i));if(r)d.slots[i]=r}catch(_){}}if(meta){try{d.meta=localStorage.getItem(META_K)}catch(_){}}
+ const lb=slotLabels(),l2={};for(const i of sel)if(lb[i])l2[i]=lb[i];d.labels=JSON.stringify(l2);
+ const json=JSON.stringify(d);if(typeof CompressionStream!=='undefined'){try{const cs=new Blob([json]).stream().pipeThrough(new CompressionStream('gzip'));const buf=new Uint8Array(await new Response(cs).arrayBuffer());let bin='';for(let i=0;i<buf.length;i+=8192)bin+=String.fromCharCode.apply(null,buf.subarray(i,i+8192));return 'NIP2Z.'+btoa(bin)}catch(_){}}
+ return 'NIP2.'+btoa(unescape(encodeURIComponent(json)))}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-act="trCopy"],[data-act="trFile"]');if(!b)return;const box=$('#trSel');if(!box)return;if(!box.querySelector('[data-trs]:checked')&&!$('#trMeta').checked){e.stopImmediatePropagation();toast('渡すものを1つ以上選んでください')}},true);
+
+// 受け取るとき：人生ごとに入れる先を選ぶ
+let TR_IN=null;
+function inSumm(raw){try{const o=JSON.parse(raw);return o?slotSumm(o):null}catch(_){return null}}
+function trRecvHtml(d){const lives=Object.entries(d.slots||{}).map(([i,raw])=>[+i,raw,inSumm(raw)]).filter(x=>x[2]);const lb=(()=>{try{return JSON.parse(d.labels||'{}')||{}}catch(_){return {}}})();
+ const here=[];for(let j=0;j<SLOT_N;j++)here.push([j,slotInfo(j)]);const empties=here.filter(x=>!x[1]).map(x=>x[0]);
+ let h=`<div class="card confirm-inline trrecv"><h3>受け取る内容</h3>`;
+ if(lives.length){h+=`<p class="hint">人生ごとに、この端末のどのスロットに入れるかを選んでください。</p>`;lives.forEach(([i,raw,inf],n)=>{const def=empties[n]!=null?empties[n]:-1;
+  h+=`<div class="trrow"><div><b>${esc(lb[i]||('スロット'+(i+1)))}</b>：${esc(inf.name||'')}（${inf.age}歳・${inf.y}年）</div><select data-trin="${i}"><option value="-1" ${def<0?'selected':''}>受け取らない</option>${here.map(([j,s])=>`<option value="${j}" ${def===j?'selected':''}>スロット${j+1}${s?`（${esc(s.name)}を上書き）`:'（空き）'}</option>`).join('')}</select></div>`})}
+ else h+=`<p class="hint">このコードには、人生（セーブ）は入っていません。</p>`;
+ if(d.meta)h+=`<h3>実績・図鑑・引き継ぎスキル</h3><div class="seg wrapseg" id="trMetaMode"><button type="button" class="on" data-trmm="merge">合わせる（両方の記録を残す）</button><button type="button" data-trmm="replace">置きかえる</button><button type="button" data-trmm="skip">受け取らない</button></div>`;
+ return h+`<p class="hint" id="trInMsg"></p><div class="row"><button class="b sm warnb" type="button" data-act="trInGo">受け取る</button><button class="b sm" type="button" data-act="trNo">やめる</button></div></div>`}
+{const _ti56=trImport;trImport=async function(code){const d=await unpack(code);if(!d||d.single)return _ti56.apply(this,arguments);TR_IN=d;const bx=$('#trBox');bx.innerHTML=trRecvHtml(d);try{bx.scrollIntoView({block:'start',behavior:'smooth'})}catch(_){}}}
+function metaMerge(a,b){if(a==null)return b;if(b==null)return a;if(Array.isArray(a)&&Array.isArray(b))return [...new Set(a.concat(b))];if(typeof a==='object'&&typeof b==='object'){const o=Object.assign({},a);for(const k in b)o[k]=k in a?metaMerge(a[k],b[k]):b[k];return o}if(typeof a==='number'&&typeof b==='number')return Math.max(a,b);return a}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-trmm]');if(!b)return;document.querySelectorAll('[data-trmm]').forEach(x=>x.classList.toggle('on',x===b))});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-act="trInGo"]');if(!b||!TR_IN)return;const d=TR_IN;const msg=t=>{const m=$('#trInMsg');if(m)m.textContent=t};
+ const plan=[...document.querySelectorAll('[data-trin]')].map(s=>[+s.dataset.trin,+s.value]).filter(x=>x[1]>=0);const dest=plan.map(x=>x[1]);if(new Set(dest).size!==dest.length){msg('同じスロットに2つの人生は入れられません。入れる先を分けてください。');return}
+ const mm=(document.querySelector('[data-trmm].on')||{}).dataset;const mode=mm?mm.trmm:'skip';if(!plan.length&&(!d.meta||mode==='skip')){msg('受け取るものを選んでください。');return}
+ const lb=(()=>{try{return JSON.parse(d.labels||'{}')||{}}catch(_){return {}}})();
+ for(const [i,j] of plan){try{localStorage.setItem(slotKey(j),d.slots[i]);localStorage.removeItem(slotKey(j)+'-snap')}catch(_){msg('保存できませんでした（容量がいっぱいかもしれません）');return}setSlotName(j,lb[i]||'')}
+ try{localStorage.removeItem(SLOT_INFO)}catch(_){}
+ if(d.meta&&mode!=='skip'){try{const inc=JSON.parse(d.meta)||{};const cur=(()=>{try{return JSON.parse(localStorage.getItem(META_K)||'{}')||{}}catch(_){return {}}})();const nm=mode==='replace'?inc:metaMerge(cur,inc);localStorage.setItem(META_K,JSON.stringify(nm));
+  const base={};for(const k in META){const v=META[k];base[k]=Array.isArray(v)?[]:(v&&typeof v==='object')?{}:typeof v==='number'?0:v}META=Object.assign(base,nm)}catch(err){console.error(err)}}
+ TR_IN=null;if(plan.length)setSlot(plan[0][1]);if(S&&!$('#scrGame').hidden)setSpeed(0);S=null;showScreen('title');initTitle();closeModal();toast(`受け取りました（人生${plan.length}つ${d.meta&&mode!=='skip'?'・実績など':''}）`)},true);
+document.addEventListener('click',e=>{if(e.target.closest('[data-act="trNo"]'))TR_IN=null});
 </script>

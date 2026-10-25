@@ -1,7 +1,7 @@
 # ビルド手順（Buzz人生シミュレーター）
-ソースは p1.html（画面とCSS）＋ p2〜p59.js（p37 はなし）（スクリプト）。この順でつなげて1枚のHTMLにする。
+ソースは p1.html（画面とCSS）＋ p2〜p60.js（p37 はなし）（スクリプト）。この順でつなげて1枚のHTMLにする。
 
-    { cat p1.html; echo '<script>'; cat p2.js p4.js p6.js p3.js p7.js p8.js p9.js p10.js p11.js p12.js p13.js p14.js p15.js p16.js p17.js p18.js p19.js p20.js p21.js p22.js p23.js p24.js p25.js p26.js p27.js p28.js p29.js p30.js p31.js p32.js p33.js p34.js p35.js p36.js p38.js p39.js p40.js p41.js p42.js p43.js p44.js p45.js p46.js p47.js p48.js p49.js p50.js p51.js p52.js p53.js p54.js p55.js p56.js p57.js p58.js p59.js; echo '</script>'; } > nipporia.html
+    { cat p1.html; echo '<script>'; cat p2.js p4.js p6.js p3.js p7.js p8.js p9.js p10.js p11.js p12.js p13.js p14.js p15.js p16.js p17.js p18.js p19.js p20.js p21.js p22.js p23.js p24.js p25.js p26.js p27.js p28.js p29.js p30.js p31.js p32.js p33.js p34.js p35.js p36.js p38.js p39.js p40.js p41.js p42.js p43.js p44.js p45.js p46.js p47.js p48.js p49.js p50.js p51.js p52.js p53.js p54.js p55.js p56.js p57.js p58.js p59.js p60.js; echo '</script>'; } > nipporia.html
 
 - 後のファイルほど優先（同じ名前の function は後のものが使われる）
 - p2：データ・基本の出来事 / p4：国・難易度・研究・まち・実績・BGM / p6：出来事（v0.2） / p3：エンジン・画面（v0.1） / p7：v0.2の差し替え / p8：v0.3（行動の中身・請求書・経営・5タブ） / p9：設定・削除・アップデート情報（CHANGELOG） / p10：セーブ保管・過去バージョン / p11：出来事（v0.4） / p12：子ども時代（v0.5） / p13：v0.6（人生の選択・目標・ファン層・アルバムほか） / p14：v0.7（時代・実際の出来事・会社・新しいまち・遊び方） / p15：v0.8（研究追加・スキルツリー2種・感想フォーム・舞台説明） / p16：v0.9（推定プレイ時間・感想フォーム改・バージョン画面）。感想の送り先は p16.js の FB_URL（feedback/feedback_sheet.gs をスプレッドシートに置いてウェブアプリとして公開したURL）
@@ -50,3 +50,4 @@
 - p57：v2.9 バランス調整（お店のもうけ×0.25＝SHOP_MUL、子どもはまちの自動開発なし、おまかせの会社Lvアップは所持金の1.5%以下、借金が1年続くと「生活の立て直し」）。v3.0以降は「はじめから」に v2.9 を出す
 - p58：v2.9.1 タイトル配置、データの移動の並べ替え、スマホアプリのオンライン／オフライン選択（caches 'buzz-mode' と 'buzz-pinned'、sw.js がオフラインのとき保存版を返す）、推定時間からのこり年数を削除、道のり1000万〜10億、家族チャンネルの相談（kc_ask・kc_force）、立て替えのお知らせ、高校のバイト（HS_JOB）、SNSの始め方（netShare）
 - p59：v2.9.2 遊び方を「◀ 選ぶ ▶」1行切りかえ（kind guide2）・内容更新、設定・セーブを4つの切りかえ（setGroup・kind set2）、タイトルに「📲 データの移動」、昔の版の一覧（OLD_VERS 作り直し）とアップデート情報（kind news2）
+- p60：v2.9.3 託したとき・子どもとして続けたときの引き継ぎポイント表示、つながり画面の confirmBox

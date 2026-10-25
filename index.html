@@ -3050,6 +3050,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v2.9.3','2026年10月25日',['エンドレスで子どもに人生を託したときや、子どもとして続けたときに、もらった引き継ぎポイントを表示するようにしました（これまでもポイントはもらえていましたが、表示されていませんでした）。','「つながり」の画面で「この子に託す」を押しても、確認が出なかった問題を直しました。']],
   ['v2.9.2','2026年10月25日',['【遊び方】項目を「◀ 項目を選ぶ ▶」の1行で切りかえるようにして、説明を広く読めるようにしました。内容も最新の版に合わせて更新しました。','【設定・セーブ】中身を「音」「見た目・文字」「セーブ」「その他」に分け、上のボタンで切りかえるようにしました。長くスクロールしなくても見つけられます。','【データの移動】タイトルに「📲 データの移動」ボタンを独立して置きました。','【昔の版で遊ぶ】アップデート情報の「昔の版で遊ぶ（おまけ）」の一覧と説明を最新にしました（v1.0・v0.10 も遊べます）。']],
   ['v2.9.1','2026年10月25日',['【タイトル】「はじめから」「つづきから」を大きくし、セーブがあるときは「つづきから」を上に表示するようにしました。ほかのボタンは小さくまとめました。','【データの移動】渡す人生を選ぶ欄を画面のいちばん上に移しました。説明の表はたたんでいます。','【オンライン／オフライン】スマホでアプリとして開いたときに、毎回「オンライン（ゲームの更新あり）」「オフライン（ゲームの更新なし）」を選べるようになりました。','【推定プレイ時間】この人生ののこり年数は出さず、1年・10年あたりの時間だけを表示するようにしました。','【道のり】「世界へ」「世界を動かす」「銀河へ」に、フォロワー1000万人・1億人・10億人の目標を追加しました。','【家族チャンネル】子どものころに、家族チャンネルを始めるかを相談される出来事と、親がいきなり始めてしまう出来事を追加しました。','【家族の立て替え】家族がお金を立て替えてくれたときに、金額と「大人になったら返す」ことを、その場で表示するようにしました。','【高校のアルバイト】高校によって、アルバイトができるかどうかが決まるようになりました（進学校は禁止、地元の高校と通信制はできる）。できる高校なら15歳からアルバイトを選べます。','【SNSの始め方】スマホがないときは「発信」タブに、スマホを買う・家族に借りる・学校や図書館のパソコンを使う、の3つの始め方を表示するようにしました。']],
   ['v2.9','2026年10月25日',['【バランス調整】お店のもうけを、これまでの約4分の1にしました。SNSの収入とのつり合いを取り、現実に近い金額にしています。','まるごとおまかせで、子どものうちにまちの開発やお店・会社の管理をしないようにしました（18歳から）。','まるごとおまかせで会社を大きくする速さを、ゆるやかにしました。','【生活の立て直し】お金のマイナスが1年以上続くと、公的な支援制度を利用できるようになりました。借金で身動きがとれなくなるのを防ぎます。','この v2.9 は、v3.0（機能を整理して完成を目指す版）の前の版として保管し、v3.0 が出たあとも「はじめから」で選んで遊べるようにします。']],
@@ -9460,4 +9461,12 @@ showNews=function(tabk){const t=tabk||'new';const web=/^https?:$/.test(location.
  const m=$('#mcard');if(!$('#modal').hidden&&m.dataset.kind==='news2'){m.querySelectorAll('[data-news]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.news===t)));const f=m.querySelector('.fbody');f.innerHTML=body;f.scrollTop=0;return}
  openModal(`<span hidden data-act="close"></span><div class="mcat life">アップデート</div><h2>アップデート情報</h2><div class="subtabs"><button class="stab" type="button" data-news="new" aria-pressed="${t==='new'}">新しくなったこと</button><button class="stab" type="button" data-news="old" aria-pressed="${t==='old'}">昔の版で遊ぶ（おまけ）</button></div><div class="fbody">${body}</div>`);
  m.classList.add('fixedsize');m.dataset.kind='news2';try{markVer()}catch(_){}};
+
+// ===== v2.9.3：エンドレスで子どもに託したときも、引き継ぎポイントを表示 =====
+// 「この子に託す」用の確認欄（つながり画面）
+{const _kh60=koryuHtml;koryuHtml=function(){const h=_kh60.apply(this,arguments);return h.includes('id="confirmBox"')?h:h+'<div id="confirmBox"></div>'}}
+// 生きているうちに子どもに託したとき：もらった引き継ぎポイントをお知らせ
+{const _rt60=retireTo;retireTo=function(i){const lp0=(META.leg&&META.leg.lp)||0;const r=_rt60.apply(this,arguments);try{const g=((META.leg&&META.leg.lp)||0)-lp0;if(g>0){log(`前の人生から、引き継ぎポイントを ${g} もらった`,'good');setTimeout(()=>{try{popBig('🌱 引き継ぎポイント +'+g,'子どもに人生を託しました','タイトルの「実績・引き継ぎスキル」で使えます')}catch(_){}},400)}}catch(_){}return r}}
+// 亡くなって子どもとして続けたときも、同じようにお知らせ
+{const _ca60=continueAsChild;continueAsChild=function(i,alive){const g=S&&S.lpGain;const r=_ca60.apply(this,arguments);try{if(!alive&&g>0){log(`前の人生から、引き継ぎポイントを ${g} もらった`,'good');setTimeout(()=>{try{popBig('🌱 引き継ぎポイント +'+g,'次の世代へ引き継ぎました','タイトルの「実績・引き継ぎスキル」で使えます')}catch(_){}},400)}}catch(_){}return r}}
 </script>

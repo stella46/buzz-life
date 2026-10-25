@@ -203,6 +203,7 @@ html.mlock,html.mlock body{overflow:hidden;overscroll-behavior:none}.ov{overscro
 .slottools{margin-top:4px;flex-wrap:wrap;gap:6px}.prow{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
 .verpick{margin:6px 0 10px;padding:8px;border:1px solid var(--line,#ccc);border-radius:12px}.vp-t{font-size:.85em;font-weight:700;margin-bottom:6px;opacity:.8}.vp-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.b.vp{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:2px;text-decoration:none;color:inherit;white-space:normal}.b.vp span{font-size:.78em;opacity:.8;line-height:1.35}.b.vp.on{outline:2px solid var(--cyan);}@media(max-width:480px){.vp-row{grid-template-columns:1fr}}
 .pmsw{margin:4px 0 8px}.pmsw .seg button{font-size:.8rem}.slotc.rrow{grid-template-columns:minmax(0,1fr)}.slotc.rrow .ds{grid-column:1}.rrow .sel2{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.rsl{display:flex;gap:8px;align-items:center}.rsl input{flex:1;min-width:0}.rpct{min-width:3em;text-align:right}
+.ptiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:6px;margin:6px 0}.ptile{border:2px solid var(--line);border-radius:10px;padding:6px 8px;background:var(--bg2);display:flex;flex-direction:column}.ptile span{font-size:.72rem;color:var(--muted)}.ptile b{font-size:1rem}.ptab{width:100%;border-collapse:collapse;font-size:.85rem}.ptab td{padding:4px;border-bottom:1px dashed var(--line)}.ptab td:nth-child(2){text-align:right;font-variant-numeric:tabular-nums}.ptab td:nth-child(3){width:2.5em;text-align:right}details.pmore{margin:8px 0}details.pmore summary{cursor:pointer;font-size:.86rem;font-weight:700}
 .gnav{display:flex;gap:6px;align-items:center;margin:4px 0 8px;flex:0 0 auto}.gnav select{flex:1;min-width:0;font:inherit;font-size:.95rem;padding:8px;border-radius:8px;background:var(--bg2);color:inherit;border:2px solid var(--line)}.gnav .b{flex:0 0 auto;min-width:44px}.tgrid.tgrid4{grid-template-columns:repeat(2,1fr)}.settabs{flex:0 0 auto}.spane{display:flex;flex-direction:column;gap:8px}
 .b.tbig{display:flex;flex-direction:column;align-items:center;gap:2px;padding-block:14px;font-size:1.05rem}.b.tbig small{font-size:.72rem;opacity:.8;font-weight:400}.tgrid.tgrid3{grid-template-columns:repeat(3,1fr)}.tgrid.tgrid3 .b{font-size:.82rem;padding-inline:4px}.tsmall{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:4px}.tsmall .b{font-size:.8rem}
 .netpick .mtile{text-align:left}.netpick .md b{color:var(--gold)}.trfold{margin:8px 0;border:1px dashed var(--line);border-radius:8px;padding:4px 8px}.trfold summary{cursor:pointer;font-size:.86rem;font-weight:700}.snsstart h3{margin-top:0}
@@ -3050,6 +3051,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v2.9.5','2026年10月25日',['【引き継ぎポイント】実績のポイントを、これまでに解除した実績の分も受け取れるようにしました。実績は1つにつき1ポイントで、全部の人生を合わせて1回ずつもらえます。','【プレイ時間の記録】画面をコンパクトにしました。版ごとの時間は「v2.9」のようにまとめて表示し、細かい版と「0にする」はたためるようにしました。','【昔の版で遊ぶ】v2.1〜v2.8 も遊べるようにしました。','v2.1 から抜けていた、SNSのメインがずれるとフォロワーがふえない問題の修正と、投稿していない・フォロワーがいないのにファン向けの出来事が起きないようにする調整を、元に戻しました。','子どものころにお金が足りないとき、お金がマイナスのまま進んでしまう場合があった問題を直しました。']],
   ['v2.9.4','2026年10月25日',['【引き継ぎポイント】人生を終えるときだけでなく、遊んでいる途中でももらえるようになりました。年齢・フォロワー・資産・研究・目標などの節目をこえたときと、実績を解除したときに、その場でもらえます。','人生の終わりには、まだもらっていない分だけを受け取ります（二重にはもらえません）。','「人生」→「スキル」に「引き継ぎスキル」の入口を追加しました。覚えたスキルは、いまの人生にもすぐに効きます。','最初の引き継ぎスキル「生まれつきの才能」は、20歳になれば覚えられるようにしました（これまでは人生を1回終える必要がありました）。']],
   ['v2.9.3','2026年10月25日',['エンドレスで子どもに人生を託したときや、子どもとして続けたときに、もらった引き継ぎポイントを表示するようにしました（これまでもポイントはもらえていましたが、表示されていませんでした）。','「つながり」の画面で「この子に託す」を押しても、確認が出なかった問題を直しました。']],
   ['v2.9.2','2026年10月25日',['【遊び方】項目を「◀ 項目を選ぶ ▶」の1行で切りかえるようにして、説明を広く読めるようにしました。内容も最新の版に合わせて更新しました。','【設定・セーブ】中身を「音」「見た目・文字」「セーブ」「その他」に分け、上のボタンで切りかえるようにしました。長くスクロールしなくても見つけられます。','【データの移動】タイトルに「📲 データの移動」ボタンを独立して置きました。','【昔の版で遊ぶ】アップデート情報の「昔の版で遊ぶ（おまけ）」の一覧と説明を最新にしました（v1.0・v0.10 も遊べます）。']],
@@ -5962,6 +5964,30 @@ XG('nw11','ニュース',ag(10),.008,[
 ACH.push(['ev500','人生の百科事典','出来事を500種類見る',()=>Object.keys(META.seen).length>=500]);
 ACH.push(['ev800','千の物語へ','出来事を800種類見る',()=>Object.keys(META.seen).length>=800]);
 EVL=null;
+OLD_VERS.unshift(['v0.10','versions/v0.10/','流行・投稿の企画・コラボ・自動進行が入ったころ（見た目は旧デザイン）']);
+OLD_VERS.unshift(['v1.0','versions/v1.0/','グラフィックとサウンドを一新したころ（v1.0.4）']);
+
+// ===== v1.1.1：メインのSNSがずれてフォロワーが増えないのを修正 =====
+function fixMain(){if(!S||!S.snsOpen||!S.open||S.open[S.main])return;const k=Object.keys(SNS).find(x=>S.open[x]);if(!k)return;const old=S.main;if(old&&S.f[old]>0){S.f[k]=(S.f[k]||0)+S.f[old];S.f[old]=0}S.main=k}
+const _postAll11=postAll;postAll=function(k){fixMain();return _postAll11(k)};
+const _sph11=snsPlanHtml;snsPlanHtml=function(){fixMain();let h='';if(S&&S.snsOpen&&!(S.plan||[]).includes('post'))h+=`<div class="card warn"><p class="mtext">いまの予定に「投稿する」が入っていないので、フォロワーは増えない。「予定」タブで「投稿する」を入れよう。</p></div>`;return h+_sph11()};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-opensns]');if(b&&S)setTimeout(()=>{if(!S.open[S.main]||!S.f[S.main]){if(!S.open[S.main])S.main=b.dataset.opensns}fixMain();try{if(!S.genre)S.genre=topTal()}catch(_){}save(true);render()},0)},true);
+const _turn111=turn;turn=function(){fixMain();return _turn111.apply(this,arguments)};
+const _outc111=outc;outc=function(cat,v){if(S&&v>0&&age()<18&&S.money-v<0){const cover=v-Math.max(0,S.money);if(cover>0){try{if(!/^(medical|ev|tax|home|util|rent|phone|debt|family|bill|move|staff)$/.test(cat||'')){S.famDebt=(S.famDebt||0)+cover;log(`足りない${yen(cover)}は家族が立て替えてくれた（大人になったら返す）`,'life')}else log(`足りない${yen(cover)}は家族が払ってくれた`,'life')}catch(_){}}_outc111(cat,Math.max(0,S.money));return}return _outc111(cat,v)};
+
+// ===== v1.1.2：投稿していない・フォロワーがいないのに、見てくれる人がいる前提の出来事が起きないように =====
+const AUD_RE=/コメント|視聴者|ファン|フォロワー|投げ銭|再生|記念|お祝い|おめでとう|案件|声をかけ|常連|アンチ|炎上|取材|バズ|反響|見てくれ|見てます|応援|切り抜き|登録者|ライブ中|配信中/;
+const AUD_FREE=/^(sns_start|era_sns|m13|m13k|sn11_(12|16|30)|ch11_3|trend_chg|rv_.*|kc_.*|s100|s1k|s10k|s100k|s1m)$/;
+function postedWithin(n){if(S.lastPostAm!=null)return S.am-S.lastPostAm<=n;return !!(S.last&&S.last.posts>0)}
+let AUD_DONE=false;
+function audGate(){if(AUD_DONE||!S)return;AUD_DONE=true;
+  for(const e of Object.values(EV)){if(!e||AUD_FREE.test(e.id)||(e.w<=0&&e.id!=='flame'))continue;
+    const isSns=e.cat==='SNS'||e.cat==='sns'||/^(s_|x_s_|sn1|gn_|cr11|ch11)/.test(e.id);if(!isSns)continue;
+    let s=(e.t||'')+' ';const ts=String(e.text);try{s+=ts==='()=>text'?e.text():ts}catch(_){}try{const cs=String(e.ch);if(typeof e.ch!=='function')s+=e.ch.map(x=>x[0]).join(' ');else if(/chs\.filter/.test(cs))s+=e.ch().map(x=>x[0]).join(' ');else s+=cs}catch(_){}
+    const anniv=/記念/.test(s),aud=AUD_RE.test(s)||e.id==='flame';
+    const w0=e.when;e.when=function(){if(!S.snsOpen||!postedWithin(12))return false;if(anniv&&(!postedWithin(3)||totalF()<10))return false;if(aud&&(!postedWithin(6)||totalF()<30))return false;return !w0||w0()}}}
+const _postAll112=postAll;postAll=function(k){S.lastPostAm=S.am;return _postAll112(k)};
+const _roll112=rollEvent;rollEvent=function(k){audGate();return _roll112(k)};
 
 // ===== v1.1.3：最近の投稿のバリエーション・買い物の「1回だけ／何度でも」と買いすぎ対策 =====
 
@@ -9493,4 +9519,40 @@ lifeEndLegacy=function(){legState();try{recUpdate()}catch(_){}const tot=S?lpDueN
 {const _st61=secTip;secTip=function(){try{if(S&&age()>=6&&!S.flags.legTold){const L=legState();const can=LEG.filter(x=>!L.nodes[x.id]&&(!x.req||L.nodes[x.req])&&x.ok(META.rec)&&L.lp>=x.c);if(can.length){S.flags.legTold=S.am;return [`引き継ぎスキル「${can[0].n}」を覚えられます（${can[0].d}）`,'life:skill']}}}catch(_){}return _st61.apply(this,arguments)}}
 (function(){const g=GUIDE.find(x=>x[0]==='skill');if(g)g[2]=g[2].replace('・引き継ぎスキル：人生を終えるとたまるポイントで覚える、すべての人生で有効なスキルです（タイトルの「実績・引き継ぎスキル」）。','・引き継ぎスキル：人生の節目や実績の解除でたまるポイントで覚える、すべての人生で有効なスキルです。遊んでいる途中でももらえて、すぐに効きます（「人生」→「スキル」、またはタイトルの「実績・引き継ぎスキル」）。')})();
 try{const f=FIND.find(x=>x[0]==='引き継ぎスキル');if(f){f[1]='人生 → スキル／タイトル';f[2]='life:skill';f[3]='人生の節目や実績でたまるポイントで覚える、すべての人生で有効なスキル'}}catch(_){}
+
+// ===== v2.9.5：これまでの実績の分も引き継ぎポイントに・プレイ時間の記録をコンパクトに・昔の版（v2.1〜v2.8）を追加 =====
+
+// ----- 実績のポイントは、全人生まとめて1回ずつ（これまでに解除した実績の分も受け取れる） -----
+function achPayAll(quiet){legState();
+ if(META.leg.achPaid==null){META.leg.achPaid=0}
+ const n=achN()-META.leg.achPaid;if(n<=0)return 0;META.leg.lp+=n;META.leg.achPaid+=n;saveMeta();
+ if(S&&S.alive)log(`実績 ${n}個 の分、引き継ぎポイントを ${n} もらった（いま ${META.leg.lp}）`,'good');
+ if(!quiet){try{popBig('🌱 引き継ぎポイント +'+n,`実績 ${n}個 の分をもらいました`,`いま ${META.leg.lp} ポイント`)}catch(_){}}return n}
+// 人生の節目の分（年齢・フォロワーなど）は、これまでどおり人生ごと。実績の分はここから外す
+lpDueNow=function(){return lpOfLife()};
+{const _mp62=lpMidPay;lpMidPay=function(){if(!S||!S.alive)return;
+ // v2.9.4 で、この人生の実績の分を人生ごとに受け取っていた場合は、二重にならないように調整
+ if(S.achBase!=null&&!S.achMig){S.achMig=1;legState();const k=Math.max(0,(S.lpPaid||0)-lpOfLife());if(k>0){S.lpPaid-=k;if(META.leg.achPaid==null)META.leg.achPaid=0;META.leg.achPaid+=Math.min(k,Math.max(0,achN()-META.leg.achPaid))}}
+ achPayAll(true);return _mp62.apply(this,arguments)}}
+{const _le62=lifeEndLegacy;lifeEndLegacy=function(){try{achPayAll(true)}catch(_){}return _le62.apply(this,arguments)}}
+// ページを開いたとき：これまでの実績の分をまとめて受け取る
+setTimeout(()=>{try{if(META.leg&&META.leg.achPaid!=null)return;legState();const n=achPayAll(true);if(n>0){toast(`これまでに解除した実績 ${n}個 の分、引き継ぎポイント +${n}`);try{popBig('🌱 引き継ぎポイント +'+n,`これまでに解除した実績 ${n}個 の分`,'「実績・引き継ぎスキル」で使えます')}catch(_){}}}catch(e){console.error(e)}},1200);
+{const _lh62=legHtml;legHtml=function(){return _lh62.apply(this,arguments).replace('人生の節目（年齢・フォロワー・資産・研究・目標など）や実績の解除で、遊んでいる途中でももらえます。','人生の節目（年齢・フォロワー・資産・研究・目標など）で、遊んでいる途中でももらえます。実績は1つ解除するごとに1ポイント（これまでに解除した実績の分ももらえます）。')}}
+
+// ----- プレイ時間の記録をコンパクトに -----
+playHtml=function(){const vm=(META.verMs)||{};const inG=S&&!$('#scrGame').hidden;
+ const tile=(l,ms)=>`<div class="ptile"><span>${l}</span><b>${fmtDur(ms||0)}</b></div>`;
+ let h=`<div class="ptiles">${tile('サイト全体',META.playMs)}${inG?tile(esc(slotName(SLOT)),S.playMs)+tile('この人生',S.lifeMs):''}</div>`;
+ const grp={};for(const [v,ms] of Object.entries(vm)){const g=(v.match(/^v\d+\.\d+/)||[v])[0];grp[g]=(grp[g]||0)+ms}
+ const gl=Object.entries(grp).sort((a,b)=>{const p=s=>s.slice(1).split('.').map(Number);const x=p(a[0]),y=p(b[0]);return y[0]-x[0]||y[1]-x[1]});
+ h+=`<h3>版ごとのプレイ時間</h3>${gl.length?`<table class="ptab">${gl.slice(0,6).map(([g,ms])=>`<tr><td>${esc(g)}</td><td>${fmtDur(ms)}</td></tr>`).join('')}</table>`:'<p class="hint">まだありません。</p>'}`;
+ if(gl.length>6||Object.keys(vm).length>gl.length)h+=`<details class="pmore"><summary>細かい版ごとに見る（${Object.keys(vm).length}件）</summary><table class="ptab">${Object.entries(vm).sort((a,b)=>b[1]-a[1]).map(([v,ms])=>`<tr><td>${esc(v)}</td><td>${fmtDur(ms)}</td><td><button class="b sm ghost" type="button" data-preset="v:${esc(v)}" aria-label="${esc(v)}を0にする">↺</button></td></tr>`).join('')}</table></details>`;
+ h+=`<details class="pmore"><summary>プレイ時間を0にする</summary><div class="row"><button class="b sm" type="button" data-preset="site">サイト全体</button>${inG?'<button class="b sm" type="button" data-preset="save">このセーブ</button><button class="b sm" type="button" data-preset="life">この人生</button>':''}</div><p class="hint">ほかのスロットは「セーブスロット」の画面から0にできます。</p></details><div id="presetBox"></div>`;
+ return h};
+
+// ----- 昔の版で遊ぶ：v2.1〜v2.8 を追加 -----
+[['v2.1','versions/v2.1/','世界進出・ランキング・ライバル企業・つながりが加わった版（画像のタイトルロゴ）'],['v2.2.1','versions/v2.2/','予定の決め方（いつもの予定・割合）が加わった版'],['v2.3','versions/v2.3/','人生の終わりのモードを途中で切りかえられるようになった版'],
+ ['v2.4','versions/v2.4/','研究約300・大計画213・とんでもなく高額なアクションが加わった版'],['v2.5','versions/v2.5/','推定プレイ時間・家族への返済・人生の終わりの選択が加わった版'],['v2.6','versions/v2.6/','年齢に合った出来事・まるごとおまかせ・秘書・さがすが加わった版'],
+ ['v2.7.1','versions/v2.7/','研究ポイント3倍・人生の道のりが加わった版'],['v2.8.2','versions/v2.8/','遊び方の更新・データの移動・感想と不具合の報告が加わった版']].forEach(v=>{if(!OLD_VERS.some(o=>o[1]===v[1]))OLD_VERS.unshift(v)});
+{const i=OLD_VERS.findIndex(o=>o[0]==='v2.9');if(i>0){const [x]=OLD_VERS.splice(i,1);OLD_VERS.unshift(x)}}
 </script>

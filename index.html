@@ -3047,6 +3047,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v2.9','2026年10月25日',['【バランス調整】お店のもうけを、これまでの約4分の1にしました。SNSの収入とのつり合いを取り、現実に近い金額にしています。','まるごとおまかせで、子どものうちにまちの開発やお店・会社の管理をしないようにしました（18歳から）。','まるごとおまかせで会社を大きくする速さを、ゆるやかにしました。','【生活の立て直し】お金のマイナスが1年以上続くと、公的な支援制度を利用できるようになりました。借金で身動きがとれなくなるのを防ぎます。','この v2.9 は、v3.0（機能を整理して完成を目指す版）の前の版として保管し、v3.0 が出たあとも「はじめから」で選んで遊べるようにします。']],
   ['v2.8.2','2026年10月24日',['研究ポイントが、人生の後半に急にふえすぎてしまう問題を直しました。','家族に立て替えてもらうお金に、出来事でかかったお金（家族の出費）まで数えられていた問題を直しました。立て替えになるのは、子どものころに自分で使ったお金だけです。']],
   ['v2.8.1','2026年10月24日',['【データの移動】渡すときに、どの人生（セーブスロット）を渡すか選べるようになりました。実績・図鑑・引き継ぎスキルを渡すかどうかも選べます。','受け取るときは、人生ごとに、この端末のどのスロットに入れるかを選べるようになりました。実績などは「合わせる（両方の記録を残す）」「置きかえる」「受け取らない」から選べます。']],
   ['v2.8','2026年10月24日',['【遊び方】遊び方の説明を全面的に新しくしました。「遊びの順番」「つながり」「世界進出とランキング」「大計画」「便利な機能」「人生の終わりと次の世代」などの項目を追加しました。','【データの移動】「引き継ぎ」を「データの移動」という名前にして、できること・できないこと、いっしょに移るもの・移らないものを表で表示するようにしました。昔の版（v1.2.3・v2.0など）のデータも、最新版へ移せます。','タイトルの「実績・引き継ぎ」は「実績・引き継ぎスキル」に名前を変えました。データの移動は「設定・セーブ」にあります。','【感想・不具合】タイトルに「📝 感想・不具合を送る」ボタンを置きました。「🐞 不具合を報告する」と「💬 感想・アイデアを送る」に分け、画面と起きたことを選ぶだけで送れるようにしました。遊んでいる版や端末の情報は自動で添えられます。','「出典・クレジット」は「設定・セーブ」に移しました。']],
@@ -8956,14 +8957,14 @@ const OMK=[['res','研究','おすすめの研究を、ポイントがたまり�
 function omk(k){return !!(S&&S.omk&&S.omk[k])}
 function omkHtml(){const n=OMK.filter(x=>omk(x[0])).length;
  return `<details class="omk"${n?'':''}><summary>🤖 まるごとおまかせ <span class="chip">${n?n+'つオン':'オフ'}</span></summary><p class="hint">分野ごとに、毎月の管理をまかせられます。まかせた分野は、さわらなくても進みます。</p><div class="omkl">${OMK.map(([k,n2,d])=>`<label class="omki"><input type="checkbox" data-omk="${k}" ${omk(k)?'checked':''}><span><b>${n2}</b><small>${d}</small></span></label>`).join('')}</div><div class="row"><button class="b sm" type="button" data-omkall="1">すべてまかせる</button><button class="b sm ghost" type="button" data-omkall="0">すべて自分でやる</button></div></details>`}
-function omkApply(){if(!S.omk)return;
+function omkApply(){if(!S.omk||age()<18)return;
  if(omk('town'))for(const T of allTowns()){T.auto=T.auto||{on:0,b:5e6};T.auto.on=1}
  if(omk('shop'))for(const T of allTowns())withTown(T,()=>S.town.tiles.forEach((t,i)=>{if(SHOP[t.t]&&!t.mgr){t.mgr=1;try{mgrOptimize(i)}catch(_){}}}));
  if(omk('co'))for(const c of (S.cos||[])){coInit(c);c.emp.auto=1;if(c.pmode==='manual')c.pmode='auto'}}
 function omkMonth(){if(!S.omk||age()<10)return;const did=[];omkApply();
  if(omk('res')){let n=0;for(let i=0;i<4;i++){const x=resRec(1)[0];if(!x||S.rp<x.c)break;if(x.t==='t')rtBuy(x.id);else{const r=RES.find(z=>z.id===x.id);if(!r)break;S.rp-=r.c;S._rpSp=(S._rpSp||0)+r.c;S.res[r.id]=1;log(`研究「${r.n}」が完了した（おまかせ）`,'good')}n++}if(n)did.push(`研究${n}件`)}
  if(omk('skill')&&(S.sp||0)>0){for(let g=0;g<10;g++){let best=null;for(const [bk,bn,ns] of SKT)for(let i=0;i<ns.length;i++){const id=ns[i][0];if(sk(id))continue;if(i&&!sk(ns[i-1][0]))break;if(SK_COST[i]<=S.sp&&(!best||SK_COST[i]<best[1]))best=[id,SK_COST[i]];break}if(!best)break;skBuy(best[0]);did.push('スキル')}}
- if(omk('co')&&age()>=20)for(const c of (S.cos||[])){if(c.lv<8){const up=Math.round(COS[c.k].c*c.lv*Math.max(.2,S.cty.inc));if(S.money*.03>=up){outc('co',up);c.cap+=COS[c.k].c*c.lv;c.lv++;c.val+=Math.round(COS[c.k].c*(c.lv-1)*.9);did.push(`「${c.name}」Lv${c.lv}`)}}else if(c.lv<12&&typeof lvUpCost==='function'){const cst=lvUpCost(c);if(S.money*.03>=cst){outc('co',cst);c.cap+=cst;c.lv++;c.val=Math.round(c.val*1.4+cst*.6);did.push(`「${c.name}」Lv${c.lv}`)}}}
+ if(omk('co')&&age()>=20)for(const c of (S.cos||[])){if(c.lv<8){const up=Math.round(COS[c.k].c*c.lv*Math.max(.2,S.cty.inc));if(S.money*.015>=up){outc('co',up);c.cap+=COS[c.k].c*c.lv;c.lv++;c.val+=Math.round(COS[c.k].c*(c.lv-1)*.9);did.push(`「${c.name}」Lv${c.lv}`)}}else if(c.lv<12&&typeof lvUpCost==='function'){const cst=lvUpCost(c);if(S.money*.015>=cst){outc('co',cst);c.cap+=cst;c.lv++;c.val=Math.round(c.val*1.4+cst*.6);did.push(`「${c.name}」Lv${c.lv}`)}}}
  if(omk('mega')&&age()>=20&&(S.mega||[]).filter(x=>!x.done).length<3){const cand=Object.values(MEGA).filter(m=>!megaOf(m.k)&&S.y>=m.yr&&!(m.req&&!megaDone(m.req))&&megaCost(m)<=S.money*.05).sort((a,b)=>a.c-b.c)[0];if(cand){megaStart(cand.k);did.push(`大計画「${cand.n}」`)}}
  if(omk('ppl')&&typeof kLeft==='function'){const K=kOf();const L=pplAll().filter(([n,kind])=>kind!=='rival'&&!K.did[n.id||n.name]).sort((a,b)=>a[0].rel-b[0].rel);for(const [n] of L){if(kLeft()<=0)break;rel(n,K_ACT.talk[2]);K.n++;K.did[n.id||n.name]=1}}
  if(did.length)log('おまかせ：'+did.slice(0,6).join('・'),'life')}
@@ -9281,4 +9282,21 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-act="trInG
   const base={};for(const k in META){const v=META[k];base[k]=Array.isArray(v)?[]:(v&&typeof v==='object')?{}:typeof v==='number'?0:v}META=Object.assign(base,nm)}catch(err){console.error(err)}}
  TR_IN=null;if(plan.length)setSlot(plan[0][1]);if(S&&!$('#scrGame').hidden)setSpeed(0);S=null;showScreen('title');initTitle();closeModal();toast(`受け取りました（人生${plan.length}つ${d.meta&&mode!=='skip'?'・実績など':''}）`)},true);
 document.addEventListener('click',e=>{if(e.target.closest('[data-act="trNo"]'))TR_IN=null});
+
+// ===== v2.9：バランス調整 =====
+// 子どものうちは、まちの自動開発をしない
+{const _adt57=autoDevTown;autoDevTown=function(){if(age()<18)return;return _adt57.apply(this,arguments)}}
+// お店のもうけを現実に近く（SNSの収入とのつり合いを取る）
+const SHOP_MUL=.25;
+{const _sc57=shopCalc;shopCalc=function(i,commit){const r=_sc57.apply(this,arguments);if(r){r.sales=Math.round(r.sales*SHOP_MUL);r.cost=Math.round(r.cost*SHOP_MUL);r.profit=r.sales-r.cost}return r}}
+// 長いあいだ生活が苦しいときの支援（借金で動けなくならないように）
+function safetyCheck(){if(age()<18||!S.alive)return;if(S.money<0){S.flags.negM=(S.flags.negM||0)+1}else S.flags.negM=0;
+ if(S.flags.negM>=12&&(S.cd.safety==null||S.am-S.cd.safety>=120)&&!S.q.includes('safety')){S.q.push('safety')}}
+E('safety',{t:'生活の立て直し',cat:'暮らし',w:0,text:()=>`お金が足りない状態が1年以上続いている（いま ${yen(S.money)}）。\n役所の窓口で相談したところ、生活を立て直すための公的な支援制度があると教えてもらった。`,
+ ch:()=>[['支援制度を利用する',()=>{const d=-Math.min(0,S.money);S.money=Math.max(0,S.money);S.debt=Math.round((S.debt||0)*.3);S.flags.negM=0;ad('mental',8);ad('rep',-2);tl('公的な支援で生活を立て直した');return `マイナスだった${yen(d)}が整理され、借入も大きく減った。ここから立て直そう。`}],
+  ['自分の力でがんばる',()=>{ad('mental',-3);persAdd&&persAdd('bold',1);S.flags.negM=6;return 'もう少し、自分の力でやってみることにした。'}]]});
+{const _mh57=monthHook11;monthHook11=function(){_mh57();try{safetyCheck()}catch(e){console.error(e)}}}
+// v3.0 以降：「はじめから」で v2.9 も選べるように（v2.9 のあいだは表示しない）
+{const _ss57=showSlots;showSlots=function(mode){const r=_ss57.apply(this,arguments);try{if(mode==='new'&&CUR_VER!=='v2.9'&&!/^v2\.9/.test(CUR_VER)){const row=document.querySelector('#verPick .vp-row');if(row&&!row.querySelector('[href="versions/v2.9/"]'))row.insertAdjacentHTML('beforeend',`<a class="b vp" href="versions/v2.9/" data-vp="v29"><b>v2.9</b><span>v3.0で整理される前の、機能がいちばん多い版です。別の画面で開き、セーブも別になります</span></a>`)}}catch(_){}return r}}
+if(!/^v2\.9/.test(CUR_VER)&&!OLD_VERS.some(v=>v[0]==='v2.9'))OLD_VERS.unshift(['v2.9','versions/v2.9/','v3.0で整理される前の、機能がいちばん多い版（v2.9）']);
 </script>

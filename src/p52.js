@@ -15,14 +15,14 @@ const OMK=[['res','研究','おすすめの研究を、ポイントがたまり�
 function omk(k){return !!(S&&S.omk&&S.omk[k])}
 function omkHtml(){const n=OMK.filter(x=>omk(x[0])).length;
  return `<details class="omk"${n?'':''}><summary>🤖 まるごとおまかせ <span class="chip">${n?n+'つオン':'オフ'}</span></summary><p class="hint">分野ごとに、毎月の管理をまかせられます。まかせた分野は、さわらなくても進みます。</p><div class="omkl">${OMK.map(([k,n2,d])=>`<label class="omki"><input type="checkbox" data-omk="${k}" ${omk(k)?'checked':''}><span><b>${n2}</b><small>${d}</small></span></label>`).join('')}</div><div class="row"><button class="b sm" type="button" data-omkall="1">すべてまかせる</button><button class="b sm ghost" type="button" data-omkall="0">すべて自分でやる</button></div></details>`}
-function omkApply(){if(!S.omk)return;
+function omkApply(){if(!S.omk||age()<18)return;
  if(omk('town'))for(const T of allTowns()){T.auto=T.auto||{on:0,b:5e6};T.auto.on=1}
  if(omk('shop'))for(const T of allTowns())withTown(T,()=>S.town.tiles.forEach((t,i)=>{if(SHOP[t.t]&&!t.mgr){t.mgr=1;try{mgrOptimize(i)}catch(_){}}}));
  if(omk('co'))for(const c of (S.cos||[])){coInit(c);c.emp.auto=1;if(c.pmode==='manual')c.pmode='auto'}}
 function omkMonth(){if(!S.omk||age()<10)return;const did=[];omkApply();
  if(omk('res')){let n=0;for(let i=0;i<4;i++){const x=resRec(1)[0];if(!x||S.rp<x.c)break;if(x.t==='t')rtBuy(x.id);else{const r=RES.find(z=>z.id===x.id);if(!r)break;S.rp-=r.c;S._rpSp=(S._rpSp||0)+r.c;S.res[r.id]=1;log(`研究「${r.n}」が完了した（おまかせ）`,'good')}n++}if(n)did.push(`研究${n}件`)}
  if(omk('skill')&&(S.sp||0)>0){for(let g=0;g<10;g++){let best=null;for(const [bk,bn,ns] of SKT)for(let i=0;i<ns.length;i++){const id=ns[i][0];if(sk(id))continue;if(i&&!sk(ns[i-1][0]))break;if(SK_COST[i]<=S.sp&&(!best||SK_COST[i]<best[1]))best=[id,SK_COST[i]];break}if(!best)break;skBuy(best[0]);did.push('スキル')}}
- if(omk('co')&&age()>=20)for(const c of (S.cos||[])){if(c.lv<8){const up=Math.round(COS[c.k].c*c.lv*Math.max(.2,S.cty.inc));if(S.money*.03>=up){outc('co',up);c.cap+=COS[c.k].c*c.lv;c.lv++;c.val+=Math.round(COS[c.k].c*(c.lv-1)*.9);did.push(`「${c.name}」Lv${c.lv}`)}}else if(c.lv<12&&typeof lvUpCost==='function'){const cst=lvUpCost(c);if(S.money*.03>=cst){outc('co',cst);c.cap+=cst;c.lv++;c.val=Math.round(c.val*1.4+cst*.6);did.push(`「${c.name}」Lv${c.lv}`)}}}
+ if(omk('co')&&age()>=20)for(const c of (S.cos||[])){if(c.lv<8){const up=Math.round(COS[c.k].c*c.lv*Math.max(.2,S.cty.inc));if(S.money*.015>=up){outc('co',up);c.cap+=COS[c.k].c*c.lv;c.lv++;c.val+=Math.round(COS[c.k].c*(c.lv-1)*.9);did.push(`「${c.name}」Lv${c.lv}`)}}else if(c.lv<12&&typeof lvUpCost==='function'){const cst=lvUpCost(c);if(S.money*.015>=cst){outc('co',cst);c.cap+=cst;c.lv++;c.val=Math.round(c.val*1.4+cst*.6);did.push(`「${c.name}」Lv${c.lv}`)}}}
  if(omk('mega')&&age()>=20&&(S.mega||[]).filter(x=>!x.done).length<3){const cand=Object.values(MEGA).filter(m=>!megaOf(m.k)&&S.y>=m.yr&&!(m.req&&!megaDone(m.req))&&megaCost(m)<=S.money*.05).sort((a,b)=>a.c-b.c)[0];if(cand){megaStart(cand.k);did.push(`大計画「${cand.n}」`)}}
  if(omk('ppl')&&typeof kLeft==='function'){const K=kOf();const L=pplAll().filter(([n,kind])=>kind!=='rival'&&!K.did[n.id||n.name]).sort((a,b)=>a[0].rel-b[0].rel);for(const [n] of L){if(kLeft()<=0)break;rel(n,K_ACT.talk[2]);K.n++;K.did[n.id||n.name]=1}}
  if(did.length)log('おまかせ：'+did.slice(0,6).join('・'),'life')}

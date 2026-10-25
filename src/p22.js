@@ -593,7 +593,7 @@ const _postAll11=postAll;postAll=function(k){fixMain();return _postAll11(k)};
 const _sph11=snsPlanHtml;snsPlanHtml=function(){fixMain();let h='';if(S&&S.snsOpen&&!(S.plan||[]).includes('post'))h+=`<div class="card warn"><p class="mtext">いまの予定に「投稿する」が入っていないので、フォロワーは増えない。「予定」タブで「投稿する」を入れよう。</p></div>`;return h+_sph11()};
 document.addEventListener('click',e=>{const b=e.target.closest('[data-opensns]');if(b&&S)setTimeout(()=>{if(!S.open[S.main]||!S.f[S.main]){if(!S.open[S.main])S.main=b.dataset.opensns}fixMain();try{if(!S.genre)S.genre=topTal()}catch(_){}save(true);render()},0)},true);
 const _turn111=turn;turn=function(){fixMain();return _turn111.apply(this,arguments)};
-const _outc111=outc;outc=function(cat,v){if(S&&v>0&&age()<18&&S.money-v<0){const cover=v-Math.max(0,S.money);if(cover>0){try{log(`足りない${yen(cover)}は家族が払ってくれた`,'life')}catch(_){}}_outc111(cat,Math.max(0,S.money));return}return _outc111(cat,v)};
+const _outc111=outc;outc=function(cat,v){if(S&&v>0&&age()<18&&S.money-v<0){const cover=v-Math.max(0,S.money);if(cover>0){try{if(!/^(medical|ev|tax|home|util|rent|phone|debt|family|bill|move|staff)$/.test(cat||'')){S.famDebt=(S.famDebt||0)+cover;log(`足りない${yen(cover)}は家族が立て替えてくれた（大人になったら返す）`,'life')}else log(`足りない${yen(cover)}は家族が払ってくれた`,'life')}catch(_){}}_outc111(cat,Math.max(0,S.money));return}return _outc111(cat,v)};
 
 // ===== v1.1.2：投稿していない・フォロワーがいないのに、見てくれる人がいる前提の出来事が起きないように =====
 const AUD_RE=/コメント|視聴者|ファン|フォロワー|投げ銭|再生|記念|お祝い|おめでとう|案件|声をかけ|常連|アンチ|炎上|取材|バズ|反響|見てくれ|見てます|応援|切り抜き|登録者|ライブ中|配信中/;

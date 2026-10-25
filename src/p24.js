@@ -219,13 +219,13 @@ function svcHtml(){const c=ci2();let h=`<h3>自分のサブスク事業</h3><p c
     h+=`<div class="card"><div class="hd"><span>${esc(s.name||t.n)}</span><span>${num(s.users)}人</span></div><div class="kv"><span>月額</span><span>${yen(t.price*P.m*c)}（${P.n}）</span><span>品質</span><span>${Math.round(s.q)}</span><span>先月の利益</span><span class="${prof>=0?'up':'dn'}">${prof>=0?'+':''}${yen(prof)}</span></div>
     <div class="seg">${Object.entries(SVC_PRICE).map(([k,p])=>`<button type="button" class="${(s.pr||'std')===k?'on':''}" data-svcpr="${i}" data-v="${k}">${p.n}</button>`).join('')}</div>
     <div class="row"><button class="b sm" type="button" data-svc="${i}" data-k="up" ${S.money<t.dev*.15*c?'disabled':''}>アップデート ${yen(t.dev*.15*c)}</button><button class="b sm" type="button" data-svc="${i}" data-k="ad" ${S.money<t.dev*.05*c?'disabled':''}>宣伝する ${yen(t.dev*.05*c)}</button><button class="b sm ghost" type="button" data-svc="${i}" data-k="sell">事業を売る（${yen(svcValue(s))}）</button></div></div>`}
-  if((S.svcs||[]).length<3){h+=`<h3>新しいサービスを開発する</h3><div>`;for(const t of SVC_T.map(r=>SVCT[r[0]])){if(!svcOk(t))continue;const done=(S.svcs||[]).some(s=>s.t===t.k);
+  if((S.svcs||[]).length<30){h+=`<h3>新しいサービスを開発する</h3><div>`;for(const t of SVC_T.map(r=>SVCT[r[0]])){if(!svcOk(t))continue;const done=(S.svcs||[]).some(s=>s.t===t.k);
     h+=`<div class="shop"><div><div>${esc(t.n)} <span class="muted small">開発費 ${yen(t.dev*c)}</span></div><div class="muted small">月額 ${yen(t.price*c)}・原価 1人${yen(t.cost*c)}${t.g?`・${esc(GENRES[t.g].n)}の発信と相性がいい`:'・どのジャンルでも'}</div></div><button class="b sm" type="button" data-svcnew="${t.k}" ${done||S.money<t.dev*c?'disabled':''}>${done?'運営中':'開発する'}</button></div>`}h+='</div>'}
-  else h+='<p class="hint">サービスは3つまで運営できる。</p>';
+  else h+='<p class="hint">サービスは30個まで運営できます。</p>';
   return h}
 function svcValue(s){const e=svcEst(s);return Math.max(0,Math.round((e.rev-e.cost)*24))}
 document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!S)return;const d=b.dataset;const c=ci2();
-  if(d.svcnew){const t=SVCT[d.svcnew];if(!t||S.money<t.dev*c||(S.svcs||[]).length>=3)return;outc('svcbiz',Math.round(t.dev*c));if(!S.svcs)S.svcs=[];S.svcs.push({t:t.k,users:0,q:55+Math.min(30,(S.sk.plan+S.p.know)/8),pr:'std',age:0,mkt:totalF()*.01});tl(`サブスク「${t.n}」を始めた`);log(`「${t.n}」を開発して、サービスを始めた`,'good');snd('buy');save(true);render();return}
+  if(d.svcnew){const t=SVCT[d.svcnew];if(!t||S.money<t.dev*c||(S.svcs||[]).length>=30)return;outc('svcbiz',Math.round(t.dev*c));if(!S.svcs)S.svcs=[];S.svcs.push({t:t.k,users:0,q:55+Math.min(30,(S.sk.plan+S.p.know)/8),pr:'std',age:0,mkt:totalF()*.01});tl(`サブスク「${t.n}」を始めた`);log(`「${t.n}」を開発して、サービスを始めた`,'good');snd('buy');save(true);render();return}
   if(d.svcpr!=null){const s=S.svcs[+d.svcpr];if(s){s.pr=d.v;save();renderPanel()}return}
   if(d.svc!=null){const s=S.svcs[+d.svc];if(!s)return;const t=SVCT[s.t];
     if(d.k==='up'){const cost=Math.round(t.dev*.15*c);if(S.money<cost)return;outc('svcbiz',cost);s.q=clamp(s.q+R(8,15),5,100);log(`${t.n}をアップデートした（品質 ${Math.round(s.q)}）`,'good')}

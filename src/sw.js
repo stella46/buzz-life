@@ -1,5 +1,5 @@
 // Buzz人生シミュレーター：オフライン用（一度開いたファイルを端末に保存して、ネットがなくても動かす）
-const CACHE='buzz-life-v2.9.6';
+const CACHE='buzz-life-v2.9.7';
 const CORE=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./apple-touch-icon.png','./logo.webp','./logo@2x.webp'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()))});
 const KEEP=['buzz-mode','buzz-pinned'];

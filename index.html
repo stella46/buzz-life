@@ -3065,6 +3065,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v3.0.14','2026年10月26日',['大計画の期間を見直しました。']],
   ['v3.0.13','2026年10月26日',['「人生」→「人」で、跡継ぎを決められるようになりました。決めておくと、好きなときに隠居して託せます。','孫ができるようになりました。','引き継ぐときに、お金・会社・芸能事務所の扱いを選べるようになりました。','子どもとの家族チャンネルを、自分で始められるようになりました。','子どもとして続けたときに、名前がおかしくなることがある問題を直しました。']],
   ['v3.0.12','2026年10月26日',['人生の終わりに「いまの年齢のまま続ける」を選べないようにしました。','子どもに引き継ぐときに、引き継がれるものをふやしました。','おまかせ設定を見直しました。']],
   ['v3.0.11','2026年10月26日',['サービス会社（サブスク）の利用者が、現実に近い人数までふえるようになりました。','会社を大きくするときの待ち時間をなくしました。','「○○年から」のものは、研究が進むと解放されるようにしました。']],
@@ -10444,4 +10445,8 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-stsell]');
 function surOf(P){try{if(P&&typeof P.sur==='string')return P.sur;if(P&&typeof P.last==='string')return P.last;const n=String(P&&P.name||'');return P&&P.cty&&!P.cty.jp?n.split(' ').slice(-1)[0]:n.split(' ')[0]}catch(_){return ''}}
 {const _fn85=fullNameFrom;fullNameFrom=function(P,first){return P&&P.cty&&!P.cty.jp?first+' '+surOf(P):surOf(P)+' '+first}}
 {const _ca85b=continueAsChild;continueAsChild=function(i,alive){const sur=surOf(S);const r=_ca85b.apply(this,arguments);try{if(S&&typeof S.sur!=='string'){S.sur=sur;if(/null|undefined|object/.test(S.name))S.name=S.cty&&!S.cty.jp?S.first+' '+sur:sur+' '+S.first}}catch(_){}return r}}
+
+// ===== v3.0.14：大計画の期間を最長5年に（つながった計画が長すぎて、1回の人生で終わらなかったため） =====
+for(const m of Object.values(MEGA))m.dur=Math.min(60,m.dur);
+{const _mh86=monthHook11;monthHook11=function(){try{if(S&&S.mega)for(const x of S.mega)if(!x.done&&x.dur>60)x.dur=60}catch(_){}return _mh86.apply(this,arguments)}}
 </script>

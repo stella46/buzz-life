@@ -1,0 +1,5 @@
+.bfx{display:block;font-size:.72em;opacity:.75;font-weight:400;line-height:1.25;margin-top:2px}
+.hint.fx{margin:.15em 0 .5em;font-size:.85em}
+.accf{list-style:none;margin:.3em 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;font-size:.88em}
+.accf li{opacity:.7}.accf li.ok{opacity:1;font-weight:600}.accf small{display:block;font-weight:400;opacity:.8;font-size:.85em}
+@media (max-width:420px){.accf{grid-template-columns:1fr}}

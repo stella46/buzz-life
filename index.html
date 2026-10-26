@@ -3065,6 +3065,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v3.0.20','2026年10月26日',['軽量モードを、同じ遊びをかんたんにしたモードに作り直しました。','契約・サブスクを、同じ効果ごとのコースにまとめ、段階を上げていく形にしました。','スキルは、自動で覚えるようにしました。','「昔の版で遊ぶ」に v3.0 を追加しました。']],
   ['v3.0.19','2026年10月26日',['「はじめから」で、「通常」と「軽量」の2つのモードを選べるようになりました。軽量は、SNSと人生が中心の気軽なモードです。','昔の版は、「アップデート情報」の「昔の版で遊ぶ」から遊べます。']],
   ['v3.0.18','2026年10月26日',['セーブが見つからないときは、自動で保管していたセーブから戻すようにしました。','セーブスロットに、どの版のデータかを表示するようにしました。前の版のデータも、そのまま最新版で続けられます。']],
   ['v3.0.17','2026年10月26日',['セーブが残らない場所で開いているときに、お知らせを出すようにしました。']],
@@ -10539,25 +10540,106 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-sm="cont"]
 let LITE_PICK=0;
 function isLite(){return !!(S&&S.lite)}
 {const _ss91=showSlots;showSlots=function(mode){const r=_ss91.apply(this,arguments);try{if(mode!=='new')return r;const d=$('#verPick');if(!d)return r;
- d.innerHTML=`<div class="vp-t">遊ぶモード</div><div class="vp-row"><button class="b vp ${LITE_PICK?'':'on'}" type="button" data-vp2="full" aria-pressed="${!LITE_PICK}"><b>通常</b><span>SNS・人生・お金・事業（まち・会社・大計画）まで、すべて遊べます</span></button><button class="b vp ${LITE_PICK?'on':''}" type="button" data-vp2="lite" aria-pressed="${!!LITE_PICK}"><b>軽量</b><span>SNSと人生が中心。事業はなく、研究とスキルは自動で進みます。気軽に遊びたいときに</span></button></div><p class="hint small">昔の版（v1.2.3・v2.9など）は、タイトルの「アップデート情報」→「昔の版で遊ぶ」から遊べます。</p>`}catch(e){console.error(e)}return r}}
+ d.innerHTML=`<div class="vp-t">遊ぶモード</div><div class="vp-row"><button class="b vp ${LITE_PICK?'':'on'}" type="button" data-vp2="full" aria-pressed="${!LITE_PICK}"><b>通常</b><span>SNS・人生・お金・事業（まち・会社・大計画）まで、すべて遊べます</span></button><button class="b vp ${LITE_PICK?'on':''}" type="button" data-vp2="lite" aria-pressed="${!!LITE_PICK}"><b>軽量</b><span>同じ遊びを、かんたんに。事業はシンプル、出来事は少なめ、大計画は10個。はじめての人や、気軽に遊びたいときに</span></button></div><p class="hint small">昔の版（v1.2.3・v2.9など）は、タイトルの「アップデート情報」→「昔の版で遊ぶ」から遊べます。</p>`}catch(e){console.error(e)}return r}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-vp2]');if(!b)return;LITE_PICK=b.dataset.vp2==='lite'?1:0;document.querySelectorAll('[data-vp2]').forEach(x=>{const on=x.dataset.vp2===b.dataset.vp2;x.classList.toggle('on',on);x.setAttribute('aria-pressed',String(on))})});
-{const _ng91=newGame;newGame=function(){const r=_ng91.apply(this,arguments);try{if(S){S.lite=LITE_PICK?1:0;if(S.lite){S.omk=Object.assign(S.omk||{},{res:1,skill:1})}}}catch(_){}return r}}
-// 軽量：事業のタブを出さない
-{const _rd91=render;render=function(){const r=_rd91.apply(this,arguments);try{const t=document.querySelector('.tab[data-tab="biz"]');if(t)t.hidden=isLite();if(isLite()&&typeof tab!=='undefined'&&tab==='biz')setTab('act')}catch(_){}return r}}
-{const _st91=setTab;setTab=function(t){if(isLite()&&t==='biz')t='act';return _st91.call(this,t)}}
-// 軽量：事業の出来事は起きない
-const LITE_NG=new Set(['会社','まち','大計画']);
-{const _re91=rollEvent;rollEvent=function(k){if(!isLite())return _re91.apply(this,arguments);for(let i=0;i<6;i++){const e=_re91.apply(this,arguments);if(!e||!LITE_NG.has(e.cat))return e}return null}}
-// 軽量：おまかせ・秘書・道のり・お金の使い道から、事業のものを外す
-{const BIZK=new Set(['town','shop','co','mega','office','svc','big']);const _oh91=omkHtml;omkHtml=function(){let h=_oh91.apply(this,arguments);if(!isLite())return h;for(const k of BIZK)h=h.replace(new RegExp(`<label class="omki"><input type="checkbox" data-omk="${k}"[^>]*><span><b>[^<]*</b><small>[^<]*</small></span></label>`),'');return h.replace('<p class="hint small">まち・お店・会社・大計画は18歳から動きます。</p>','')}}
-{const _stp91=secTip;secTip=function(){const r=_stp91.apply(this,arguments);try{if(isLite()&&r&&r[1]&&/^biz:/.test(r[1]))return ['今月も順調です。気になることがあれば、上の「🧭ナビ」から探せます',null]}catch(_){}return r}}
-{const _rs91=roadState;roadState=function(){const r=_rs91.apply(this,arguments);try{if(isLite()){const NG=['お店とまち','会社の社長','世界を動かす','銀河へ'];const st=r.st.filter(s=>!NG.includes(s.n));let cur=st.findIndex(s=>s.done<s.g.length);if(cur<0)cur=st.length-1;return {st,cur}}}catch(_){}return r}}
-{const _sp91=spendHtml;spendHtml=function(){if(!isLite())return _sp91.apply(this,arguments);const sv=[hostHtml,bigAllHtml];hostHtml=()=>'';bigAllHtml=()=>'';try{return _sp91.apply(this,arguments)}finally{hostHtml=sv[0];bigAllHtml=sv[1]}}}
-// 軽量：研究とスキルは毎月おまかせで進む
-{const _mh91=monthHook11;monthHook11=function(){try{if(isLite()&&S.omk){S.omk.res=1;S.omk.skill=1;for(const k of ['town','shop','co','mega','office','svc','big'])S.omk[k]=0}}catch(_){}return _mh91.apply(this,arguments)}}
-// 軽量：「人生」→「自分」に、研究とスキルの進み具合を表示
-{const _pl91=panelLife;panelLife=function(){let h=_pl91.apply(this,arguments);try{if(isLite()&&SUB.life==='stat')h+=`<div class="card"><div class="hd"><span>🔬 研究とスキル（自動）</span><b>研究 ${resDoneAll()}個</b></div><p class="hint">軽量モードでは、研究ポイントとスキルポイントは、おすすめの順に自動で使われます。</p></div>`}catch(_){}return h}}
+{const _ng91=newGame;newGame=function(){const r=_ng91.apply(this,arguments);try{if(S){S.lite=LITE_PICK?1:0;if(S.lite){S.pmode='bal'}}}catch(_){}return r}}
 // セーブスロット・人生の終わりの画面に、モードを表示
 {const _sc91=slotCard;slotCard=function(i,s,mode){let h=_sc91.apply(this,arguments);try{const o=JSON.parse(localStorage.getItem(slotKey(i))||'null');if(o&&o.lite)h=h.replace('<p class="hint small">','<p class="hint small"><span class="chip">軽量</span> ')}catch(_){}return h}}
-(function(){const g=GUIDE.find(x=>x[0]==='basic');if(g&&!/軽量/.test(g[2]))g[2]+='\n・「はじめから」で、モードを選べます。通常：すべての機能で遊べます。軽量：SNSと人生が中心で、事業（まち・会社・大計画）はありません。研究とスキルは自動で進みます。'})();
+(function(){const g=GUIDE.find(x=>x[0]==='basic');if(g&&!/軽量/.test(g[2]))g[2]+='\n・「はじめから」で、モードを選べます。通常：すべての機能で遊べます。軽量：同じ遊びを、かんたんにしたモードです（事業はシンプル、出来事は少なめ、大計画は10個、賞は5つ、研究はまとめて解放、予定は「バランスよく全部」）。'})();
+
+// ===== v3.0.20：契約・サブスクをアップグレード方式に／スキルは自動で覚える =====
+// 同じ効果のものを1本の「コース」にまとめ、段階を上げていく（とんでもなく高いものはなし：月100万円以上）
+const SUB_TR=[
+ ['発信','edit','動画編集',['editsoft','sozai','aiedit','gearrent']],
+ ['発信','reach','分析と海外向け',['analytics','subtitle']],
+ ['学び','know','知識',['magazine','paper','univon','bizsem']],
+ ['学び','lang','語学',['eikaiwa']],
+ ['学び','prog','プログラミング',['prog']],
+ ['健康','body','体の健康',['sleep','gymsub','meal','massage']],
+ ['健康','mind','心の健康',['yoga','counsel']],
+ ['健康','ins','医療保険',['insurance']],
+ ['暮らし','fun','楽しみ',['music','video','manga','gamesub']],
+ ['暮らし','home','暮らしの便利',['coffee','flower','kaden','shokuzai','carshare']],
+ ['暮らし','look','見た目',['fukurent','stylist']],
+ ['暮らし','lux','ぜいたく',['chef']],
+ ['お金','money','お金の管理',['kakeibo','invstudy','zeirishi']],
+ ['素質','t_game','ゲーム実況の素質',['t_game1','t_game2','t2_game','t3_game']],
+ ['素質','t_cook','料理の素質',['cookcl','t_cook1','t2_cook','t3_cook']],
+ ['素質','t_beauty','美容の素質',['t_beauty1','t_beauty2','t2_beauty','t3_beauty']],
+ ['素質','t_talk','雑談の素質',['t_talk1','t_talk2','t2_talk','t3_talk']],
+ ['素質','t_study','勉強・解説の素質',['t_study1','t_study2','t2_study','t3_study']],
+ ['素質','t_music','歌・音楽の素質',['bgmlib','voice','t_music1','t2_music','t3_music']],
+ ['素質','t_comedy','お笑いの素質',['t_comedy1','t_comedy2','t2_comedy','t3_comedy']],
+ ['素質','t_vlog','Vlogの素質',['photo','t_vlog1','t2_vlog','t3_vlog']],
+ ['素質','t_all','いろいろな素質',['t_all1','t_all2','t_ai','t_pro']],
+ ['ふしぎ','odd','ちょっとふしぎ',['stone','mystery','homeru','penguin']]
+].map(([c,id,n,ks])=>[c,id,n,ks.filter(k=>SUBS[k]&&SUBS[k].p<1e6)]).filter(t=>t[3].length);
+function trCur(t){let c=-1;t[3].forEach((k,i)=>{if(S.subs&&S.subs[k])c=i});return c}
+function trOk(k){const s=SUBS[k];if(!s)return false;if(s.age&&age()<s.age)return false;if(s.yr&&S.y<s.yr)return false;try{if(k.startsWith('t3_')&&(S.tal[k.slice(3)]||0)<80)return false}catch(_){}return true}
+function subPrice(k){return Math.round(SUBS[k].p*Math.max(.3,S.cty.inc))}
+let SUBTR_CAT='発信';
+subsListHtml=function(){const cats=[...new Set(SUB_TR.map(t=>t[0]))];const on=SUB_TR.filter(t=>trCur(t)>=0).length;
+ let h=`<p class="hint">同じ効果のものは1つのコースにまとめています。段階を上げるほど効果が大きくなります（毎月の請求書に入ります。いつでもやめられます）。いま契約中：${on}コース。</p><div class="seg wrapseg">${cats.map(c=>`<button type="button" class="${SUBTR_CAT===c?'on':''}" data-strc="${c}">${c}</button>`).join('')}</div><div>`;
+ for(const t of SUB_TR.filter(x=>x[0]===SUBTR_CAT)){const ci=trCur(t),cur=ci>=0?t[3][ci]:null,nx=t[3][ci+1];const nxOk=nx&&trOk(nx);
+  h+=`<div class="shop"><div><div><b>${esc(t[2])}</b> <span class="chip">${ci>=0?`${ci+1}/${t[3].length}段`:'未契約'}</span></div>`+
+   (cur?`<div class="muted small">いま：${esc(SUBS[cur].n)}（月${yen(subPrice(cur))}）・${esc(SUBS[cur].d)}</div>`:'')+
+   (nx?`<div class="muted small">${ci>=0?'次':'はじめ'}：${esc(SUBS[nx].n)}（月${yen(subPrice(nx))}）・${esc(SUBS[nx].d)}${nxOk?'':`（${SUBS[nx].age&&age()<SUBS[nx].age?SUBS[nx].age+'歳から':'まだ選べません'}）`}</div>`:'<div class="muted small">いちばん上の段です</div>')+
+   `</div><div class="row">${nx?`<button class="b sm ${ci<0?'':'pri'}" type="button" data-stup="${t[1]}" ${nxOk?'':'disabled'}>${ci<0?'契約する':'アップグレード'}</button>`:''}${cur?`<button class="b sm ghost" type="button" data-stoff="${t[1]}">やめる</button>`:''}</div></div>`}
+ return h+'</div>'};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-strc],[data-stup],[data-stoff]');if(!b||!S)return;
+ if(b.dataset.strc){SUBTR_CAT=b.dataset.strc;renderPanel();return}
+ const t=SUB_TR.find(x=>x[1]===(b.dataset.stup||b.dataset.stoff));if(!t)return;const ci=trCur(t);
+ for(const k of t[3])if(S.subs[k])S.subs[k]=0;
+ if(b.dataset.stup){const nx=t[3][ci+1];if(nx&&trOk(nx)){S.subs[nx]=1;log(`${t[2]}：「${SUBS[nx].n}」を契約した`,'life')}}
+ else log(`${t[2]}の契約をやめた`,'life');save();renderPanel()});
+// 古いセーブ：同じコースで2つ以上契約していたら、いちばん上の段だけ残す／とんでもなく高いものは解約
+{const _mh92=monthHook11;monthHook11=function(){try{if(S&&S.subs){for(const t of SUB_TR){const ci=trCur(t);t[3].forEach((k,i)=>{if(i!==ci&&S.subs[k])S.subs[k]=0})}for(const k in S.subs)if(S.subs[k]&&SUBS[k]&&SUBS[k].p>=1e6){S.subs[k]=0;log(`「${SUBS[k].n}」の契約は終わった`,'life')}}}catch(_){}return _mh92.apply(this,arguments)}}
+// おまかせ（お金）の契約も、コース単位で
+{const _ob92=omkBuyAll;omkBuyAll=function(){const r=_ob92.apply(this,arguments);try{if(!S||!omk('money')||age()<18||S.m%3)return r;const on=SUB_TR.filter(t=>trCur(t)>=0).length;
+ const L=SUB_TR.filter(t=>!['ふしぎ'].includes(t[0])).map(t=>[t,trCur(t)]).filter(([t,ci])=>t[3][ci+1]&&trOk(t[3][ci+1])).sort((a,b)=>subPrice(a[0][3][a[1]+1])-subPrice(b[0][3][b[1]+1]));
+ for(const [t,ci] of L){const nx=t[3][ci+1];if(ci<0&&on>=8)continue;if(S.money>=subPrice(nx)*240){for(const k of t[3])S.subs[k]=0;S.subs[nx]=1;log(`おまかせ：${t[2]}「${SUBS[nx].n}」`,'life');break}}}catch(e){console.error(e)}return r}}
+
+// ----- スキル：通常も軽量も、自動で覚える -----
+{const _mh92b=monthHook11;monthHook11=function(){try{if(S){S.omk=S.omk||{};S.omk.skill=1}}catch(_){}return _mh92b.apply(this,arguments)}}
+{const _rp92=researchPanel;researchPanel=function(){if(RESCAT==='skill')RESCAT='rec';let h=_rp92.apply(this,arguments);return h.replace(/<button type="button" class="[^"]*" data-rescat="skill">[\s\S]*?<\/button>/,'')}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-goto="life:skill"]');if(b){b.dataset.goto='life:stat'}},true);
+{const _pl92=panelLife;panelLife=function(){let h=_pl92.apply(this,arguments);try{if(SUB.life==='stat'){const n=Object.keys(S.skills||S.sk2||{}).length;h=h.replace(/<button class="b sm" type="button" data-goto="life:skill">[^<]*<\/button>/,'');h+=`<div class="card"><div class="hd"><span>🌱 この人生のスキル（自動）</span></div><p class="hint">スキルポイントがたまると、自動で覚えます。</p>${typeof sktHtml==='function'?`<details class="pmore"><summary>覚えたスキルを見る</summary>${sktHtml().replace(/data-skt=/g,'disabled data-sktx=').replace(/<p class="hint">スキルポイント[\s\S]*?<\/p>/,'')}</details>`:''}</div>`}}catch(e){console.error(e)}return h}}
+(function(){for(const x of GUIDE)x[2]=x[2].replace('・スキル：この人生だけのスキルです。「事業」→「研究」の「🌱 スキル」で覚えます。','・スキル：この人生だけのスキルです。スキルポイントがたまると自動で覚えます（「人生」→「自分」で見られます）。').replace('この人生のスキルも「🌱 スキル」でここから覚えます。','')})();
+
+// ===== v3.0.20：軽量モードの中身（同じ遊びを、かんたんに） =====
+// 予定の決め方は「バランスよく全部」だけ
+{const _pm93=pmode;pmode=function(){if(isLite()){S.pmode='bal';return 'bal'}return _pm93.apply(this,arguments)}}
+{const _pp93=panelPlan;panelPlan=function(){let h=_pp93.apply(this,arguments);if(isLite())h=h.replace(/<div class="pmsw">[\s\S]*?<p class="hint">予定の決め方：[^<]*<\/p><\/div>/,'');return h}}
+// 出来事は少なめ（よくある出来事の半分くらい）
+{const _re93=rollEvent;rollEvent=function(k){const e=_re93.apply(this,arguments);if(isLite()&&e&&e.w>0&&e.w<1&&chance(.5))return null;return e}}
+// 事業はかんたんに：店長・社員・作るもの・事務所のスタッフは自動
+{const _mh93=monthHook11;monthHook11=function(){try{if(isLite()&&age()>=18){S.omk=S.omk||{};S.omk.shop=1;for(const c of (S.cos||[])){try{coInit(c);c.emp.auto=1;if(c.pmode==='manual')c.pmode='auto'}catch(_){}}
+ const o=S.office;if(o&&o.lv){const ks=Object.keys(STAFF);while(staffTotal()<OFFICE[o.lv].staff){const k=ks.sort((x,y)=>stN(x)-stN(y))[0];if(S.money<STAFF[k].sal*S.cty.inc*24)break;o.staff[k]++}}}}catch(e){console.error(e)}return _mh93.apply(this,arguments)}}
+const LITE_TIP={town:'空き地を選んで、建物やお店を建てましょう。建てたお店は店長が自動で切り盛りします。',shop:'お店は店長が自動で切り盛りします。見ておくだけでOKです。',co:'会社を作ったら、「大きくする」だけでOK。社員と作るものは自動で決まります。',office:'事務所を作って、タレントを探しましょう。スタッフは自動で雇います。',svc:'サービスを始めると、毎月利用者がふえていきます。',aw:'条件を満たすと、自動でノミネートされます。',mega:'お金がたまったら、大計画を始めましょう（全部で10個）。',res:'研究ポイントがたまったら、分野ごとに「まとめて研究する」を押しましょう。'};
+{const _pb93=panelBiz;panelBiz=function(){let h=_pb93.apply(this,arguments);try{if(!isLite())return h;const t=LITE_TIP[SUB.biz];if(!t)return h;const card=`<div class="card litetip"><b>かんたんモード</b><p class="hint">${t}</p></div>`;
+ const m=h.match(/<div class="subtabs sub2"[\s\S]*?<\/div>|<div class="subtabs sgrp"[\s\S]*?<\/div>/g);if(m){const last=m[m.length-1];const i=h.indexOf(last)+last.length;return h.slice(0,i)+card+h.slice(i)}return card+h}catch(_){return h}}}
+// 会社の画面：「概要」と「作るもの」だけ
+{const _sc93=showCo;showCo=function(id,tab){if(isLite()&&(tab==='emp'||tab==='off'||CM_TAB==='emp'||CM_TAB==='off'))CM_TAB='sum';const r=_sc93.call(this,id,isLite()&&(tab==='emp'||tab==='off')?'sum':tab);try{if(isLite())document.querySelectorAll('#mcard [data-cmtab="emp"],#mcard [data-cmtab="off"]').forEach(b=>b.remove())}catch(_){}return r}}
+// 大計画は10個
+const LITE_MEGA=['sattnet','debris','station','spacehotel','moonbase','mooncity','mars','elevator','probe','spacelive'];
+{const _ms93=megaStart;megaStart=function(k){if(isLite()&&!LITE_MEGA.includes(k))return;return _ms93.apply(this,arguments)}}
+{const _mh93b=megaHtml;megaHtml=function(){let h=_mh93b.apply(this,arguments);if(!isLite())return h;try{const names=new Set(LITE_MEGA.map(k=>MEGA[k]&&MEGA[k].n));const d=document.createElement('div');d.innerHTML=h;
+ d.querySelectorAll('.shop').forEach(r=>{const t=(r.querySelector('div>div')||r).textContent;let ok=false;for(const n of names)if(n&&t.indexOf(n)===0){ok=true;break}if(!ok)r.remove()});
+ d.querySelectorAll('details').forEach(x=>{if(!x.querySelector('.shop'))x.remove()});const dn=LITE_MEGA.filter(k=>megaDone(k)).length;return `<p class="hint">軽量モードの大計画：${dn} / 10 完成</p>`+d.innerHTML}catch(e){console.error(e);return h}}}
+// 賞は5つ
+const LITE_AW=['creator','rookie','ceo','townaw','social'];
+{const _aw93=awMonth;awMonth=function(){if(!isLite())return _aw93.apply(this,arguments);const keep=AWARDS.slice();const L=AWARDS.filter(a=>LITE_AW.includes(a.k));AWARDS.length=0;AWARDS.push(...L);try{return _aw93.apply(this,arguments)}finally{AWARDS.length=0;AWARDS.push(...keep)}}}
+{const _ah93=awHtml;awHtml=function(){if(!isLite())return _ah93.apply(this,arguments);const keep=AWARDS.slice();const L=AWARDS.filter(a=>LITE_AW.includes(a.k));AWARDS.length=0;AWARDS.push(...L);try{return _ah93.apply(this,arguments)}finally{AWARDS.length=0;AWARDS.push(...keep)}}}
+// 研究は、分野ごとに「まとめて研究する」
+function liteResList(cat){return RES.filter(r=>r.cat===cat&&!has(r.id)&&(!r.req||has(r.req))&&!(r.year&&S.y<r.year))}
+function liteResPack(cat){const L=liteResList(cat).sort((a,b)=>a.c-b.c).slice(0,6);const T=RTRACK.filter(t=>t[1]===cat&&rtOk(t[0])&&rt(t[0])<t[5].length);const c=Math.round((L.reduce((a,r)=>a+r.c,0)+T.reduce((a,t)=>a+rtCost(t[0]),0))*.8);return {L,T,c}}
+{const _rp93=researchPanel;researchPanel=function(){if(!isLite())return _rp93.apply(this,arguments);applyResCost();const done=resDoneAll(),tot=resTotal();
+ let h=`<div class="reshd"><div><b>研究ポイント ${num(Math.floor(S.rp))}</b><span class="muted small">（月に約${(S.rpRate||0).toFixed(1)}pt）</span></div><div class="muted small">完了 ${done} / ${tot}</div></div><div class="tbar"><i style="width:${(done/tot*100).toFixed(1)}%"></i></div><p class="hint">分野ごとに、いくつかの研究をまとめて進めます。</p>`;
+ for(const [cat,n] of Object.entries(RT_CATN)){const p=liteResPack(cat);const cnt=p.L.length+p.T.length;h+=`<div class="shop"><div><div><b>${esc(n)}</b> <span class="muted small">${cnt?`次のまとめ：${cnt}つ・${num(p.c)}pt`:'いまできる研究はありません'}</span></div>${cnt?`<div class="muted small">${esc(p.L.map(r=>r.n).concat(p.T.map(t=>t[2]+'＋1段')).slice(0,4).join('・'))}${cnt>4?' など':''}</div>`:''}</div>${cnt?`<button class="b sm ${S.rp>=p.c?'pri':''}" type="button" data-lres="${cat}" ${S.rp<p.c?'disabled':''}>まとめて研究する</button>`:''}</div>`}
+ return h}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-lres]');if(!b||!S)return;const p=liteResPack(b.dataset.lres);if(S.rp<p.c)return;S.rp-=p.c;for(const r of p.L)S.res[r.id]=1;for(const t of p.T){if(!S.rtk)S.rtk={};S.rtk[t[0]]=rt(t[0])+1}log(`研究を${p.L.length+p.T.length}つ、まとめて進めた`,'good');try{applyResCost()}catch(_){}save();renderPanel()});
+// 軽量では、研究のおまかせは使わない（自分で「まとめて研究」）
+{const _om93=omkHtml;omkHtml=function(){let h=_om93.apply(this,arguments);if(isLite())h=h.replace(/<label class="omki"><input type="checkbox" data-omk="res"[^>]*><span><b>[^<]*<\/b><small>[^<]*<\/small><\/span><\/label>/,'');return h}}
+// 昔の版で遊ぶ：v3.0 を追加
+try{if(!OLD_VERS.some(v=>v[1]==='versions/v3.0/'))OLD_VERS.unshift(['v3.0','versions/v3.0/','機能を整理した最初の v3.0'])}catch(_){}
 </script>

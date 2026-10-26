@@ -485,6 +485,13 @@ body.mode-dark.th-pixel{--bg:#0a0b1c;--bg2:#12142e;--panel:#181a42;--panel2:#202
 .accf{list-style:none;margin:.3em 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;font-size:.88em}
 .accf li{opacity:.7}.accf li.ok{opacity:1;font-weight:600}.accf small{display:block;font-weight:400;opacity:.8;font-size:.85em}
 @media (max-width:420px){.accf{grid-template-columns:1fr}}
+.plcard{padding:10px}.plbtn{width:100%;font-weight:700}
+.plist{display:flex;flex-direction:column;gap:6px;margin:6px 0}
+.plist .prow{display:flex!important;flex-direction:row!important;gap:8px;align-items:center;padding:6px;border-radius:10px;background:rgba(127,127,127,.08)}
+.prow.buzz{background:rgba(255,120,80,.14);outline:1px solid rgba(255,120,80,.35)}
+.plist .prow canvas{width:96px!important;height:54px!important;max-width:96px;border-radius:6px;flex:none}
+.plist .pinfo{flex:1;text-align:left;display:flex;flex-direction:column;min-width:0;line-height:1.35}.pinfo b{font-size:.92em;overflow-wrap:anywhere}
+.pnum{font-size:.85em;font-weight:600}
 </style>
 <script>
 // ===== 設定・基本ヘルパー =====
@@ -3058,6 +3065,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v3.0.6','2026年10月26日',['「発信」タブで、これまでの投稿をもっとたくさん見られるようになりました。ボタンで開いたり閉じたりできます。','バズった投稿の再生数や、ふえたフォロワーも残るようになりました。']],
   ['v3.0.5','2026年10月26日',['アップデート情報の書き方を見直しました。']],
   ['v3.0.4','2026年10月26日',['フォロワーの伸び方を見直しました。工夫しだいで、もっと伸びるようになります。','「発信」タブに、アカウントのようすがわかる表示を追加しました。','選んだものの効果が、わかりやすく表示されるようになりました。']],
   ['v3.0.3','2026年10月26日',['サブチャンネルが伸びやすくなりました。','フォロワーの伸び方に、変化が出るようになりました。']],
@@ -10092,4 +10100,32 @@ function genreFx(g){const G=GENRES[g];if(!G)return '';const w=Object.entries(G.w
  h=h.replace(/(<select data-set="lesson" id="lessonSel">)([\s\S]*?)(<\/select>)/,(m,a,b,c)=>a+b.replace(/<option value="([a-z]+)"([^>]*)>([^<]+)<\/option>/g,(mm,k,at,n)=>{const L=LESSONS[k];if(!L)return mm;const fx=[...(L.tal||[]).map(t=>TN[t]||t),L.know?'知識':'',L.health?'健康':''].filter(Boolean).join('・');return `<option value="${k}"${at}>${n}${fx?`／${fx}が伸びる`:''}</option>`})+c)}catch(e){console.error(e)}return h}}
 // 古い案内の文を、いまの場所に
 {const _pb78=popBig;popBig=function(a,b,c){const f=s=>typeof s==='string'?s.replace(/「人生」→「スキル」の「引き継ぎスキル」/g,'「人生」→「自分」の「引き継ぎスキル」').replace(/「人生」→「スキル」/g,'「事業」→「研究」の「🌱 スキル」'):s;return _pb78.call(this,f(a),f(b),f(c))}}
+
+// ===== v3.0.6：最近の投稿をもっと見られるように（たたんで表示・ベスト10・バズの記録） =====
+// 投稿ごとに、再生数・ふえたフォロワー・広告収入も記録する
+let PL_OPEN=0,PL_TAB='new';
+{const _dp79=doPost;doPost=function(k){const key=S.main,f0=S.f[key]||0,m0=(S.mo.inc&&S.mo.inc.sns)||0,t0=(S.mo.inc&&S.mo.inc.tip)||0;const r=_dp79.apply(this,arguments);
+ try{if(!SUBPOST){const last=(S.posts||[])[S.posts.length-1];if(last&&last.am===S.am&&!last._rec){last._rec=1;last.nf=Math.round((S.f[key]||0)-f0);last.inc=Math.round(((S.mo.inc.sns||0)-m0)+((S.mo.inc.tip||0)-t0));last.sns=key;last.y=S.y;last.mo=S.m;last.age=age();
+  if(!S.plog)S.plog=[];S.plog.push(Object.assign({},last));if(S.plog.length>40)S.plog.shift();
+  if(!S.pbest)S.pbest=[];S.pbest.push(Object.assign({},last));S.pbest.sort((a,b)=>b.v-a.v);S.pbest.length=Math.min(10,S.pbest.length)}}}catch(e){console.error(e)}return r}}
+function plRow(p,i,list){return `<div class="prow${p.b?' buzz':''}"><canvas width="96" height="54" data-pt="${list}:${i}"></canvas><div class="pinfo"><b>${esc(p.t)}</b><span class="muted small">${p.y?`${p.y}年${p.mo}月・${p.age}歳`:''}${p.sns&&SNS[p.sns]?`・${esc(SNS[p.sns].n)}`:''}${p.b?' <span class="chip hot">🔥 バズ</span>':''}</span>
+ <span class="pnum">▶ ${num(p.v)}回再生${p.nf!=null?`　👤 ${p.nf>=0?'+':''}${num(p.nf)}人`:''}${p.inc?`　💰 ${yen(p.inc)}`:''}</span></div></div>`}
+function plHtml(){const lg=(S.plog||[]).slice().reverse(),bs=(S.pbest||[]);const n=lg.length;if(!n&&!(S.posts||[]).length)return '';
+ const top=bs[0];
+ let body='';if(PL_OPEN){const L=PL_TAB==='best'?bs:lg;
+  body=`<div class="subtabs"><button class="stab" type="button" data-pltab="new" aria-pressed="${PL_TAB==='new'}">🕒 最近（${n}）</button><button class="stab" type="button" data-pltab="best" aria-pressed="${PL_TAB==='best'}">🏆 再生数ベスト10</button></div>
+  ${L.length?`<div class="plist">${L.map((p,i)=>plRow(p,i,PL_TAB)).join('')}</div>`:'<p class="hint">まだ記録がありません。投稿すると、ここに残ります。</p>'}
+  <div class="row"><button class="b sm" type="button" data-plopen="0">▲ 投稿の一覧をとじる</button></div>`}
+ return `<div class="card plcard"><button class="b plbtn ${PL_OPEN?'on':''}" type="button" data-plopen="${PL_OPEN?0:1}">${PL_OPEN?'▲ 投稿の一覧をとじる':`📺 投稿の一覧を見る${n?`（${n}件）`:''}`}</button>${!PL_OPEN&&top?`<p class="hint small">いちばん再生された投稿：「${esc(top.t)}」${num(top.v)}回再生${top.b?'（バズ）':''}</p>`:''}${body}</div>`}
+{const _ph79=postsHtml;postsHtml=function(){const h=_ph79.apply(this,arguments);try{return h+plHtml()}catch(e){console.error(e);return h}}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-plopen],[data-pltab]');if(!b||!S)return;
+ if(b.dataset.pltab){PL_TAB=b.dataset.pltab;renderPanel();return}
+ PL_OPEN=+b.dataset.plopen;const st=window.scrollY;renderPanel();if(!PL_OPEN){const c=document.querySelector('.plcard');if(c)c.scrollIntoView({block:'nearest'})}});
+// サムネイル：一覧の分も描く（元の描き方を、1枚ずつ使う）
+{const _pt79=paintThumbs;paintThumbs=function(){const r=_pt79.apply(this,arguments);try{const mine=[...document.querySelectorAll('canvas[data-pt]')];if(!mine.length)return r;
+ const orig=[...document.querySelectorAll('canvas[data-thumb]')];orig.forEach(c=>{c.dataset.thumbX=c.dataset.thumb;delete c.dataset.thumb});const sv=S.posts;
+ try{for(const cv of mine){const [l,i]=cv.dataset.pt.split(':');const L=l==='best'?(S.pbest||[]):(S.plog||[]).slice().reverse();const p=L[+i];if(!p)continue;S.posts=[p];cv.dataset.thumb='0';try{_pt79()}catch(_){}delete cv.dataset.thumb}}
+ finally{S.posts=sv;orig.forEach(c=>{c.dataset.thumb=c.dataset.thumbX;delete c.dataset.thumbX})}}catch(e){console.error(e)}return r}}
+// バズったときのお知らせに、投稿のタイトルと再生数を
+{const _pr79=postRecord;postRecord=function(buzzed,views){const r=_pr79.apply(this,arguments);try{if(buzzed&&!SUBPOST){const p=S.posts[S.posts.length-1];if(p&&p.am===S.am){S.lastBuzz={t:p.t,v:p.v};log(`🔥 バズった投稿「${p.t}」：${num(p.v)}回再生`,'good')}}}catch(_){}return r}}
 </script>

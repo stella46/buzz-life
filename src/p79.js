@@ -24,5 +24,3 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-plopen],[d
  const orig=[...document.querySelectorAll('canvas[data-thumb]')];orig.forEach(c=>{c.dataset.thumbX=c.dataset.thumb;delete c.dataset.thumb});const sv=S.posts;
  try{for(const cv of mine){const [l,i]=cv.dataset.pt.split(':');const L=l==='best'?(S.pbest||[]):(S.plog||[]).slice().reverse();const p=L[+i];if(!p)continue;S.posts=[p];cv.dataset.thumb='0';try{_pt79()}catch(_){}delete cv.dataset.thumb}}
  finally{S.posts=sv;orig.forEach(c=>{c.dataset.thumb=c.dataset.thumbX;delete c.dataset.thumbX})}}catch(e){console.error(e)}return r}}
-// バズったときのお知らせに、投稿のタイトルと再生数を
-{const _pr79=postRecord;postRecord=function(buzzed,views){const r=_pr79.apply(this,arguments);try{if(buzzed&&!SUBPOST){const p=S.posts[S.posts.length-1];if(p&&p.am===S.am){S.lastBuzz={t:p.t,v:p.v};log(`🔥 バズった投稿「${p.t}」：${num(p.v)}回再生`,'good')}}}catch(_){}return r}}

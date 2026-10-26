@@ -3051,6 +3051,19 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v3.0','2026年10月26日',['機能を整理して、遊びやすくしました。前の版（v2.9）も「昔の版で遊ぶ」で遊べます。',
+   '画面の上のボタンを「🧭ナビ」1つにしました。',
+   'おまかせは「🤖 おまかせ設定」1か所で決められます。',
+   '予定の決め方に「バランスよく全部」を追加しました。',
+   '投稿のスタイルを4つにしました。',
+   '高額なアクションとイベントの主催は「お金」→「使い道」にまとめました。',
+   '研究とスキルは「事業」→「研究」にまとめました。',
+   'アルバムとランキングは「人生」→「記録」にまとめました。',
+   '時をさかのぼる・相関図と弟子・ライバルとの勝負は、なくしました。',
+   'フォロワーがふえやすくなりました。',
+   '大計画が、がんばれば1回の人生で全部できるくらいになりました。',
+   '宇宙にも進出できるようになりました。',
+   '新しいまちの開発費を、現実に近い金額にしました。']],
   ['v2.9.7','2026年10月25日',['すべての画面・ボタン・遊び方（SNS・会社・まちづくり・おまかせ・昔の版など）をひととおり確認しました。']],
   ['v2.9.6','2026年10月25日',['【引き継ぎスキル】解放条件を、1回の人生の中で届くものに変えました（例：90歳まで生きる → 50歳まで生きる、フォロワー100万人 → 10万人、3代続ける → 子どもが生まれる、など）。前の条件を満たしていた場合も、そのまま解放されます。','【バランス調整】お店の店長の給料を、お店のもうけに合わせて下げました。小さなお店が赤字になり、借金がふくらむことがありました。','同じまちにお店が9軒以上あると、お客さんを取り合うようにしました。お店をふやすほどもうかり続けることはなくなります。','出来事での大きな出費（宇宙旅行など）は、持っているお金に合わせた金額になるようにしました。何千万円もの借金をいきなり背負うことはなくなります。']],
   ['v2.9.5','2026年10月25日',['【引き継ぎポイント】実績のポイントを、これまでに解除した実績の分も受け取れるようにしました。実績は1つにつき1ポイントで、全部の人生を合わせて1回ずつもらえます。','【プレイ時間の記録】画面をコンパクトにしました。版ごとの時間は「v2.9」のようにまとめて表示し、細かい版と「0にする」はたためるようにしました。','【昔の版で遊ぶ】v2.1〜v2.8 も遊べるようにしました。','v2.1 から抜けていた、SNSのメインがずれるとフォロワーがふえない問題の修正と、投稿していない・フォロワーがいないのにファン向けの出来事が起きないようにする調整を、元に戻しました。','子どものころにお金が足りないとき、お金がマイナスのまま進んでしまう場合があった問題を直しました。']],
@@ -9575,4 +9588,284 @@ for(const x of LEG){const c=LEG_COND[x.id];if(!c)continue;const ok0=x.ok;x.cond=
 {const _ssm63=shopSegMul;shopSegMul=function(i){let m=_ssm63.apply(this,arguments);try{const n=S.town.tiles.filter(t=>SHOP[t.t]).length;if(n>8)m*=Math.pow(8/n,.6)}catch(_){}return m}}
 
 // ===== v2.9.7：（子どもの急な死亡を止める調整は、人生と同じく起こりうるものとして取りやめ） =====
+
+// ===== v3.0（1）：やめる・奥にしまう =====
+
+// ----- やめる：時をさかのぼる -----
+snapPut=function(){};try{snapClear()}catch(_){}
+{const _die65=die;die=function(){const r=_die65.apply(this,arguments);try{const m=$('#mcard');if(m){m.querySelectorAll('[data-dch="back"],.dsub').forEach(x=>x.remove());m.querySelectorAll('.dchoice .hint').forEach(x=>{if(/さかのぼ/.test(x.textContent))x.remove()})}}catch(_){}return r}}
+
+// ----- やめる：相関図・弟子 -----
+{const _st65=subTabs;subTabs=function(tabk,items){if(tabk==='life'){items=items.filter(x=>x[0]!=='map');if(SUB.life==='map')SUB.life='ppl'}return _st65.call(this,tabk,items)}}
+{const _pl65=panelLife;panelLife=function(){if(SUB.life==='map')SUB.life='ppl';return _pl65.apply(this,arguments)}}
+
+// ----- やめる：ライバルとの勝負（ライバルは出来事・コラボ・ランキングで出る） -----
+// ----- 奥にしまう：シリーズ・マンネリ（自動で計算するだけ）／やめる：流行の噂 -----
+snsExtra=function(){if(!S.snsOpen)return '';const core=S.fanCore,anti=S.fanAnti,light=Math.max(0,1-core-anti),F=totalF();
+ return `<h2>ファン</h2><div class="fanbar"><i style="width:${core*100}%" class="c"></i><i style="width:${light*100}%" class="l"></i><i style="width:${anti*100}%" class="a"></i></div><div class="kv"><span>ガチ勢</span><span>${num(F*core)}人（${Math.round(core*100)}%）</span><span>ライト層</span><span>${num(F*light)}人</span><span>アンチ</span><span>${num(F*anti)}人（${Math.round(anti*100)}%）</span></div><p class="hint">ガチ勢は同じジャンルを続けたりライブをしたりすると増え、ファンクラブの収入になります。アンチは攻めた投稿で増え、炎上しやすくなります。</p>`};
+// 噂は出さない（流行だけ）
+{const _mh65=monthHook11;monthHook11=function(){_mh65.apply(this,arguments);try{if(S&&S.rumor)S.rumor=null;
+ // シリーズは自動：飽きられ始めたら、自然に新しいシリーズへ
+ if(S&&S.series&&S.series.fat>12){S.series={g:S.genre,n:0,fat:0}}}catch(_){}}}
+{const _ps65=panelSns;panelSns=function(){return _ps65.apply(this,arguments).replace('上の「コラボ」から申し込める。勝負は下の「ライバルとの勝負」から。','コラボは上の「コラボ」から申し込めます。')}}
+
+// ----- 奥にしまう：推定プレイ時間（画面の上には出さない。「時間の進み方」の中だけ） -----
+etaText=function(){return ''};
+
+// ----- 奥にしまう：チャンネル名・SNSの名前・SNSの買収は「くわしく」の中へ -----
+{const _cr65=chRenameHtml;chRenameHtml=function(){const h=_cr65.apply(this,arguments);if(!h)return h;return `<details class="pmore"><summary>くわしく：チャンネル名を変える</summary>${h}</details>`}}
+{const _sb65=snsBuyHtml;const _co65=coHtml;coHtml=function(){const h=_co65.apply(this,arguments);try{const s=_sb65();const i=h.indexOf(s);if(i>=0)return h.slice(0,i)+`<details class="pmore"><summary>くわしく：SNSの運営会社（買収・名前の変更）</summary>${s.replace('<h3>SNSの運営会社</h3>','')}</details>`+h.slice(i+s.length)}catch(_){}return h}}
+
+// 遊び方の説明から、なくなった機能を外す
+(function(){for(const g of GUIDE){g[2]=g[2].replace(/・相関図と弟子/g,"").replace(/、相関図/g,"").replace(/／時をさかのぼって続ける/g,'').replace(/\n?・時をさかのぼる：[^\n]*/g,'').replace(/\n?・[^\n]*ライバルとの勝負[^\n]*/g,'').replace(/\n?・[^\n]*流行の噂[^\n]*/g,'').replace(/\n?・[^\n]*相関図[^\n]*/g,'')}})();
+try{for(let i=FIND.length-1;i>=0;i--){if(/さかのぼ|相関図|弟子|ライバルとの勝負|噂/.test(FIND[i][0]+FIND[i][3]))FIND.splice(i,1)}}catch(_){}
+
+// ===== v3.0（2）：🧭ナビ（道のり・さがす・移動を1つに） =====
+const _road66=showRoad,_find66=showFind,_sc66=showShortcut;let NAV_TAB='road';
+function navGrab(fn,arg){const om=openModal;let got='';openModal=function(h){got=h};try{fn(arg)}finally{openModal=om}
+ return got.replace(/<div class="mcat[^"]*">[^<]*<\/div>/,'').replace(/<h2>[^<]*<\/h2>/,'').replace(/<button class="b pri" type="button" data-act="close">閉じる<\/button>/g,'')}
+function showNav(t){t=t||NAV_TAB;NAV_TAB=t;const m=$('#mcard');
+ const body=t==='road'?navGrab(_road66):t==='find'?navGrab(_find66,''):navGrab(_sc66);
+ const tabs=[['road','🧭 道のり'],['find','🔎 さがす'],['go','⚡ 移動']].map(([k,n])=>`<button class="stab" type="button" data-nav="${k}" aria-pressed="${k===t}">${n}</button>`).join('');
+ if(!$('#modal').hidden&&m.dataset.kind==='nav'){m.querySelectorAll('[data-nav]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.nav===t)));const f=m.querySelector('.fbody');f.innerHTML=body;f.scrollTop=0}
+ else{openModal(`<span hidden data-act="close"></span><div class="mcat life">ナビ</div><h2>どこへ行く？ 何をする？</h2><div class="subtabs">${tabs}</div><div class="fbody">${body}</div>`);m.classList.add('fixedsize');m.dataset.kind='nav'}
+ if(t==='find')setTimeout(()=>{const i=$('#findQ');if(i)i.focus()},50)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-nav]');if(!b)return;showNav(b.dataset.nav)});
+showRoad=function(){showNav('road')};showShortcut=function(){showNav('go')};
+showFind=function(q){if($('#findList'))return _find66(q);showNav('find');if(q){const i=$('#findQ');if(i){i.value=q;_find66(q)}}};
+// 画面の上のボタンは「🧭ナビ」1つに
+(function(){const sc=$('#btnSc'),fd=$('#btnFind'),rd=$('#btnRoad');const c=$('#ctrl');if(!c)return;
+ const b=document.createElement('button');b.className='b sm';b.type='button';b.id='btnNav';b.textContent='🧭ナビ';b.title='道のり・さがす・移動';
+ b.addEventListener('click',e=>{e.stopPropagation();if(S)showNav()});(sc||fd||rd)?(sc||fd||rd).before(b):c.appendChild(b);[sc,fd,rd].forEach(x=>x&&x.remove())})();
+// 遊び方・さがすの説明
+(function(){const g=GUIDE.find(x=>x[0]==='auto');if(g)g[2]=g[2].replace(/・🧭道のり：[^\n]*\n・🔎さがす：[^\n]*\n・⚡移動：[^\n]*/,'・🧭ナビ：画面の上のボタン。「道のり」（遊びの順番と次の目標）、「さがす」（機能や用語の検索）、「移動」（どの画面へもすぐ行ける）の3つがあります。');
+ for(const x of GUIDE)x[2]=x[2].replace(/画面の上の「🧭道のり」/g,'画面の上の「🧭ナビ」の「道のり」').replace(/「🧭道のり」と同じです/g,'「🧭ナビ」の「道のり」と同じです').replace('機能の場所がわからないときは「🔎さがす」、どの画面へもすぐ行きたいときは「⚡移動」が便利です。','機能の場所がわからないときや、どの画面へもすぐ行きたいときも「🧭ナビ」から。')})();
+try{for(const f of FIND){f[1]=String(f[1]).replace('画面の上の「🧭道のり」','画面の上の「🧭ナビ」')}}catch(_){}
+{const _stp66=secTip;secTip=function(){const r=_stp66.apply(this,arguments);try{if(r&&r[0])r[0]=r[0].replace('上の「🔎さがす」から','上の「🧭ナビ」の「さがす」から')}catch(_){}return r}}
+
+// ===== v3.0（3）：🤖おまかせ設定（行動・分野・出来事のおまかせを1つに） =====
+const _evsk66=evSkipHtml;
+function evSkipInner(){return _evsk66().replace(/^<details[^>]*><summary>[\s\S]*?<\/summary>/,'').replace(/<\/details>$/,'')}
+evSkipHtml=function(){return ''};
+omkHtml=function(){const a=age();const n=OMK.filter(x=>omk(x[0])).length,ne=Object.values(S.evSkip||{}).filter(Boolean).length;const on=(S.auto?1:0)+n+(ne?1:0);
+ return `<details class="omk"><summary>🤖 おまかせ設定 <span class="chip">${on?on+'つオン':'オフ'}</span></summary><p class="hint">まかせたものは、さわらなくても自動で進みます。いつでも戻せます。</p>
+ <h4>毎月の行動</h4><div class="row"><button class="b sm ${S.auto?'on':''}" type="button" data-act="auto">行動のおまかせ：${S.auto?'ON':'OFF'}</button><span class="hint small">予定の枠を毎月自動で決めます</span></div>
+ ${a>=10?`<h4>分野ごと</h4><div class="omkl">${OMK.map(([k,n2,d])=>`<label class="omki"><input type="checkbox" data-omk="${k}" ${omk(k)?'checked':''}><span><b>${n2}</b><small>${d}</small></span></label>`).join('')}</div><div class="row"><button class="b sm" type="button" data-omkall="1">すべてまかせる</button><button class="b sm ghost" type="button" data-omkall="0">すべて自分でやる</button></div>${a<18?'<p class="hint small">まち・お店・会社・大計画は18歳から動きます。</p>':''}`:''}
+ <h4>出来事（種類ごと）</h4>${evSkipInner()}</details>`};
+{const _pp66=panelPlan;panelPlan=function(){let h=_pp66.apply(this,arguments);try{const a=age();if(a>=6&&a<10&&!uiHidden('omk')&&h.indexOf('🤖 おまかせ設定')<0){const o=omkHtml();const j=h.indexOf('<div class="grp"><h3>時間の進み方');h=j<0?h+o:h.slice(0,j)+o+h.slice(j)}
+ h=h.replace('<span class="hint">ONにすると行動を自動で決める</span>','<span class="hint">ONにすると行動を自動で決めます（ほかのおまかせは下の「🤖 おまかせ設定」）</span>')}catch(e){console.error(e)}return h}}
+// おまかせ設定を開いたままにする
+{let omkOpen=false;document.addEventListener('toggle',e=>{if(e.target&&e.target.matches&&e.target.matches('details.omk'))omkOpen=e.target.open},true);
+ const _rp66=renderPanel;renderPanel=function(){const r=_rp66.apply(this,arguments);try{if(omkOpen){const d=document.querySelector('#panel details.omk');if(d)d.open=true}}catch(_){}return r}}
+(function(){for(const x of GUIDE)x[2]=x[2].replace(/「?🤖まるごとおまかせ」?/g,'「🤖 おまかせ設定」').replace(/「?🤖 まるごとおまかせ」?/g,'「🤖 おまかせ設定」').replace(/出来事のおまかせ（種類ごと）/g,'「🤖 おまかせ設定」の「出来事」')})();
+{const _stp66b=secTip;secTip=function(){const r=_stp66b.apply(this,arguments);try{if(r&&r[0])r[0]=r[0].replace(/「🤖まるごとおまかせ」/g,'「🤖 おまかせ設定」')}catch(_){}return r}}
+try{for(const f of FIND){f[0]=String(f[0]).replace('まるごとおまかせ','おまかせ設定');f[1]=String(f[1]).replace(/時間の進み方/,'おまかせ設定')}}catch(_){}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-evsk1]');if(b)b.textContent=b.textContent.replace('予定タブの「時間の進み方」で戻せます','予定タブの「🤖 おまかせ設定」で戻せます')});
+(function(){for(const x of GUIDE){x[2]=x[2].replace('「時間の進み方」では、1ターンの長さ、「🤖 おまかせ設定」の「出来事」（種類ごとに止めない）、推定プレイ時間を見られます。','「🤖 おまかせ設定」では、毎月の行動・分野ごと（研究・スキル・まち・お店・会社・大計画・つながり）・出来事の種類ごとに、まとめておまかせにできます。\n・「時間の進み方」では、1ターンの長さと推定プレイ時間を見られます。')
+ .replace('・「🤖 おまかせ設定」で、研究・スキル・まち・お店・会社・大計画・つながりを、分野ごとにまかせられます。\n','')
+ .replace(/・「🤖 おまかせ設定」：分野ごとに毎月の管理をまかせる。\n・「🤖 おまかせ設定」の「出来事」：[^\n]*/,'・🤖 おまかせ設定：毎月の行動・分野ごと・出来事の種類ごとのおまかせを、1つの画面でまとめて設定（出来事の画面からも設定できます）。')}})();
+
+// ===== v3.0（4）：予定の決め方を「枠」「割合」の2つに（どちらも「今月だけ」が使える） =====
+PMODES.length=0;PMODES.push(['classic','枠で決める','枠ごとに行動を選びます。変えたい月だけ「今月だけ」も使えます'],['hybrid','割合で決める','「投稿50%・休み20%」のように割合で配分します。変えたい月だけ「今月だけ」も使えます']);
+pmode=function(){if(!S)return 'classic';if(S.pmode==='routine')S.pmode='classic';else if(S.pmode==='ratio')S.pmode='hybrid';return S.pmode||'classic'};
+{const _t67=turn;turn=function(){if(!S||!S.alive||modalOpen()||pmode()!=='classic'||!onceOn())return _t67.apply(this,arguments);
+ const sv=[S.plan.slice(),(S.planOpt||[]).slice()],au=S.auto;S.auto=0;S.plan=S.once.plan.slice();S.planOpt=S.once.opt.slice();
+ try{return _t67.apply(this,arguments)}finally{S.auto=au;S.plan=sv[0];S.planOpt=sv[1];if(S.once&&S.once.am<S.am)S.once=null}}}
+{const _pp67=panelPlan;panelPlan=function(){let h=_pp67.apply(this,arguments);try{if(S&&age()>=6&&pmode()==='classic'){const mk='</span></div>';const k=h.indexOf('data-act="auto"');if(k>=0){const j=h.indexOf(mk,k);if(j>=0)h=h.slice(0,j+mk.length)+onceHtml()+h.slice(j+mk.length)}}}catch(e){console.error(e)}return h}}
+(function(){for(const x of GUIDE)x[2]=x[2].replace(/・予定の決め方は4種類から選べます。\n　いつもの枠[^\n]*\n　いつもの予定[^\n]*\n　割合で決める[^\n]*\n　割合＋今月だけ[^\n]*/,'・予定の決め方は2つ：「枠で決める」と「割合で決める」。どちらも、変えたい月だけ「📅 今月だけ」で予定を変えられます。')})();
+
+// ===== v3.0（5）：投稿のスタイルを4つに =====
+{const MAP={safe:'chill',story:'chill',variety:'norm',trend:'norm'};for(const k of Object.keys(MAP))delete STYLES[k];
+ STYLES.chill.n='ゆるく癒し';STYLES.chill.d='炎上しにくく、ガチ勢が育ちやすい。伸びはゆっくり';STYLES.norm.n='ふつう';STYLES.norm.d='バランスよく伸びる';STYLES.edge.n='攻め';STYLES.expert.n='ガチ解説';
+ const fix=()=>{try{if(S&&MAP[S.style])S.style=MAP[S.style];if(S&&S.subch)for(const c of S.subch)if(MAP[c.style])c.style=MAP[c.style]}catch(_){}};
+ const _mh67=monthHook11;monthHook11=function(){fix();return _mh67.apply(this,arguments)};const _ps67=panelSns;panelSns=function(){fix();return _ps67.apply(this,arguments)}}
+
+// ===== v3.0（6）：お金の「使い道」に、高額なアクション・イベントの主催をまとめる／部屋の飾りは「買い物」へ =====
+let BIG_ALL=0;{const _bh68=bigHtml;bigHtml=function(a){return BIG_ALL?_bh68.apply(this,arguments):''}}
+const BIG_AREA=[['sns','📱 SNS'],['money','💰 お金'],['town','🏙 まち'],['shop','🏪 お店'],['co','🏢 会社'],['office','🎤 事務所'],['svc','📦 サービス'],['life','👥 人']];
+function hostHtml(){if(age()<18||!S.town)return '';const T=S.town;const cd=T.evAm!=null&&S.am-T.evAm<evCd();
+ return `<h3>🎪 まちのイベントを主催する</h3><p class="hint">いまのまち（${esc(townName(T))}）で開きます。まちの発展度・支持・評判が上がります。</p>${cd?`<p class="hint">次に主催できるのは${evCd()-(S.am-T.evAm)}か月後。</p>`:''}`+TEVENTS.map(ev=>{const c=Math.round(ev.cost*Math.max(.2,S.cty.inc));return `<div class="shop"><div><div>${ev.n} <span class="muted small">${yen(c)}</span></div><div class="muted small">来場者の目安 ${num(ev.base*(1+T.dev/100))}人〜</div></div><button class="b sm" type="button" data-tev="${ev.k}" ${cd||S.money<c?'disabled':''}>主催する</button></div>`}).join('')}
+function bigAllHtml(){if(age()<18)return '';BIG_ALL=1;let h='';try{for(const [a,n] of BIG_AREA){const x=bigHtml(a);if(x)h+=x.replace(/💎 とんでもなく高額なアクション/,'💎 '+n)}}finally{BIG_ALL=0}
+ return h?`<h3>💎 とんでもなく高額なアクション</h3><p class="hint">お金がたくさんあるときの、大きな使い道です。</p>${h}`:''}
+{const _sp68=spendHtml;spendHtml=function(){return _sp68.apply(this,arguments)+hostHtml()+bigAllHtml()}}
+{const _te68=townExtra;townExtra=function(){const h=_te68.apply(this,arguments);const i=h.indexOf('<h3>まちのイベントを主催する</h3>');return i<0?h:h.slice(0,i)+'<p class="hint">まちのイベントの主催は「お金」→「使い道」からできます。</p>'}}
+// 部屋の飾りは「買い物」の中へ
+{const _st68=subTabs;subTabs=function(tabk,items){if(tabk==='money'){items=items.filter(x=>x[0]!=='room');if(SUB.money==='room')SUB.money='shop'}return _st68.call(this,tabk,items)}}
+{const _pm68=panelMoney;panelMoney=function(){if(SUB.money==='room')SUB.money='shop';const h=_pm68.apply(this,arguments);try{if(age()>=18&&SUB.money==='shop')return h+'<h3>🖼 部屋の飾り</h3>'+decoPanel()}catch(e){console.error(e)}return h}}
+(function(){for(const x of GUIDE)x[2]=x[2].replace(/「部屋の飾り」/g,'「買い物」の「部屋の飾り」')})();
+(function(){for(const x of GUIDE)x[2]=x[2].replace('・使い道・買い物・部屋の飾り・投資・借入（借入は18歳から）があります。','・家計・使い道・買い物（部屋の飾りもここ）・投資・借入（借入は18歳から）があります。').replace('・お金に余裕ができたら、各画面の「💎とんでもなく高額なアクション」も使えます。','・お金に余裕ができたら、「使い道」の「💎とんでもなく高額なアクション」や、まちのイベントの主催も使えます。')})();
+try{for(const f of FIND){if(/高額/.test(f[0])){f[1]='お金 → 使い道';f[2]='money:spend'}if(/主催/.test(f[0])){f[1]='お金 → 使い道';f[2]='money:spend'}if(/飾り/.test(f[0])){f[1]='お金 → 買い物';f[2]='money:shop'}}}catch(_){}
+
+// ===== v3.0（7）：契約・サブスクの種類を減らす（契約中のものは、そのまま続けられる） =====
+const SUBS_HIDE=new Set('sozai cloud bgmlib shodo acting photo sleep telemed massage manga kaden fukurent flower coffee magazine driver stylist moonland kakuu stone surprise fossil cloudorder kakeibo t_game2 t_cook1 t_beauty2 t_talk2 t_study2 t_music1 t_comedy2'.split(' '));
+{const _sl68=subsListHtml;subsListHtml=function(){let h=_sl68.apply(this,arguments);try{for(const k of SUBS_HIDE){if(S.subs&&S.subs[k])continue;const at=h.indexOf(`data-sub2="${k}"`);if(at<0)continue;const st=h.lastIndexOf('<div class="shop">',at);const en=h.indexOf('</div>',h.indexOf('</button>',at));if(st>=0&&en>=0)h=h.slice(0,st)+h.slice(en+6)}}catch(e){console.error(e)}return h}}
+
+// ===== v3.0（8）：会社まわりを整理（芸能事務所・サービス会社も「会社の種類」として並べる／オフィスの画面を1つに） =====
+{const _st69=subTabs;subTabs=function(tabk,items){if(tabk==='biz')items=items.map(x=>x[0]==='office'?[x[0],'芸能事務所',x[2]]:x[0]==='svc'?[x[0],'サービス会社',x[2]]:x[0]==='co'?[x[0],'会社',x[2]]:x);return _st69.call(this,tabk,items)}}
+{const _co69=coHtml;coHtml=function(){const h=_co69.apply(this,arguments);return h.replace('<h3>会社を設立する</h3>','<h3>会社を設立する</h3><p class="hint">芸能事務所（タレントの所属）と、サービス会社（サブスクの提供）も会社の種類です。となりの「芸能事務所」「サービス会社」から始められます。</p>')}}
+// 会社の画面：「オフィス・支社」と「レイアウト」を1つのタブに
+{const _sc69=showCo;showCo=function(id,tab){if(tab==='lay')tab='off';if(CM_TAB==='lay')CM_TAB='off';const r=_sc69.call(this,id,tab);try{const m=$('#mcard');m.querySelectorAll('[data-cmtab="lay"]').forEach(b=>b.remove());const o=m.querySelector('[data-cmtab="off"]');if(o)o.textContent='オフィス'}catch(_){}return r}}
+{const _cb69=cmBody;cmBody=function(c){if(CM_TAB!=='off')return _cb69.apply(this,arguments);let h=_cb69.apply(this,arguments);CM_TAB='lay';try{h+='<h3>オフィスのレイアウト</h3>'+_cb69.apply(this,arguments)}finally{CM_TAB='off'}return h}}
+(function(){for(const x of GUIDE)x[2]=x[2].replace(/「事務所」タブ/g,'「芸能事務所」タブ').replace(/「サブスク事業」/g,'「サービス会社」')})();
+try{for(const f of FIND){f[1]=String(f[1]).replace('サブスク事業','サービス会社').replace(/→ 事務所$/,'→ 芸能事務所')}}catch(_){}
+
+// ===== v3.0（9）：研究をまとめる（研究ラインとひとつずつの研究を1つの一覧に・ずっと続く研究とスキルも研究の画面へ） =====
+{const _rp70=researchPanel;researchPanel=function(){if(RESCAT==='skill'){let h=_rp70.apply(this,(RESCAT='rec',arguments));RESCAT='skill';
+  const i=h.indexOf('<p class="hint">いまの遊び方に合わせて');h=(i<0?h:h.slice(0,i))+`<p class="hint">スキルポイント（人生の節目でもらえる）で覚える、この人生のスキルです。</p>`+sktHtml();return navRes(h)}
+ if(RESCAT==='lv')RESCAT='rec';let h=_rp70.apply(this,arguments);
+ if(RESCAT==='rec'){h+=`<details class="pmore"><summary>ポイントが余ったら：何段でも重ねられる研究</summary><div class="rtree">${RLV.map(([k,n,d])=>`<div class="rnode ready"><div class="rb"><div>${n} <b>${rlv(k)}段</b> <span class="muted small">${rlvCost(k)}pt</span></div><div class="muted small">${d}</div></div><button class="b sm" type="button" data-rlv="${k}" ${S.rp<rlvCost(k)||rlv(k)>=20?'disabled':''}>研究する</button></div>`).join('')}</div></details>`}
+ else{h=h.replace('<h3>研究ライン</h3>','<h3>研究</h3>').replace(/<h3>ひとつずつの研究 <span class="muted small">[^<]*<\/span><\/h3>/,'')}
+ return navRes(h)}}
+function navRes(h){return h.replace(/<button type="button" class="[^"]*" data-rescat="lv">[^<]*<\/button>/,'').replace(/(<div class="seg wrapseg restabs">[\s\S]*?)(<\/div>)/,`$1<button type="button" class="${RESCAT==='skill'?'on':''}" data-rescat="skill">🌱 スキル${(S.sp||0)>0?`<span class="badge">${S.sp}</span>`:''}</button>$2`)}
+// 「人生」の「スキル」は研究の画面へ（引き継ぎスキルは「人生」→「自分」に）
+document.addEventListener('click',e=>{const b=e.target.closest('[data-goto="life:skill"],[data-sub="life:skill"]');if(!b)return;if(b.dataset.goto)b.dataset.goto='biz:res';if(b.dataset.sub)b.dataset.sub='biz:res';RESCAT='skill';if(b.dataset.sub){e.stopImmediatePropagation();e.preventDefault();SUB.biz='res';setTab('biz');try{renderBadges()}catch(_){}}},true);
+{const _st70=subTabs;subTabs=function(tabk,items){if(tabk==='life'){items=items.filter(x=>x[0]!=='skill');if(SUB.life==='skill')SUB.life='stat'}return _st70.call(this,tabk,items)}}
+{const _pl70=panelLife;panelLife=function(){if(SUB.life==='skill')SUB.life='stat';let h=_pl70.apply(this,arguments);try{if(SUB.life==='stat'){const L=legState();const can=LEG.filter(x=>!L.nodes[x.id]&&(!x.req||L.nodes[x.req])&&x.ok(META.rec)&&L.lp>=x.c).length;
+ h+=`<div class="card legcard"><div class="hd"><span>🌱 引き継ぎスキル</span><b>${L.lp} ポイント</b></div><p class="hint">すべての人生で有効なスキルです。人生の節目や実績の解除で、途中でもポイントがもらえます。${can?`<b>いま ${can}つ覚えられます。</b>`:''}</p><div class="row"><button class="b sm ${can?'pri':''}" type="button" data-act="legacy">引き継ぎスキルを見る</button>${(S.sp||0)>0?`<button class="b sm" type="button" data-goto="life:skill">この人生のスキル（${S.sp}ポイント）</button>`:''}</div></div>`}}catch(e){console.error(e)}return h}}
+{const _stp70=secTip;secTip=function(){const r=_stp70.apply(this,arguments);try{if(r&&r[1]==='life:skill')r[1]='biz:res';if(r&&r[1]==='biz:res'&&/スキル/.test(r[0]))RESCAT='skill'}catch(_){}return r}}
+try{for(const f of FIND){if(f[2]==='life:skill'){f[2]='biz:res';f[1]=String(f[1]).replace('人生 → スキル','事業 → 研究 → スキル')}}}catch(_){}
+(function(){for(const x of GUIDE)x[2]=x[2].replace(/「人生」→「スキル」/g,'「事業」→「研究」の「🌱 スキル」').replace(/「ずっと続く」/g,'「何段でも重ねられる研究」')})();
+
+// ===== v3.0（10）：「人生」をまとめる（人生の選択はつながりの中へ／アルバム・記録・ランキングは「記録」1画面に） =====
+let NO_SUBTABS=0;
+function lifeSub(k){if(!S)return '';const sv=SUB.life;SUB.life=k;NO_SUBTABS=1;try{return panelLife()}catch(e){console.error(e);return ''}finally{NO_SUBTABS=0;SUB.life=sv}}
+{const _pl71=panelLife;panelLife=function(){if(!S)return '';if(NO_SUBTABS)return _pl71.apply(this,arguments);const s=SUB.life;
+ if(s==='choice'){SUB.life='ppl'}else if(s==='album'||s==='world'){SUB.life='rec'}
+ let h=_pl71.apply(this,arguments);
+ try{if(SUB.life==='ppl')h+=`<h2>人生の選択</h2>`+lifeSub('choice');
+  if(SUB.life==='rec'){h+=`<details class="pmore"><summary>📷 アルバム</summary>${lifeSub('album')}</details><details class="pmore"><summary>🌍 世界・ランキング</summary>${lifeSub('world')}</details>`}}catch(e){console.error(e)}
+ return h}}
+{const _st71=subTabs;subTabs=function(tabk,items){if(NO_SUBTABS)return '';if(tabk==='life'){items=items.filter(x=>!['choice','album','world'].includes(x[0]))}return _st71.call(this,tabk,items)}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-goto],[data-sub]');if(!b)return;const v=b.dataset.goto||b.dataset.sub;const m={'life:choice':'life:ppl','life:album':'life:rec','life:world':'life:rec','life:map':'life:ppl'}[v];if(m){if(b.dataset.goto)b.dataset.goto=m;else b.dataset.sub=m}},true);
+{const _stp71=secTip;secTip=function(){const r=_stp71.apply(this,arguments);try{if(r&&r[1]){r[1]={'life:choice':'life:ppl','life:album':'life:rec','life:world':'life:rec','life:map':'life:ppl'}[r[1]]||r[1]}}catch(_){}return r}}
+try{for(const f of FIND){const m={'life:choice':'life:ppl','life:album':'life:rec','life:world':'life:rec'}[f[2]];if(m){f[2]=m;f[1]=String(f[1]).replace(/人生 → [^／]*/,m==='life:ppl'?'人生 → 人':'人生 → 記録')}}}catch(_){}
+
+// ===== v3.0（11）：設定を整理（見た目・音楽・文字の種類を3つずつ／表示のカスタマイズは設定の「見た目」へ） =====
+(function(){
+ const gm={classic:'pixel',phone:'hybrid'};delete GFX_OPT.classic;delete GFX_OPT.phone;GFX_OPT.pixel.n='A 高精細ドット';GFX_OPT.illust.n='B イラスト';GFX_OPT.hybrid.n='C スマホ＋ドット';
+ if(gm[GFX]){try{setGfx(gm[GFX])}catch(_){GFX=gm[GFX]}}
+ const mm={classic:'chip',scene:'both'};delete MUS_OPT.classic;delete MUS_OPT.scene;MUS_OPT.chip.n='1 チップチューン';MUS_OPT.era.n='2 時代で変わる';MUS_OPT.both.n='3 時代×場面で変わる';
+ if(mm[MUS]){MUS=mm[MUS];try{localStorage.setItem('buzz-music',MUS)}catch(_){}}
+ for(const k of ['dot','mplus','noto','klee'])delete FONT_OPT[k];
+ if(!FONT_OPT[UFONT]){UFONT='theme';try{localStorage.setItem('buzz-font',UFONT)}catch(_){}try{applyFont()}catch(_){}}
+})();
+// 表示のカスタマイズ（v3.0 の画面に合わせた項目）
+UI_ITEMS.length=0;UI_ITEMS.push(['画面の部品',[['sec','秘書のひとこと'],['todo','いまできること'],['omk','おまかせ設定（予定タブ）']]],
+ ['「事業」タブ',[['s:biz:town','まちの地図'],['s:biz:shop','お店の経営'],['s:biz:co','会社'],['s:biz:office','芸能事務所'],['s:biz:svc','サービス会社'],['s:biz:aw','賞・イベント'],['s:biz:mega','大計画'],['s:biz:res','研究']]],
+ ['「人生」タブ',[['s:life:goal','目標・性格'],['s:life:rec','記録']]]);
+function uiCustomInner(){const h=uiHide();return `<p class="hint">使わない項目のチェックをはずすと、画面から隠せます（この端末だけの設定です）。</p>${UI_ITEMS.map(([g,L])=>`<h4>${g}</h4><div class="omkl">${L.map(([k,n])=>`<label class="omki"><input type="checkbox" data-uih="${k}" ${h[k]?'':'checked'}><span><b>${n}</b></span></label>`).join('')}</div>`).join('')}<div class="row"><button class="b sm ghost" type="button" data-uireset2="1">すべて表示に戻す</button></div>`}
+{const _sh72=screenHtml;screenHtml=function(){return _sh72.apply(this,arguments)+`<h3>表示する項目</h3>${uiCustomInner()}`}}
+try{const g=SET_GROUPS.find(x=>x[0]==='look');if(g&&!g[2].includes('表示する項目'))g[2].push('表示する項目')}catch(_){}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-uireset2]');if(!b)return;UIH=null;try{localStorage.removeItem(UI_KEY)}catch(_){}if(S)render();try{reopenSettings()}catch(_){}});
+showUiCustom=function(){showSettings();setTimeout(()=>{try{SET_TAB='look';const b=document.querySelector('[data-settab="look"]');if(b)b.click()}catch(_){}},150)};
+{const _rp72=renderPanel;renderPanel=function(){const r=_rp72.apply(this,arguments);try{document.querySelectorAll('#panel [data-uicust]').forEach(b=>b.remove())}catch(_){}return r}}
+(function(){for(const x of GUIDE)x[2]=x[2].replace(/各タブの説明にある「⚙表示」/g,'「メニュー」→「設定・セーブ」の「見た目・文字」にある「表示する項目」').replace(/「⚙表示」/g,'設定の「表示する項目」')})();
+try{for(const f of FIND){if(/表示のカスタマイズ/.test(f[0])){f[1]='メニュー → 設定 → 見た目・文字';f[2]=null}}}catch(_){}
+
+// ===== v3.0（12）：バランス調整 =====
+// 方針：やりこめば、1回の人生で大計画をすべてそろえられるかもしれない（ゲーム補正）。フォロワーもそれに合わせて大きく。
+
+// ----- 大計画：値段（高すぎるものを値下げ）・期間（短く）・年の制限（研究の数で解放） -----
+const MEGA_RESN=k=>{const m=MEGA[k];return m&&m._yr0>2026?Math.min(180,Math.round((m._yr0-2026)*.8)):0};
+for(const m of Object.values(MEGA)){if(m._c0!=null)continue;m._c0=m.c;m._yr0=m.yr||0;m._dur0=m.dur;
+ m.c=m._c0<=1e12?m._c0:Math.round(1e12*Math.pow(m._c0/1e12,.5));m.dur=Math.max(6,Math.round(m._dur0*.3));
+ const k=m.k;Object.defineProperty(m,'yr',{get(){const n=MEGA_RESN(k);try{return n&&resDoneAll()<n?90000+n:0}catch(_){return 0}},set(v){},configurable:true,enumerable:true})}
+{const _mh73=megaHtml;megaHtml=function(){let h=_mh73.apply(this,arguments);return h.replace(/（9(\d{4})年から）/g,(s,n)=>`（研究${+n}個で解放・いま${resDoneAll()}個）`)}}
+// おまかせ：大計画を同時に10個まで
+{const _om73=omkMonth;omkMonth=function(){const r=_om73.apply(this,arguments);try{if(S&&omk('mega')&&age()>=20){for(let i=0;i<2;i++){if((S.mega||[]).filter(x=>!x.done).length>=10)break;const cand=Object.values(MEGA).filter(m=>!megaOf(m.k)&&S.y>=m.yr&&!(m.req&&!megaDone(m.req))&&megaCost(m)<=S.money*.25).sort((a,b)=>a.c-b.c)[0];if(!cand)break;megaStart(cand.k)}}}catch(e){console.error(e)}return r}}
+// 完成した大計画は、毎月、経済効果（費用の0.3%）を生む
+{const _mm73=megaMonth;megaMonth=function(){const r=_mm73.apply(this,arguments);try{let t=0;for(const x of (S.mega||[]))if(x.done&&MEGA[x.k])t+=megaCost(MEGA[x.k])*.003;if(t>0)inc('mega',Math.round(t*R(.85,1.15)))}catch(e){console.error(e)}return r}}
+
+// ----- 宇宙人の視聴者：宇宙の大計画で、地球の外にも届くように -----
+const ALIEN={aliencity:1e11,galnet:1e12,galfed:1e13,universe:1e14};
+function alienPop(){let n=0;try{for(const k in ALIEN)if(megaDone(k))n+=ALIEN[k]}catch(_){}return n}
+function viewersAll(){return worldPop()+(W().r.includes('space')?alienPop():0)}
+WREG.push(['space','宇宙',1,.35,1e12,'宇宙ステーションの中継で、月・火星・コロニー、そして宇宙人にも届ける']);
+{const _wn73=wNext;wNext=function(){const w=W();const r=WREG.find(x=>!w.r.includes(x[0]));if(r&&r[0]==='space'&&!(megaDone('station')&&w.r.includes('global')))return null;return r}}
+{const _wc73=worldCard;worldCard=function(){let h=_wc73.apply(this,arguments);try{const w=W();if(h&&!w.r.includes('space')&&w.r.includes('global')&&!megaDone('station'))h=h.replace('すべての地域に進出しました。あとは世界一を目指すだけです。','地球のすべての地域に進出しました。大計画で「民間宇宙ステーション」ができると、宇宙にも配信できるようになります。');
+ if(w.r.includes('space'))h=h.replace('すべての地域に進出しました。あとは世界一を目指すだけです。',`宇宙にも届いています。宇宙の視聴者：約${num(viewersAll()-WORLD_POP)}人（大計画で宇宙人とつながるほど増えます）。`)}catch(_){}return h}}
+// 登録者の上限：国内は広めに。全世界に進出したら「届く人の数（人口＋宇宙）」まで
+const CAPX=5;
+for(const k of Object.keys(SNS)){const o=SNS[k];if(o._cap0==null){const c0=o.cap;o._cap0=c0}Object.defineProperty(o,"cap",{get(){const sh=Math.min(1,this._cap0/SNS.milu._cap0);let c=this._cap0*CAPX*worldMul();try{if(S&&S.world&&S.world.r.includes('global'))c=Math.max(c,viewersAll()*sh)}catch(_){}return c},set(v){this._cap0=v},configurable:true,enumerable:true})}
+
+// ----- フォロワーの伸びを大きく -----
+{const _dp73=doPost;doPost=function(k){const key=S.main,f0=S.f[key]||0;const r=_dp73.apply(this,arguments);try{const sn=SNS[key],f1=S.f[key]||0,d=f1-f0;if(d>0){const room=Math.max(0,1-f1/sn.cap);const q=postQuality();const ex=(d*.8+f0*.012*k*Math.min(2,q/60))*room;S.f[key]=f1+ex;S.mo.newF+=ex}}catch(e){console.error(e)}return r}}
+
+// ----- 市場の広がり：人口と宇宙の大計画で、会社やお店の収入が大きくなる -----
+function marketMul(){try{return Math.max(1,Math.sqrt((worldPop()+alienPop())/WORLD_POP))}catch(_){return 1}}
+{const _inc73=inc;inc=function(cat,v){if(v>0&&(cat==='co'||cat==='biz'||cat==='mega'||cat==='platform')){const m=marketMul();if(m>1)v=Math.round(v*m)}return _inc73.call(this,cat,v)}}
+
+// ----- 新しいまち：現実に近い金額に。そのぶん、まちからの収入（地代・税収）も -----
+{const P={onsen:1e11,newtown:3e11,resort:5e11,bay:2e12,future:1e13};for(const d of DEVS){if(d._c0==null){d._c0=d.cost;if(P[d.k])d.cost=P[d.k]}}}
+{const _mh73b=monthHook11;monthHook11=function(){_mh73b.apply(this,arguments);try{if(!S||!S.towns2)return;let t=0;for(const T of S.towns2){const d=DEVS.find(x=>x.k===T.kind);if(!d)continue;t+=d.cost*Math.max(.2,S.cty.inc)*.006*(.6+Math.min(1,(T.dev||0)/100)*.8)}if(t>0)inc('biz',Math.round(t))}catch(e){console.error(e)}}}
+// フォロワーがふえたぶん、SNSの広告収入は1人あたり少なめに（お金がふくらみすぎないように）
+{const _inc73b=inc;inc=function(cat,v){if(v>0&&(cat==='sns'||cat==='tip'))v=Math.round(v*.3);return _inc73b.call(this,cat,v)}}
+
+// ===== v3.0（13）：予定の決め方「バランスよく全部」（できる行動を、毎月少しずつ全部やる） =====
+PMODES.push(['bal','バランスよく全部','できる行動を、毎月少しずつ順番に全部やります。やりたくない行動だけ外せます。変えたい月だけ「今月だけ」も使えます']);
+function balOff(){if(!S.balOff)S.balOff={};return S.balOff}
+function balRows(){const off=balOff();const rows=[];for(const [k] of actOk()){if(off[k])continue;let w=10;if(k==='post'&&age()>=13)w=20;if(k==='rest'){w=S.p.health<45||S.p.mental<40?40:6}rows.push([k,null,w])}return rows}
+function balApply(){if(!S.bal)S.bal={rows:[],carry:{}};S.bal.rows=balRows();if(!S.bal.rows.length)return;const sv=S.ratio;S.ratio=S.bal;try{ratioApply()}finally{S.bal=S.ratio;S.ratio=sv}}
+function balPreview(){if(!S.bal)S.bal={rows:[],carry:{}};S.bal.rows=balRows();const sv=S.ratio;S.ratio=S.bal;try{return ratioPreview()}finally{S.ratio=sv}}
+{const _t74=turn;turn=function(){if(!S||!S.alive||modalOpen()||pmode()!=='bal'||age()<6)return _t74.apply(this,arguments);
+ const au=S.auto;S.auto=0;let sv=null;try{if(onceOn()){sv=[S.plan.slice(),(S.planOpt||[]).slice()];S.plan=S.once.plan.slice();S.planOpt=S.once.opt.slice()}else balApply();return _t74.apply(this,arguments)}
+ finally{S.auto=au;if(sv){S.plan=sv[0];S.planOpt=sv[1]}if(S.once&&S.once.am<S.am)S.once=null}}}
+function balHtml(){const off=balOff();const L=actOk();const pv=balPreview();
+ return `<h3>バランスよく全部</h3><p class="hint">できる行動を、毎月少しずつ順番に全部やります（投稿は多め・疲れているときは休みを多め）。外したい行動は、押してオフにできます。</p><div class="chips">${L.map(([k,a])=>`<button class="b sm ${off[k]?'':'on'}" type="button" data-baloff="${k}" aria-pressed="${!off[k]}">${esc(a.n)}</button>`).join('')}</div>${pv.length?`<p class="hint">来月の予定（目安）：${pv.map(a=>esc(ACT[a]?ACT[a].n:a)).join('・')}</p>`:'<p class="hint">行動がすべてオフになっています。</p>'}`}
+{const _pp74=panelPlan;panelPlan=function(){let h=_pp74.apply(this,arguments);try{if(S&&age()>=6&&pmode()==='bal'){const r=ratioHtml();const k=h.indexOf(r);if(k>=0)h=h.slice(0,k)+balHtml()+onceHtml()+h.slice(k+r.length)}}catch(e){console.error(e)}return h}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-baloff]');if(!b||!S)return;const off=balOff(),k=b.dataset.baloff;if(off[k])delete off[k];else off[k]=1;save();renderPanel()});
+
+// ===== v3.0（14）：遊び方・チュートリアルを v3.0 の画面に合わせる =====
+(function(){const set=(k,t)=>{const g=GUIDE.find(x=>x[0]===k);if(g)g[2]=t};
+ set('act',`毎月の自由な時間に何をするかを決めます。
+・予定の決め方は3つです。どれも、変えたい月だけ「📅 今月だけ」で予定を変えられます。
+　枠で決める：枠ごとに行動を選ぶ
+　割合で決める：「投稿50%・休み20%」のように配分する
+　バランスよく全部：できる行動を、毎月少しずつ順番に全部やる（やりたくない行動だけ外せる）
+・いちばん上に、秘書のアオイが「いまやるといいこと」を1つ出します。
+・「🤖 おまかせ設定」では、毎月の行動・分野ごと（研究・スキル・まち・お店・会社・大計画・つながり）・出来事の種類ごとに、まとめておまかせにできます。
+・「時間の進み方」では、1ターンの長さと推定プレイ時間を見られます。`);
+ set('sns',`SNSでフォロワーをふやします。
+・SNSは13歳から始められます。スマホがないときは「発信」タブに、スマホを買う・家族に借りる・学校や図書館のパソコンを使う、の3つの始め方が出ます。
+・「発信」タブで、ジャンル・スタイル（ふつう・攻め・ゆるく癒し・ガチ解説）・投稿の企画を決め、「予定」に「投稿」を入れた月に投稿します。
+・流行のジャンルで投稿すると伸びやすくなります。コラボをすると新しいファンが来ます。同じジャンルを続けるとガチ勢が育ちます。
+・フォロワーがふえると、「世界の舞台」のボタンで次の地域へ進出できます（アジア→北米→…→全世界→宇宙）。進出するほど、届けられる人数の上限が広がります。
+・全世界に進出すると、世界の人口まで届きます。大計画で人口がふえたり、宇宙に進出して宇宙人とつながったりすると、さらに上限が広がります。
+・チャンネル名の変更や、SNSの運営会社の買収は「くわしく」の中にあります。`);
+ set('biz',`「事業」タブは、上の段で分野を選び、下の段で画面を選びます。
+・まち：まちの地図・お店の経営。建物をふやすとまちが発展します。お店に店長を置くと管理をまかせられます。新しいまちの開発は大きなお金がかかりますが、毎月の地代・税収が入ります。
+・会社：会社・サービス会社（サブスク）・芸能事務所。会社では作るもの（ゲーム・アプリなど）と社員を決めます。会社の画面は「概要・従業員・オフィス・作るもの」の4つです。
+・挑戦：賞（毎年14種類）と大計画。
+・研究：研究ポイントで効果を解放します。迷ったら「⭐おすすめ」から。この人生のスキルも「🌱 スキル」でここから覚えます。`);
+ set('life',`「人生」タブは、上の段で分野を選び、下の段で画面を選びます。
+・自分：能力・目標と性格。「能力」では人生の終わりのモード（亡くなったら終わり／エンドレス）を切りかえられます。引き継ぎスキルの入口もここです。
+・人：つながり（家族・恋人・友達との交流）と、人生の選択（恋人探し・転職・引っ越しなど）。
+・記録：人生年表・アルバム・世界のランキング。`);
+ set('world',`・発信タブの「世界の舞台」から、地域へ順に進出できます（全世界のあとは、宇宙ステーションができると宇宙へ）。
+・「人生」→「記録」の「世界・ランキング」で、世界の配信者ランキング・長者番付・企業ランキングを見られます（ランキングの相手は架空の人物・企業です）。
+・登録者・資産・社員数が大きな節目をこえると、身近なものにたとえてお祝いが出ます。`);
+ set('mega',`とてつもないお金と年月がかかる計画です（全213種類）。やりこめば、1回の人生ですべてそろえられるかもしれません。
+・分類：宇宙・地球・夢・社会・ぜいたく・エンタメ・ふしぎ・インフラ・人口・銀河。
+・遠い未来の計画は、研究をたくさん進めると始められるようになります（何年に生まれても目指せます）。
+・いくつも同時に建てられます。完成した大計画は、毎月、経済効果のお金を生みます。
+・人口がふえたり、宇宙の大計画で宇宙人とつながったりすると、会社やまちの市場も広がります。`);
+ set('skill',`・研究：研究ポイント（10歳からたまる）で、効果や新しい機能を解放します。
+　「⭐おすすめ」には、いまの遊び方に合った研究が5つ出ます。分類のタブでは、研究ラインとひとつずつの研究がまとめて並びます。
+　ポイントが余ったら、「何段でも重ねられる研究」もあります（おすすめの下）。
+・スキル：スキルポイントで、この人生だけのスキルを覚えます（「事業」→「研究」の「🌱 スキル」）。
+・引き継ぎスキル：人生の節目や実績の解除でたまるポイントで覚える、すべての人生で有効なスキルです。遊んでいる途中でももらえて、すぐに効きます（「人生」→「自分」、またはタイトルの「実績・引き継ぎスキル」）。`);
+ set('auto',`・🧭 ナビ：画面の上のボタン。「道のり」（遊びの順番と次の目標）、「さがす」（機能や用語の検索）、「移動」（どの画面へもすぐ行ける）の3つがあります。
+・秘書のアオイ：予定タブの上で、いまやるといいことを1つ提案します。
+・🤖 おまかせ設定：毎月の行動・分野ごと・出来事の種類ごとのおまかせを、1つの画面でまとめて設定します（出来事の画面からも設定できます）。
+・表示する項目：「メニュー」→「設定・セーブ」→「見た目・文字」で、使わない項目を画面から隠せます（この端末だけ）。`);
+})();
+// チュートリアル
+(function(){const f=s=>TUT_STEPS.find(x=>x.tab===s);
+ const a=f('act');if(a)a.t='「予定」：毎月の行動を決める。6歳までは自動。決め方は「枠」「割合」「バランスよく全部」の3つ。「🤖 おまかせ設定」でまかせることもできる。';
+ const l=f('life');if(l)l.t='「人生」：能力・目標・つながり（家族や恋人）・人生の選択・記録。';
+ const i=TUT_STEPS.findIndex(x=>x.sel==='#btnMenu');if(i>=0&&!TUT_STEPS.some(x=>x.sel==='#btnNav'))TUT_STEPS.splice(i,0,{sel:'#btnNav',t:'「🧭ナビ」：次に何をすればいいか（道のり）、機能の場所（さがす）、画面の移動がここからできる。'});
+ const m=TUT_STEPS.find(x=>x.sel==='#btnMenu');if(m)m.t='「メニュー」：見た目・音・文字の設定、遊び方、セーブなど。';})();
+// なくなった機能の研究は一覧から外す
+for(const id of ['battle_k','mentor_k']){const i=RES.findIndex(r=>r.id===id);if(i>=0)RES.splice(i,1)}
+try{for(let i=FIND.length-1;i>=0;i--){if(/勝負|弟子|ずっと続く/.test(FIND[i][0]))FIND.splice(i,1)}}catch(_){}
 </script>

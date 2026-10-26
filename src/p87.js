@@ -8,8 +8,8 @@ function bkAll(){try{return JSON.parse(localStorage.getItem(BKA_KEY)||'[]')||[]}
 function bkSnap(){const sl={};for(let i=0;i<SLOT_N;i++){try{const v=localStorage.getItem(slotKey(i));if(v)sl[i]=v}catch(_){}}let lb=null;try{lb=localStorage.getItem('nipporia-slotlabel')}catch(_){}return {ver:CUR_VER,at:Date.now(),slots:sl,labels:lb}}
 (function(){try{const L=bkAll();const last=L[0];const snap=bkSnap();if(!Object.keys(snap.slots).length)return;
  if(!last||last.ver!==CUR_VER){L.unshift(snap);while(L.length>3)L.pop();for(let k=0;k<4;k++){try{localStorage.setItem(BKA_KEY,JSON.stringify(L));break}catch(_){L.pop();if(!L.length)break}}}}catch(_){}})();
-// 遊んでいる間も、1日に1回ほど保管しなおす
-{const _mh87=monthHook11;monthHook11=function(){_mh87.apply(this,arguments);try{if(S&&S.am%12===0){const L=bkAll();const snap=bkSnap();if(L[0]&&L[0].ver===CUR_VER&&Date.now()-L[0].at<864e5)return;if(L[0]&&L[0].ver===CUR_VER)L[0]=snap;else{L.unshift(snap);while(L.length>3)L.pop()}localStorage.setItem(BKA_KEY,JSON.stringify(L))}}catch(_){}}}
+// 遊んでいる間も、10分に1回ほど保管しなおす
+{const _mh87=monthHook11;monthHook11=function(){_mh87.apply(this,arguments);try{if(S&&S.am%12===0){const L=bkAll();const snap=bkSnap();if(L[0]&&L[0].ver===CUR_VER&&Date.now()-L[0].at<6e5)return;if(L[0]&&L[0].ver===CUR_VER)L[0]=snap;else{L.unshift(snap);while(L.length>3)L.pop()}localStorage.setItem(BKA_KEY,JSON.stringify(L))}}catch(_){}}}
 // 3) セーブスロットの画面：保管したセーブから戻せる
 function bkHtml(){const L=bkAll().filter(b=>Object.keys(b.slots||{}).length);if(!L.length)return '';
  return `<details class="pmore"><summary>🛟 保管しているセーブから戻す</summary><p class="hint small">版が変わったときなどに、自動で保管しているセーブです（新しいものから3つ）。戻すと、そのスロットのいまのセーブは置きかわります。</p>${L.map((b,i)=>`<div class="card"><div class="hd"><span>${esc(b.ver)}のとき</span><span class="muted small">${fmtDate(b.at)}</span></div>${Object.entries(b.slots).map(([si,raw])=>{let nm='',ag='';try{const o=JSON.parse(raw);nm=o.name;ag=Math.floor(o.am/12)+'歳'}catch(_){}return `<div class="row"><span class="small">スロット${+si+1}：${esc(nm)} ${ag}</span><button class="b sm" type="button" data-bkr="${i}:${si}">このセーブに戻す</button></div>`}).join('')}</div>`).join('')}</details>`}

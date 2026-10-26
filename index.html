@@ -3065,6 +3065,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v3.0.18','2026年10月26日',['セーブが見つからないときは、自動で保管していたセーブから戻すようにしました。','セーブスロットに、どの版のデータかを表示するようにしました。前の版のデータも、そのまま最新版で続けられます。']],
   ['v3.0.17','2026年10月26日',['セーブが残らない場所で開いているときに、お知らせを出すようにしました。']],
   ['v3.0.16','2026年10月26日',['保存する場所がいっぱいでも、セーブが失われにくくしました。','「設定・セーブ」に、使っている量とセーブの状態を見る機能を追加しました。']],
   ['v3.0.15','2026年10月26日',['セーブデータを守る仕組みを強くしました。','版が変わるたびに、すべてのセーブを自動で保管するようにしました。セーブスロットの画面の「🛟 保管しているセーブから戻す」で戻せます。']],
@@ -10462,8 +10463,8 @@ function bkAll(){try{return JSON.parse(localStorage.getItem(BKA_KEY)||'[]')||[]}
 function bkSnap(){const sl={};for(let i=0;i<SLOT_N;i++){try{const v=localStorage.getItem(slotKey(i));if(v)sl[i]=v}catch(_){}}let lb=null;try{lb=localStorage.getItem('nipporia-slotlabel')}catch(_){}return {ver:CUR_VER,at:Date.now(),slots:sl,labels:lb}}
 (function(){try{const L=bkAll();const last=L[0];const snap=bkSnap();if(!Object.keys(snap.slots).length)return;
  if(!last||last.ver!==CUR_VER){L.unshift(snap);while(L.length>3)L.pop();for(let k=0;k<4;k++){try{localStorage.setItem(BKA_KEY,JSON.stringify(L));break}catch(_){L.pop();if(!L.length)break}}}}catch(_){}})();
-// 遊んでいる間も、1日に1回ほど保管しなおす
-{const _mh87=monthHook11;monthHook11=function(){_mh87.apply(this,arguments);try{if(S&&S.am%12===0){const L=bkAll();const snap=bkSnap();if(L[0]&&L[0].ver===CUR_VER&&Date.now()-L[0].at<864e5)return;if(L[0]&&L[0].ver===CUR_VER)L[0]=snap;else{L.unshift(snap);while(L.length>3)L.pop()}localStorage.setItem(BKA_KEY,JSON.stringify(L))}}catch(_){}}}
+// 遊んでいる間も、10分に1回ほど保管しなおす
+{const _mh87=monthHook11;monthHook11=function(){_mh87.apply(this,arguments);try{if(S&&S.am%12===0){const L=bkAll();const snap=bkSnap();if(L[0]&&L[0].ver===CUR_VER&&Date.now()-L[0].at<6e5)return;if(L[0]&&L[0].ver===CUR_VER)L[0]=snap;else{L.unshift(snap);while(L.length>3)L.pop()}localStorage.setItem(BKA_KEY,JSON.stringify(L))}}catch(_){}}}
 // 3) セーブスロットの画面：保管したセーブから戻せる
 function bkHtml(){const L=bkAll().filter(b=>Object.keys(b.slots||{}).length);if(!L.length)return '';
  return `<details class="pmore"><summary>🛟 保管しているセーブから戻す</summary><p class="hint small">版が変わったときなどに、自動で保管しているセーブです（新しいものから3つ）。戻すと、そのスロットのいまのセーブは置きかわります。</p>${L.map((b,i)=>`<div class="card"><div class="hd"><span>${esc(b.ver)}のとき</span><span class="muted small">${fmtDate(b.at)}</span></div>${Object.entries(b.slots).map(([si,raw])=>{let nm='',ag='';try{const o=JSON.parse(raw);nm=o.name;ag=Math.floor(o.am/12)+'歳'}catch(_){}return `<div class="row"><span class="small">スロット${+si+1}：${esc(nm)} ${ag}</span><button class="b sm" type="button" data-bkr="${i}:${si}">このセーブに戻す</button></div>`}).join('')}</div>`).join('')}</details>`}
@@ -10510,4 +10511,25 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-sdiag]');i
  const msg=!ok?'このページでは、セーブを保存できません（ブラウザの設定やプライベートモードの可能性があります）。':framed?'ほかのページの中で開いているため、リロードするとセーブが消えることがあります。':'このアドレスでは、セーブが残らないことがあります。';
  const d=document.createElement('div');d.className='savewarn';d.style.cssText='position:relative;z-index:41;background:#ff9f43;color:#2b1600;font:14px/1.5 system-ui,sans-serif;padding:8px 16px;text-align:center';
  d.innerHTML=`⚠️ ${msg} <a href="https://stella46.github.io/buzz-life/" target="_blank" rel="noopener" style="color:#2b1600;font-weight:bold">こちらで開いてください</a>`;document.body.prepend(d)})();
+
+// ===== v3.0.18：セーブが消えていたら、保管から自動で戻す／どの版のデータかを表示して、最新版で続ける =====
+// セーブに「保存したときの版」を入れる
+{const _sv90=save;save=function(){try{if(S)S.saveVer=CUR_VER}catch(_){}return _sv90.apply(this,arguments)}}
+// 自分で消したスロットは、自動で戻さない
+const DEL_KEY='nipporia-deleted';
+function delMarks(){try{return JSON.parse(localStorage.getItem(DEL_KEY)||'{}')||{}}catch(_){return {}}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-sm="over2"],[data-sm="del2"]');if(!b)return;const m=delMarks();m[b.dataset.slot]=Date.now();try{localStorage.setItem(DEL_KEY,JSON.stringify(m))}catch(_){}},true);
+// ページを開いたとき：空のスロットに、保管したセーブがあれば戻す（いちばん新しいもの）
+(function(){try{const L=bkAll(),dm=delMarks();if(!L.length)return;const done=[];
+ for(let i=0;i<SLOT_N;i++){if(localStorage.getItem(slotKey(i)))continue;let best=null;for(const b of L){const raw=b.slots&&b.slots[i];if(!raw)continue;if(dm[i]&&dm[i]>b.at)continue;if(!best||b.at>best.at)best={raw,ver:b.ver,at:b.at}}
+  if(!best)continue;try{const o=JSON.parse(best.raw);if(!o||!o.alive)continue;localStorage.setItem(slotKey(i),best.raw);done.push(`スロット${i+1}（${o.name}・${Math.floor(o.am/12)}歳・${o.saveVer||best.ver}のデータ）`)}catch(_){}}
+ if(done.length){try{const all=slotInfoAll();for(let i=0;i<SLOT_N;i++)delete all[i];localStorage.setItem(SLOT_INFO,JSON.stringify(all))}catch(_){}
+  setTimeout(()=>{try{initTitle();contInfo()}catch(_){}try{popBig('🛟 セーブを戻しました',done.join('<br>'),'「つづきから」で続けられます')}catch(_){toast('セーブを保管から戻しました')}},800)}}catch(e){console.error(e)}})();
+// スロットの画面：どの版のデータか表示して、最新版で続ける
+function slotVer(i){try{const o=JSON.parse(localStorage.getItem(slotKey(i))||'null');if(!o)return null;return o.saveVer||null}catch(_){return null}}
+{const _sc90=slotCard;slotCard=function(i,s,mode){let h=_sc90.apply(this,arguments);try{if(!s)return h;const v=slotVer(i);const label=v?(v===CUR_VER?`${v}（最新版）のデータ`:`${v}のデータ`):'以前の版のデータ';
+ h=h.replace('<p class="hint small">',`<p class="hint small"><span class="chip">${esc(label)}</span> `);
+ if(v!==CUR_VER)h=h.replace('>この人生を続ける</button>',`>最新版（${esc(CUR_VER)}）で続ける</button>`)}catch(_){}return h}}
+// 続けたときに、版が上がったことを知らせる
+document.addEventListener('click',e=>{const b=e.target.closest('[data-sm="cont"]');if(!b)return;const v=slotVer(+b.dataset.slot);if(v&&v!==CUR_VER)setTimeout(()=>{try{toast(`${v}のデータを、最新版（${CUR_VER}）で続けます`)}catch(_){}},500)},true);
 </script>

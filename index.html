@@ -3065,6 +3065,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v3.0.11','2026年10月26日',['サービス会社（サブスク）の利用者が、現実に近い人数までふえるようになりました。','会社を大きくするときの待ち時間をなくしました。','「○○年から」のものは、研究が進むと解放されるようにしました。']],
   ['v3.0.10','2026年10月26日',['大人になってからのお金の伸びを、ゆるやかにしました。','自分で工夫して経営するほど、もうかるようにしました。','会社は、大きくするたびに次まで少し時間がかかるようになりました。']],
   ['v3.0.9','2026年10月26日',['終わった人生の記録が残るようになりました。セーブスロットの画面から見られます。','フォロワーが多くなっても、ふだんの投稿がバズあつかいにならないようにしました。','おまかせ（お金）で、買い物・住まい・契約なども自動でするようにしました。','引き継ぎスキルは、おまかせから外しました（自分で選べます）。']],
   ['v3.0.8','2026年10月26日',['「バズ」の表示は、本当に大きく伸びた投稿だけにしました。','投稿の再生数・ふえたフォロワー・広告収入が、つり合うようにしました。','メインにしていないアカウントのフォロワーが、減りすぎないようにしました。']],
@@ -10274,26 +10275,32 @@ const MKT_EXP=.4;
 marketMul=function(){try{return Math.max(1,Math.pow((worldPop()+alienPop())/WORLD_POP,MKT_EXP))}catch(_){return 1}};
 // おまかせの管理には手数料がかかる（自分で管理するほうが、もうかる）
 {const _inc83=inc;inc=function(cat,v){try{if(v>0&&S&&S.omk){if(cat==='co'&&S.omk.co)v=Math.round(v*.5);else if(cat==='mega'&&S.omk.mega)v=Math.round(v*.5)}}catch(_){}return _inc83.call(this,cat,v)}}
-// 会社は、すぐには大きくならない（大きくするたびに、次まで時間がかかる）
-function coGap(lv){return lv<4?6:lv<8?12:24}
-function coWait(c){const g=coGap(c.lv);return Math.max(0,(c.lvAm==null?-9999:c.lvAm)+g-S.am)}
-{let NOCO=0;const _omk83=omk;omk=function(k){if(NOCO&&k==='co')return false;return _omk83.apply(this,arguments)};
- const _om83=omkMonth;omkMonth=function(){NOCO=1;let r;try{r=_om83.apply(this,arguments)}finally{NOCO=0}
-  try{if(S&&omk('co')&&age()>=20){const ci=Math.max(.2,S.cty.inc);for(const c of (S.cos||[])){coInit(c);c.emp.auto=1;if(c.pmode==='manual')c.pmode='auto';if(coWait(c)>0||c.lv>=12)continue;
-   if(c.lv<8){const up=Math.round(COS[c.k].c*c.lv*ci);if(S.money*.015>=up){outc('co',up);c.cap+=COS[c.k].c*c.lv;c.lv++;c.lvAm=S.am;c.val+=Math.round(COS[c.k].c*(c.lv-1)*.9);log(`おまかせ：「${c.name}」Lv${c.lv}`,'life')}}
-   else{const cst=lvUpCost(c);if(S.money*.015>=cst){outc('co',cst);c.cap+=cst;c.lv++;c.lvAm=S.am;c.val=Math.round(c.val*1.4+cst*.6);log(`おまかせ：「${c.name}」Lv${c.lv}`,'life')}}}}}catch(e){console.error(e)}return r}}
-document.addEventListener('click',e=>{const b=e.target.closest('[data-cup],[data-cm="lvup"]');if(!b||!S)return;const c=b.dataset.cup?S.cos.find(x=>x.id===b.dataset.cup):coOf(CM_ID);if(!c)return;const w=coWait(c);
- if(w>0){e.stopImmediatePropagation();e.preventDefault();toast(`「${c.name}」を次に大きくできるのは、${w}か月後です`);return}
- const lv0=c.lv;setTimeout(()=>{if(c.lv>lv0)c.lvAm=S.am},0)},true);
-// サービス会社：ファンがサブスクに入る割合は、サービスの数で分け合う（全部合わせて、フォロワーの2%くらいまで）
-svcMonth=function(){if(!S.svcs||!S.svcs.length)return;let rv=0,cs=0;const n=S.svcs.length,F=totalF();
-  for(const s of S.svcs){const t=SVCT[s.t];if(!t)continue;const P=SVC_PRICE[s.pr||'std'];const fit=t.g&&t.g===S.genre?1.4:1;
+// サービス会社：ファンだけでなく、世の中の人も使う（有名になるほど、人口の1%くらいまで。ファンは入りやすい）。利用者は少しずつふえる
+function svcPop(){try{return W().r.includes('global')?viewersAll():Math.min(WORLD_POP,JP_POP*(1+W().r.length*1.5))}catch(_){return JP_POP}}
+svcMonth=function(){if(!S.svcs||!S.svcs.length)return;let rv=0,cs=0;const F=totalF(),P=svcPop();
+  for(const s of S.svcs){const t=SVCT[s.t];if(!t)continue;const Pp=SVC_PRICE[s.pr||'std'];const fit=t.g&&t.g===S.genre?1.4:1;
     s.q=clamp((s.q||40)-.4,5,100);s.age=(s.age||0)+1;
-    const market=Math.max(0,(F*.0005/n*fit+80*Math.max(.3,S.cty.inc)*Math.max(1,marketMul())+(s.mkt||0))*(s.q/50)*P.get*R(.7,1.3)*(s.age<6?.5+s.age/12:1));
-    const churn=s.users*clamp(.06*P.churn*(1.4-s.q/100),.01,.2);s.mkt=Math.max(0,(s.mkt||0)*.5);
-    s.users=Math.max(0,Math.round(s.users+market-churn))}
-  const U=S.svcs.reduce((a,s)=>a+(s.users||0),0),cap=F*.02+5000*n*Math.max(1,marketMul());if(U>cap){const k=cap/U;for(const s of S.svcs)s.users=Math.round(s.users*k)}
+    const fame=Math.min(1,F/(P*.1));const pot=(F*.01*fit+P*.01*fame)*(s.q/60)*Pp.get/Math.sqrt(S.svcs.length);
+    const gain=Math.max(0,(pot-s.users)*.04*R(.6,1.4)*(s.age<6?.5+s.age/12:1)+(s.mkt||0));
+    const churn=s.users*clamp(.03*Pp.churn*(1.4-s.q/100),.005,.12);s.mkt=Math.max(0,(s.mkt||0)*.5);
+    s.users=Math.max(0,Math.round(s.users+gain-churn))}
   for(const s of S.svcs){if(!SVCT[s.t])continue;const e=svcEst(s);s.lastRev=e.rev;s.lastCost=e.cost;rv+=e.rev;cs+=e.cost}
   if(rv)inc('svcbiz',rv);if(cs)bill('svcbiz','自分のサブスク事業の運営費',cs);
   if(chance(.01)&&!S.q.includes('svc_down'))S.q.push('svc_down');else if(chance(.008)&&!S.q.includes('svc_rival'))S.q.push('svc_rival')};
+
+// ----- 「○年から」は、自分の発展の速さで解放（研究が進むほど、未来のものが早く使える） -----
+function techBonus(){try{return Math.min(250,resDoneAll()*.8)}catch(_){return 0}}
+function techY(){return S?S.y+techBonus():2026}
+(function(){const conv=(o,key)=>{if(!o||o['_'+key+'0']!=null)return;const y0=o[key];if(!(y0>0))return;o['_'+key+'0']=y0;Object.defineProperty(o,key,{get(){return y0-techBonus()},set(v){},configurable:true,enumerable:true})};
+ const fixD=o=>{if(o&&typeof o.d==='string')o.d=o.d.replace(/（(\d{4})年から）/g,'（研究が進むと解放）').replace(/・(\d{4})年から）/g,'・研究が進むと解放）').replace(/(\d{4})年から。/g,'研究が進むと解放。')};
+ for(const r of RES){conv(r,'year');fixD(r)}
+ for(const d of DEVS){conv(d,'year');fixD(d)}
+ for(const k in COS){conv(COS[k],'year');fixD(COS[k])}
+ for(const k in SUBS){conv(SUBS[k],'yr');fixD(SUBS[k])}
+ try{for(const k in SVCT)conv(SVCT[k],'yr')}catch(_){}
+ try{for(const e of TEVENTS){conv(e,'yr');fixD(e)}}catch(_){}
+ try{for(const it of SPEND){if(/年から/.test(it.d||'')){const m=it.d.match(/(\d{4})年から/);const y=m?+m[1]:0;const ok0=it.ok;it.ok=function(){const sv=S.y;S.y=techY();try{return ok0?ok0.apply(this,arguments):true}finally{S.y=sv}};fixD(it)}}}catch(_){}
+})();
+// 画面の「○年から」の表示も、そろえる
+{const _rp83=renderPanel;renderPanel=function(){const r=_rp83.apply(this,arguments);try{const p=$('#panel');if(p){const w=document.createTreeWalker(p,NodeFilter.SHOW_TEXT);let n;while((n=w.nextNode())){if(/\d{4}年から/.test(n.nodeValue))n.nodeValue=n.nodeValue.replace(/（(\d{4})年から）/g,'（研究が進むと解放）').replace(/(\d{4})年から/g,'研究が進むと解放')}}}catch(_){}return r}}
 </script>

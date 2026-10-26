@@ -16,9 +16,13 @@ const LITE_TIP={town:'空き地を選んで、建物やお店を建てましょ�
 // 大計画は10個
 const LITE_MEGA=['sattnet','debris','station','spacehotel','moonbase','mooncity','mars','elevator','probe','spacelive'];
 {const _ms93=megaStart;megaStart=function(k){if(isLite()&&!LITE_MEGA.includes(k))return;return _ms93.apply(this,arguments)}}
-{const _mh93b=megaHtml;megaHtml=function(){let h=_mh93b.apply(this,arguments);if(!isLite())return h;try{const names=new Set(LITE_MEGA.map(k=>MEGA[k]&&MEGA[k].n));const d=document.createElement('div');d.innerHTML=h;
- d.querySelectorAll('.shop').forEach(r=>{const t=(r.querySelector('div>div')||r).textContent;let ok=false;for(const n of names)if(n&&t.indexOf(n)===0){ok=true;break}if(!ok)r.remove()});
- d.querySelectorAll('details').forEach(x=>{if(!x.querySelector('.shop'))x.remove()});const dn=LITE_MEGA.filter(k=>megaDone(k)).length;return `<p class="hint">軽量モードの大計画：${dn} / 10 完成</p>`+d.innerHTML}catch(e){console.error(e);return h}}}
+{const _mh93b=megaHtml;megaHtml=function(){if(!isLite())return _mh93b.apply(this,arguments);try{const dn=LITE_MEGA.filter(k=>megaDone(k)).length;
+ let h=`<h3>大計画 ${dn} / 10</h3><p class="hint">持っているお金：${yen(S.money)}</p><div>`;
+ for(const k of LITE_MEGA){const m=MEGA[k];if(!m)continue;const x=megaOf(k),c=megaCost(m);const lockY=S.y<m.yr,lockR=m.req&&!megaDone(m.req);let st='',btn='';
+  if(x&&x.done)st='<span class="chip up">完成</span>';else if(x){const left=Math.max(0,x.st+x.dur-S.am);st=`<span class="chip">建設中・あと${left}か月</span>`}
+  else{const why=lockR?`先に「${esc(MEGA[m.req].n)}」`:lockY?`研究${MEGA_RESN(k)}個で解放（いま${resDoneAll()}個）`:'';btn=`<button class="b sm ${!why&&S.money>=c&&age()>=20?'pri':''}" type="button" data-mega="${k}" ${why||S.money<c||age()<20?'disabled':''}>始める</button>`;if(why)st=`<span class="muted small">${why}</span>`}
+  h+=`<div class="shop"><div><div><b>${esc(m.n)}</b> ${st}</div><div class="muted small">${esc(m.d)}<br>${yen(c)}・約${Math.round(m.dur/12*10)/10}年</div>${x&&!x.done?`<div class="tbar"><i style="width:${Math.min(100,(S.am-x.st)/x.dur*100).toFixed(0)}%"></i></div>`:''}</div>${btn}</div>`}
+ return h+'</div>'}catch(e){console.error(e);return _mh93b.apply(this,arguments)}}}
 // 賞は5つ
 const LITE_AW=['creator','rookie','ceo','townaw','social'];
 {const _aw93=awMonth;awMonth=function(){if(!isLite())return _aw93.apply(this,arguments);const keep=AWARDS.slice();const L=AWARDS.filter(a=>LITE_AW.includes(a.k));AWARDS.length=0;AWARDS.push(...L);try{return _aw93.apply(this,arguments)}finally{AWARDS.length=0;AWARDS.push(...keep)}}}

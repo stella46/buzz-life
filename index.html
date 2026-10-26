@@ -3065,6 +3065,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v3.4.3','2026年10月27日',['軽量モードでも、予定の決め方を「枠で決める」と「バランスよく全部」から選べるようにしました（はじめは「枠で決める」です）。']],
   ['v3.4.2','2026年10月26日',['「遊び方」と「さがす」を、いまの版に合わせて書きなおしました。']],
   ['v3.4.1','2026年10月26日',['「昔の版で遊ぶ」に、v3.1・v3.2・v3.3 を追加しました。']],
   ['v3.4','2026年10月26日',['「はじめから」で、「通常」と「軽量」の2つのモードを選べるようになりました。軽量は、同じ遊びをかんたんにしたモードです。','昔の版は、「アップデート情報」の「昔の版で遊ぶ」から遊べます（v3.0 も追加しました）。','契約・サブスクを、同じ効果ごとのコースにまとめ、段階を上げていく形にしました。','スキルは、自動で覚えるようにしました。']],
@@ -10519,7 +10520,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-vp2]');if(
 {const _ng91=newGame;newGame=function(){const r=_ng91.apply(this,arguments);try{if(S){S.lite=LITE_PICK?1:0;if(S.lite){S.pmode='bal'}}}catch(_){}return r}}
 // セーブスロット・人生の終わりの画面に、モードを表示
 {const _sc91=slotCard;slotCard=function(i,s,mode){let h=_sc91.apply(this,arguments);try{const o=JSON.parse(localStorage.getItem(slotKey(i))||'null');if(o&&o.lite)h=h.replace('<p class="hint small">','<p class="hint small"><span class="chip">軽量</span> ')}catch(_){}return h}}
-(function(){const g=GUIDE.find(x=>x[0]==='basic');if(g&&!/軽量/.test(g[2]))g[2]+='\n・「はじめから」で、モードを選べます。通常：すべての機能で遊べます。軽量：同じ遊びを、かんたんにしたモードです（事業はシンプル、出来事は少なめ、大計画は10個、賞は5つ、研究はまとめて解放、予定は「バランスよく全部」）。'})();
+(function(){const g=GUIDE.find(x=>x[0]==='basic');if(g&&!/軽量/.test(g[2]))g[2]+='\n・「はじめから」で、モードを選べます。通常：すべての機能で遊べます。軽量：同じ遊びを、かんたんにしたモードです（事業はシンプル、出来事は少なめ、大計画は10個、賞は5つ、研究はまとめて解放、予定は「枠」か「バランスよく全部」）。'})();
 
 // ===== v3.0.20：契約・サブスクをアップグレード方式に／スキルは自動で覚える =====
 // 同じ効果のものを1本の「コース」にまとめ、段階を上げていく（とんでもなく高いものはなし：月100万円以上）
@@ -10728,4 +10729,14 @@ set('save',null,`・月が進むたびに自動で保存されます。セーブ
  const b=FIND.find(f=>f[0]==='買い物');if(b){b[3]='機材・住まい・部屋の飾り・サブスクの契約（コース）';b[4]+=' コース アップグレード'}
  const add=[['アカウントの調子','発信','sns:','伸び方の状態と、よくするためのヒント','伸びない 調子'],['投稿の記録','発信','sns:','最近の投稿と、再生数のベスト10','再生数 バズ ベスト'],['跡継ぎ・相続','人生 → 人','life:ppl','子どもや孫に引き継ぐ','隠居 相続 孫'],['家族チャンネル','人生 → 人','life:ppl','家族でチャンネルを作る','家族'],['終わった人生の記録','タイトル → セーブスロット',null,'終わった人生を見返す','記録 思い出'],['セーブを戻す','タイトル → セーブスロット',null,'自動で保管したセーブから戻す','消えた 復元 バックアップ'],['昔の版で遊ぶ','タイトル → アップデート情報',null,'前の版で遊ぶ（セーブは別）','旧版 おまけ']];
  for(const a of add)if(!FIND.some(f=>f[0]===a[0]))FIND.push(a)})();
+
+// ===== v3.4.3：軽量の予定の決め方は「枠で決める」と「バランスよく全部」（はじめは枠で決める） =====
+pmode=(function(_pm){return function(){if(isLite()){if(S.pmode!=='bal'&&S.pmode!=='classic')S.pmode='classic';return S.pmode}return _pm.apply(this,arguments)}})(pmode);
+{const _ps96=pmSwitch;pmSwitch=function(){if(!isLite())return _ps96.apply(this,arguments);const keep=PMODES.slice();const L=PMODES.filter(x=>x[0]!=='hybrid');PMODES.length=0;PMODES.push(...L);try{return _ps96.apply(this,arguments)}finally{PMODES.length=0;PMODES.push(...keep)}}}
+// 軽量でも切りかえを表示（割合は除く）
+{const _pp96=panelPlan;panelPlan=function(){if(!isLite())return _pp96.apply(this,arguments);const keep=S.lite;let h;S.lite=0;const sp=S.pmode;try{h=_pp96.apply(this,arguments)}finally{S.lite=keep;S.pmode=sp}
+ return h.replace(/<div class="pmsw">[\s\S]*?<p class="hint">予定の決め方：[^<]*<\/p><\/div>/,pmSwitch())}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-pm="hybrid"]');if(b&&isLite()){e.stopImmediatePropagation();e.preventDefault()}},true);
+{const _ng96=newGame;newGame=function(){const r=_ng96.apply(this,arguments);try{if(S&&S.lite)S.pmode='classic'}catch(_){}return r}}
+(function(){for(const x of GUIDE)x[2]=x[2].replace('・予定の決め方は「バランスよく全部」だけです。','・予定の決め方は「枠で決める」（はじめはこれ）と「バランスよく全部」の2つです。').replace('・決め方は3つです（軽量は「バランスよく全部」だけ）。','・決め方は3つです（軽量は「枠で決める」と「バランスよく全部」の2つ）。').replace('予定は「バランスよく全部」','予定は「枠」か「バランスよく全部」')})();
 </script>

@@ -9,4 +9,4 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-vp2]');if(
 {const _ng91=newGame;newGame=function(){const r=_ng91.apply(this,arguments);try{if(S){S.lite=LITE_PICK?1:0;if(S.lite){S.pmode='bal'}}}catch(_){}return r}}
 // セーブスロット・人生の終わりの画面に、モードを表示
 {const _sc91=slotCard;slotCard=function(i,s,mode){let h=_sc91.apply(this,arguments);try{const o=JSON.parse(localStorage.getItem(slotKey(i))||'null');if(o&&o.lite)h=h.replace('<p class="hint small">','<p class="hint small"><span class="chip">軽量</span> ')}catch(_){}return h}}
-(function(){const g=GUIDE.find(x=>x[0]==='basic');if(g&&!/軽量/.test(g[2]))g[2]+='\n・「はじめから」で、モードを選べます。通常：すべての機能で遊べます。軽量：同じ遊びを、かんたんにしたモードです（事業はシンプル、出来事は少なめ、大計画は10個、賞は5つ、研究はまとめて解放、予定は「バランスよく全部」）。'})();
+(function(){const g=GUIDE.find(x=>x[0]==='basic');if(g&&!/軽量/.test(g[2]))g[2]+='\n・「はじめから」で、モードを選べます。通常：すべての機能で遊べます。軽量：同じ遊びを、かんたんにしたモードです（事業はシンプル、出来事は少なめ、大計画は10個、賞は5つ、研究はまとめて解放、予定は「枠」か「バランスよく全部」）。'})();

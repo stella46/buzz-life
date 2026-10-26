@@ -3,15 +3,16 @@
 // 方針：やりこめば、1回の人生で大計画をすべてそろえられるかもしれない（ゲーム補正）。フォロワーもそれに合わせて大きく。
 
 // ----- 大計画：値段（高すぎるものを値下げ）・期間（短く）・年の制限（研究の数で解放） -----
+const MEGA_ECO=.002;
 const MEGA_RESN=k=>{const m=MEGA[k];return m&&m._yr0>2026?Math.min(180,Math.round((m._yr0-2026)*.8)):0};
 for(const m of Object.values(MEGA)){if(m._c0!=null)continue;m._c0=m.c;m._yr0=m.yr||0;m._dur0=m.dur;
  m.c=m._c0<=1e12?m._c0:Math.round(1e12*Math.pow(m._c0/1e12,.5));m.dur=Math.max(6,Math.round(m._dur0*.3));
  const k=m.k;Object.defineProperty(m,'yr',{get(){const n=MEGA_RESN(k);try{return n&&resDoneAll()<n?90000+n:0}catch(_){return 0}},set(v){},configurable:true,enumerable:true})}
 {const _mh73=megaHtml;megaHtml=function(){let h=_mh73.apply(this,arguments);return h.replace(/（9(\d{4})年から）/g,(s,n)=>`（研究${+n}個で解放・いま${resDoneAll()}個）`)}}
-// おまかせ：大計画を同時に10個まで
-{const _om73=omkMonth;omkMonth=function(){const r=_om73.apply(this,arguments);try{if(S&&omk('mega')&&age()>=20){for(let i=0;i<2;i++){if((S.mega||[]).filter(x=>!x.done).length>=10)break;const cand=Object.values(MEGA).filter(m=>!megaOf(m.k)&&S.y>=m.yr&&!(m.req&&!megaDone(m.req))&&megaCost(m)<=S.money*.25).sort((a,b)=>a.c-b.c)[0];if(!cand)break;megaStart(cand.k)}}}catch(e){console.error(e)}return r}}
+// おまかせ：大計画を同時に4個まで（自分で始めれば、いくつでも）
+{const _om73=omkMonth;omkMonth=function(){const r=_om73.apply(this,arguments);try{if(S&&omk('mega')&&age()>=20){for(let i=0;i<2;i++){if((S.mega||[]).filter(x=>!x.done).length>=4)break;const cand=Object.values(MEGA).filter(m=>!megaOf(m.k)&&S.y>=m.yr&&!(m.req&&!megaDone(m.req))&&megaCost(m)<=S.money*.06).sort((a,b)=>a.c-b.c)[0];if(!cand)break;megaStart(cand.k)}}}catch(e){console.error(e)}return r}}
 // 完成した大計画は、毎月、経済効果（費用の0.3%）を生む
-{const _mm73=megaMonth;megaMonth=function(){const r=_mm73.apply(this,arguments);try{let t=0;for(const x of (S.mega||[]))if(x.done&&MEGA[x.k])t+=megaCost(MEGA[x.k])*.003;if(t>0)inc('mega',Math.round(t*R(.85,1.15)))}catch(e){console.error(e)}return r}}
+{const _mm73=megaMonth;megaMonth=function(){const r=_mm73.apply(this,arguments);try{let t=0;for(const x of (S.mega||[]))if(x.done&&MEGA[x.k])t+=megaCost(MEGA[x.k])*MEGA_ECO;if(t>0)inc('mega',Math.round(t*R(.85,1.15)))}catch(e){console.error(e)}return r}}
 
 // ----- 宇宙人の視聴者：宇宙の大計画で、地球の外にも届くように -----
 const ALIEN={aliencity:1e11,galnet:1e12,galfed:1e13,universe:1e14};

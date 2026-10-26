@@ -3065,6 +3065,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v3.0.10','2026年10月26日',['大人になってからのお金の伸びを、ゆるやかにしました。','自分で工夫して経営するほど、もうかるようにしました。','会社は、大きくするたびに次まで少し時間がかかるようになりました。']],
   ['v3.0.9','2026年10月26日',['終わった人生の記録が残るようになりました。セーブスロットの画面から見られます。','フォロワーが多くなっても、ふだんの投稿がバズあつかいにならないようにしました。','おまかせ（お金）で、買い物・住まい・契約なども自動でするようにしました。','引き継ぎスキルは、おまかせから外しました（自分で選べます）。']],
   ['v3.0.8','2026年10月26日',['「バズ」の表示は、本当に大きく伸びた投稿だけにしました。','投稿の再生数・ふえたフォロワー・広告収入が、つり合うようにしました。','メインにしていないアカウントのフォロワーが、減りすぎないようにしました。']],
   ['v3.0.7','2026年10月26日',['「🤖 おまかせ設定」で、すべての操作をおまかせにできるようになりました。','おまかせできる分野をふやしました（SNS・お金・芸能事務所・サービス会社 など）。']],
@@ -9789,15 +9790,16 @@ try{for(const f of FIND){if(/表示のカスタマイズ/.test(f[0])){f[1]='メ�
 // 方針：やりこめば、1回の人生で大計画をすべてそろえられるかもしれない（ゲーム補正）。フォロワーもそれに合わせて大きく。
 
 // ----- 大計画：値段（高すぎるものを値下げ）・期間（短く）・年の制限（研究の数で解放） -----
+const MEGA_ECO=.002;
 const MEGA_RESN=k=>{const m=MEGA[k];return m&&m._yr0>2026?Math.min(180,Math.round((m._yr0-2026)*.8)):0};
 for(const m of Object.values(MEGA)){if(m._c0!=null)continue;m._c0=m.c;m._yr0=m.yr||0;m._dur0=m.dur;
  m.c=m._c0<=1e12?m._c0:Math.round(1e12*Math.pow(m._c0/1e12,.5));m.dur=Math.max(6,Math.round(m._dur0*.3));
  const k=m.k;Object.defineProperty(m,'yr',{get(){const n=MEGA_RESN(k);try{return n&&resDoneAll()<n?90000+n:0}catch(_){return 0}},set(v){},configurable:true,enumerable:true})}
 {const _mh73=megaHtml;megaHtml=function(){let h=_mh73.apply(this,arguments);return h.replace(/（9(\d{4})年から）/g,(s,n)=>`（研究${+n}個で解放・いま${resDoneAll()}個）`)}}
-// おまかせ：大計画を同時に10個まで
-{const _om73=omkMonth;omkMonth=function(){const r=_om73.apply(this,arguments);try{if(S&&omk('mega')&&age()>=20){for(let i=0;i<2;i++){if((S.mega||[]).filter(x=>!x.done).length>=10)break;const cand=Object.values(MEGA).filter(m=>!megaOf(m.k)&&S.y>=m.yr&&!(m.req&&!megaDone(m.req))&&megaCost(m)<=S.money*.25).sort((a,b)=>a.c-b.c)[0];if(!cand)break;megaStart(cand.k)}}}catch(e){console.error(e)}return r}}
+// おまかせ：大計画を同時に4個まで（自分で始めれば、いくつでも）
+{const _om73=omkMonth;omkMonth=function(){const r=_om73.apply(this,arguments);try{if(S&&omk('mega')&&age()>=20){for(let i=0;i<2;i++){if((S.mega||[]).filter(x=>!x.done).length>=4)break;const cand=Object.values(MEGA).filter(m=>!megaOf(m.k)&&S.y>=m.yr&&!(m.req&&!megaDone(m.req))&&megaCost(m)<=S.money*.06).sort((a,b)=>a.c-b.c)[0];if(!cand)break;megaStart(cand.k)}}}catch(e){console.error(e)}return r}}
 // 完成した大計画は、毎月、経済効果（費用の0.3%）を生む
-{const _mm73=megaMonth;megaMonth=function(){const r=_mm73.apply(this,arguments);try{let t=0;for(const x of (S.mega||[]))if(x.done&&MEGA[x.k])t+=megaCost(MEGA[x.k])*.003;if(t>0)inc('mega',Math.round(t*R(.85,1.15)))}catch(e){console.error(e)}return r}}
+{const _mm73=megaMonth;megaMonth=function(){const r=_mm73.apply(this,arguments);try{let t=0;for(const x of (S.mega||[]))if(x.done&&MEGA[x.k])t+=megaCost(MEGA[x.k])*MEGA_ECO;if(t>0)inc('mega',Math.round(t*R(.85,1.15)))}catch(e){console.error(e)}return r}}
 
 // ----- 宇宙人の視聴者：宇宙の大計画で、地球の外にも届くように -----
 const ALIEN={aliencity:1e11,galnet:1e12,galfed:1e13,universe:1e14};
@@ -10266,4 +10268,32 @@ function omkBuyAll(){if(!S||!omk('money')||age()<18||S.money<=0)return;const did
  if(did.length)log('おまかせ：'+did.slice(0,4).join('・'),'life')}
 {const _mh82=monthHook11;monthHook11=function(){_mh82.apply(this,arguments);try{omkBuyAll()}catch(e){console.error(e)}}}
 try{const o=OMK.find(x=>x[0]==='money');if(o)o[2]='自動払い・機材や暮らしの買い物・住まい・契約・部屋の飾り・お金の使い道をまかせます'}catch(_){}
+
+// ===== v3.0.10：50歳からの伸びをゆるやかに（工夫すると1回の人生で大計画が全部そろう。おまかせだけだと半分〜7割くらい） =====
+const MKT_EXP=.4;
+marketMul=function(){try{return Math.max(1,Math.pow((worldPop()+alienPop())/WORLD_POP,MKT_EXP))}catch(_){return 1}};
+// おまかせの管理には手数料がかかる（自分で管理するほうが、もうかる）
+{const _inc83=inc;inc=function(cat,v){try{if(v>0&&S&&S.omk){if(cat==='co'&&S.omk.co)v=Math.round(v*.5);else if(cat==='mega'&&S.omk.mega)v=Math.round(v*.5)}}catch(_){}return _inc83.call(this,cat,v)}}
+// 会社は、すぐには大きくならない（大きくするたびに、次まで時間がかかる）
+function coGap(lv){return lv<4?6:lv<8?12:24}
+function coWait(c){const g=coGap(c.lv);return Math.max(0,(c.lvAm==null?-9999:c.lvAm)+g-S.am)}
+{let NOCO=0;const _omk83=omk;omk=function(k){if(NOCO&&k==='co')return false;return _omk83.apply(this,arguments)};
+ const _om83=omkMonth;omkMonth=function(){NOCO=1;let r;try{r=_om83.apply(this,arguments)}finally{NOCO=0}
+  try{if(S&&omk('co')&&age()>=20){const ci=Math.max(.2,S.cty.inc);for(const c of (S.cos||[])){coInit(c);c.emp.auto=1;if(c.pmode==='manual')c.pmode='auto';if(coWait(c)>0||c.lv>=12)continue;
+   if(c.lv<8){const up=Math.round(COS[c.k].c*c.lv*ci);if(S.money*.015>=up){outc('co',up);c.cap+=COS[c.k].c*c.lv;c.lv++;c.lvAm=S.am;c.val+=Math.round(COS[c.k].c*(c.lv-1)*.9);log(`おまかせ：「${c.name}」Lv${c.lv}`,'life')}}
+   else{const cst=lvUpCost(c);if(S.money*.015>=cst){outc('co',cst);c.cap+=cst;c.lv++;c.lvAm=S.am;c.val=Math.round(c.val*1.4+cst*.6);log(`おまかせ：「${c.name}」Lv${c.lv}`,'life')}}}}}catch(e){console.error(e)}return r}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-cup],[data-cm="lvup"]');if(!b||!S)return;const c=b.dataset.cup?S.cos.find(x=>x.id===b.dataset.cup):coOf(CM_ID);if(!c)return;const w=coWait(c);
+ if(w>0){e.stopImmediatePropagation();e.preventDefault();toast(`「${c.name}」を次に大きくできるのは、${w}か月後です`);return}
+ const lv0=c.lv;setTimeout(()=>{if(c.lv>lv0)c.lvAm=S.am},0)},true);
+// サービス会社：ファンがサブスクに入る割合は、サービスの数で分け合う（全部合わせて、フォロワーの2%くらいまで）
+svcMonth=function(){if(!S.svcs||!S.svcs.length)return;let rv=0,cs=0;const n=S.svcs.length,F=totalF();
+  for(const s of S.svcs){const t=SVCT[s.t];if(!t)continue;const P=SVC_PRICE[s.pr||'std'];const fit=t.g&&t.g===S.genre?1.4:1;
+    s.q=clamp((s.q||40)-.4,5,100);s.age=(s.age||0)+1;
+    const market=Math.max(0,(F*.0005/n*fit+80*Math.max(.3,S.cty.inc)*Math.max(1,marketMul())+(s.mkt||0))*(s.q/50)*P.get*R(.7,1.3)*(s.age<6?.5+s.age/12:1));
+    const churn=s.users*clamp(.06*P.churn*(1.4-s.q/100),.01,.2);s.mkt=Math.max(0,(s.mkt||0)*.5);
+    s.users=Math.max(0,Math.round(s.users+market-churn))}
+  const U=S.svcs.reduce((a,s)=>a+(s.users||0),0),cap=F*.02+5000*n*Math.max(1,marketMul());if(U>cap){const k=cap/U;for(const s of S.svcs)s.users=Math.round(s.users*k)}
+  for(const s of S.svcs){if(!SVCT[s.t])continue;const e=svcEst(s);s.lastRev=e.rev;s.lastCost=e.cost;rv+=e.rev;cs+=e.cost}
+  if(rv)inc('svcbiz',rv);if(cs)bill('svcbiz','自分のサブスク事業の運営費',cs);
+  if(chance(.01)&&!S.q.includes('svc_down'))S.q.push('svc_down');else if(chance(.008)&&!S.q.includes('svc_rival'))S.q.push('svc_rival')};
 </script>

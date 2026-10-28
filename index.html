@@ -3065,6 +3065,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v3.5.3','2026年10月28日',['サブチャンネルや同時投稿をすると、メインもいっしょに伸びるようにしました。','同時投稿したSNSが、メインに合わせて伸びるようにしました。']],
   ['v3.5.2','2026年10月28日',['ほかのSNSにも同時に投稿できるようにしました（「発信」の「📡 同時に投稿」）。','サブチャンネルを作っても、メインが伸びにくくならないようにしました。']],
   ['v3.5.1','2026年10月28日',['メンタルが下がりすぎないように、回復しやすくしました。']],
   ['v3.5','2026年10月28日',['予定の行動・交流・事業で、失敗することがあるようになりました。工夫しだいで、失敗しにくくできます。','予定の画面に「うまくいく見こみ」を追加しました。','「昔の版で遊ぶ」に v3.4 を追加しました。']],
@@ -10868,18 +10869,23 @@ function xpostList(){return Object.keys(SNS).filter(xpostOn)}
 function xPost(key,k){const sv={main:S.main,posts:S.posts,cw:S.collabWith};S.main=key;S.posts=[];S.collabWith=null;POPT='normal';SUBPOST=1;
  const f0=S.f[key]||0;try{doPost(k);const d=(S.f[key]||0)-f0;if(d>0){const mul=1.25*accOf(key).form;S.f[key]=Math.min(SNS[key].cap,f0+d*mul)}}finally{SUBPOST=0;S.main=sv.main;S.posts=sv.posts;S.collabWith=sv.cw;POPT='normal'}}
 postAll=function(k){try{fixMain()}catch(_){}S.lastPostAm=S.am;const subs=S.subch||[],xs=xpostList();
- // メインの力はほとんど落とさない（サブ1つで約9%、同時投稿1つで約6%）
- const share=1/(1+.1*subs.length+.06*xs.length);
- POPT=postPlanNow();doPost(k*share);POPT='normal';
- for(const c of subs)try{subPost(c,k*share*.8)}catch(e){console.error(e)}
- for(const x of xs)try{xPost(x,k*share*.7)}catch(e){console.error(e)}
+ // メインの力は落とさない。サブ・ほかのSNSからメインへの誘導で、メインはむしろ伸びる
+ const mk=S.main,f0=S.f[mk]||0;
+ POPT=postPlanNow();doPost(k);POPT='normal';
+ const dm=Math.max(0,(S.f[mk]||0)-f0);
+ if(dm>0&&(subs.length||xs.length)){const add=dm*(.06*subs.length+.04*xs.length);S.f[mk]=Math.min(SNS[mk].cap,(S.f[mk]||0)+add);S.mo.newF+=add}
+ for(const c of subs)try{subPost(c,k*.8)}catch(e){console.error(e)}
+ // 同時投稿：メインで伸びたぶんに応じて、ほかのSNSも伸びる（SNSの向き・不向きでちがう）
+ for(const x of xs)try{const g0=S.f[x]||0;xPost(x,k*.8);const r=(SNS[x].reach||1)/Math.max(.3,SNS[mk].reach||1);const ex=dm*R(.3,.6)*clamp(r,.4,1.5)*Math.max(.2,1-g0/Math.max(1,(S.f[mk]||0)*.8));if(ex>0)S.f[x]=Math.min(SNS[x].cap,(S.f[x]||0)+ex)}catch(e){console.error(e)}
  if(xs.length||subs.length)ad('mental',-.15*k*(xs.length+subs.length))};
+// 同時投稿しているSNSには、メインのファンが毎月少しずつ流れてくる（メインの半分くらいまで）
+{const _mh99b=monthHook11;monthHook11=function(){const r=_mh99b.apply(this,arguments);try{if(S&&S.snsOpen){const m=S.f[S.main]||0;for(const x of xpostList()){const top=m*.5,f=S.f[x]||0;if(f>=top)continue;S.f[x]=Math.min(SNS[x].cap,f+m*.006*R(.5,1.5)*(1-f/top))}}}catch(e){console.error(e)}return r}}
 // 失敗の判定はメインの投稿だけ
 {const _fr99=failRoll;failRoll=function(b,sk,key){if(SUBPOST&&key==='post')return 0;return _fr99.apply(this,arguments)}}
 // 発信タブ：同時に投稿するSNSを選ぶ
 function xpostHtml(){if(!S.snsOpen)return '';const ks=Object.keys(SNS).filter(k=>S.open&&S.open[k]&&k!==S.main);
  if(!ks.length)return `<div class="card"><div class="hd"><span>📡 同時に投稿</span></div><p class="hint">ほかのSNSのアカウントを作ると、メインと同じ内容を同時に投稿できます。</p></div>`;
- return `<div class="card"><div class="hd"><span>📡 同時に投稿</span><span class="muted small">${xpostList().length}つ</span></div><p class="hint">メインに投稿するとき、選んだSNSにも同じ内容を投稿します。それぞれのフォロワーがふえます（メインの伸びはほんの少しだけ下がり、少し疲れます）。</p><div class="row wrap">${ks.map(k=>`<button class="b sm ${xpostOn(k)?'pri':''}" type="button" data-xpost="${k}" aria-pressed="${xpostOn(k)}">${xpostOn(k)?'✓ ':''}${esc(SNS[k].n)}（${num(S.f[k]||0)}人）</button>`).join('')}</div></div>`}
+ return `<div class="card"><div class="hd"><span>📡 同時に投稿</span><span class="muted small">${xpostList().length}つ</span></div><p class="hint">メインに投稿するとき、選んだSNSにも同じ内容を投稿します。それぞれのフォロワーがふえます（メインの伸びに合わせて、ほかのSNSも伸びます。ほかのSNSからメインに来る人もいます。少し疲れます）。</p><div class="row wrap">${ks.map(k=>`<button class="b sm ${xpostOn(k)?'pri':''}" type="button" data-xpost="${k}" aria-pressed="${xpostOn(k)}">${xpostOn(k)?'✓ ':''}${esc(SNS[k].n)}（${num(S.f[k]||0)}人）</button>`).join('')}</div></div>`}
 {const _ps99=panelSns;panelSns=function(){let h=_ps99.apply(this,arguments);try{if(!S.snsOpen)return h;const c=xpostHtml();const i=h.indexOf('<h2>アカウント</h2>');h=i<0?h+c:h.slice(0,i)+c+h.slice(i)}catch(e){console.error(e)}return h}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-xpost]');if(!b||!S)return;S.xpost=S.xpost||{};const k=b.dataset.xpost;S.xpost[k]=S.xpost[k]?0:1;save();renderPanel()});
 // おまかせ（SNS）：アカウントがあるSNSには同時に投稿する

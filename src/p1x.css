@@ -10,3 +10,4 @@
 .plist .prow canvas{width:96px!important;height:54px!important;max-width:96px;border-radius:6px;flex:none}
 .plist .pinfo{flex:1;text-align:left;display:flex;flex-direction:column;min-width:0;line-height:1.35}.pinfo b{font-size:.92em;overflow-wrap:anywhere}
 .pnum{font-size:.85em;font-weight:600}
+.r4row{padding:10px 12px;margin:8px 0}.r4row .seg{margin-top:6px}

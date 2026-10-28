@@ -47,7 +47,7 @@ for(const k of Object.keys(SNS)){const o=SNS[k];const d=Object.getOwnPropertyDes
 {const _mh100=monthHook11;monthHook11=function(){const r=_mh100.apply(this,arguments);try{if(!isLite2()||!S.alive)return r;
  for(const k in S.f){const c=SNS[k]&&SNS[k].cap;if(c&&S.f[k]>c)S.f[k]=c}for(const c of (S.subch||[]))c.f=Math.min(c.f||0,lite2Cap()*.5);
  // 日本のトップ近くまで来ると、世界で話題になることがある
- if(!S.lw&&S.snsOpen&&(S.f[S.main]||0)>=lite2Cap()*.8&&chance(.04)){S.lw=1;tl('世界で話題になった');log('投稿が海外でも話題になり、世界中から見られるようになった','good');try{popBig('🌏 世界で話題に','海外からも見られるようになりました','フォロワーの上限が大きくなりました')}catch(_){}}
+ if(!S.lw&&S.snsOpen&&(S.f[S.main]||0)>=lite2Cap()*.9&&chance(.01)){S.lw=1;tl('世界で話題になった');log('投稿が海外でも話題になり、世界中から見られるようになった','good');try{popBig('🌏 世界で話題に','海外からも見られるようになりました','フォロワーの上限が大きくなりました')}catch(_){}}
  // メンタルは、健康と幸福にまとめる
  S.p.mental=clamp(S.p.mental+(((S.p.health+S.p.happy)/2)-S.p.mental)*.5);
  // 記録用
@@ -126,7 +126,7 @@ SNS・人生・お金・事業（まち・会社・大計画・宇宙）まで�
  const b=GUIDE.find(x=>x[0]==='basic');if(b)b[2]=b[2].replace('「通常」か「軽量」を選べます（くわしくは「通常と軽量」）','「軽量」「通常」「旧軽量」を選べます（くわしくは「軽量と通常」）')})();
 try{if(!OLD_VERS.some(v=>v[1]==='versions/v3.5/'))OLD_VERS.unshift(['v3.5','versions/v3.5/','失敗の仕組みが入った版'])}catch(_){}
 // 軽量：フォロワーの伸びは現実くらい（日本のトップになるには長い年月がかかる）
-const LITE2_GROW=.15;
+let LITE2_GROW=.15;
 {const _dp100=doPost;doPost=function(k){if(!isLite2())return _dp100.apply(this,arguments);const key=S.main,f0=S.f[key]||0;const r=_dp100.apply(this,arguments);try{const d=(S.f[key]||0)-f0;if(d>0){S.f[key]=f0+d*LITE2_GROW;if(!SUBPOST)S.mo.newF-=d*(1-LITE2_GROW)}}catch(_){}return r}}
 
 // 軽量：賞・研究の知らせ・引き継ぎポイントの大きな知らせは出さない

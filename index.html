@@ -3066,6 +3066,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v3.6.1','2026年10月29日',['軽量モードを現実ベースにしました。給料・生活費・税金・広告収入などを、現実の統計に合わせています。','軽量モードでは、未来の空想の出来事が起きないようにしました。']],
   ['v3.6','2026年10月29日',['新しい「軽量」モードを追加しました。人生を見守りながら、分かれ道で選ぶモードです。数字は現実くらいの大きさです。','前の軽量モードは「旧軽量」として遊べます（いまのセーブもそのまま続けられます）。','人生が終わると「人生の振り返り」が見られるようになりました。','「昔の版で遊ぶ」に v3.5 を追加しました。']],
   ['v3.5.3','2026年10月28日',['サブチャンネルや同時投稿をすると、メインもいっしょに伸びるようにしました。','同時投稿したSNSが、メインに合わせて伸びるようにしました。']],
   ['v3.5.2','2026年10月28日',['ほかのSNSにも同時に投稿できるようにしました（「発信」の「📡 同時に投稿」）。','サブチャンネルを作っても、メインが伸びにくくならないようにしました。']],
@@ -10943,7 +10944,7 @@ for(const k of Object.keys(SNS)){const o=SNS[k];const d=Object.getOwnPropertyDes
 {const _mh100=monthHook11;monthHook11=function(){const r=_mh100.apply(this,arguments);try{if(!isLite2()||!S.alive)return r;
  for(const k in S.f){const c=SNS[k]&&SNS[k].cap;if(c&&S.f[k]>c)S.f[k]=c}for(const c of (S.subch||[]))c.f=Math.min(c.f||0,lite2Cap()*.5);
  // 日本のトップ近くまで来ると、世界で話題になることがある
- if(!S.lw&&S.snsOpen&&(S.f[S.main]||0)>=lite2Cap()*.8&&chance(.04)){S.lw=1;tl('世界で話題になった');log('投稿が海外でも話題になり、世界中から見られるようになった','good');try{popBig('🌏 世界で話題に','海外からも見られるようになりました','フォロワーの上限が大きくなりました')}catch(_){}}
+ if(!S.lw&&S.snsOpen&&(S.f[S.main]||0)>=lite2Cap()*.9&&chance(.01)){S.lw=1;tl('世界で話題になった');log('投稿が海外でも話題になり、世界中から見られるようになった','good');try{popBig('🌏 世界で話題に','海外からも見られるようになりました','フォロワーの上限が大きくなりました')}catch(_){}}
  // メンタルは、健康と幸福にまとめる
  S.p.mental=clamp(S.p.mental+(((S.p.health+S.p.happy)/2)-S.p.mental)*.5);
  // 記録用
@@ -11022,11 +11023,40 @@ SNS・人生・お金・事業（まち・会社・大計画・宇宙）まで�
  const b=GUIDE.find(x=>x[0]==='basic');if(b)b[2]=b[2].replace('「通常」か「軽量」を選べます（くわしくは「通常と軽量」）','「軽量」「通常」「旧軽量」を選べます（くわしくは「軽量と通常」）')})();
 try{if(!OLD_VERS.some(v=>v[1]==='versions/v3.5/'))OLD_VERS.unshift(['v3.5','versions/v3.5/','失敗の仕組みが入った版'])}catch(_){}
 // 軽量：フォロワーの伸びは現実くらい（日本のトップになるには長い年月がかかる）
-const LITE2_GROW=.15;
+let LITE2_GROW=.15;
 {const _dp100=doPost;doPost=function(k){if(!isLite2())return _dp100.apply(this,arguments);const key=S.main,f0=S.f[key]||0;const r=_dp100.apply(this,arguments);try{const d=(S.f[key]||0)-f0;if(d>0){S.f[key]=f0+d*LITE2_GROW;if(!SUBPOST)S.mo.newF-=d*(1-LITE2_GROW)}}catch(_){}return r}}
 
 // 軽量：賞・研究の知らせ・引き継ぎポイントの大きな知らせは出さない
 {const _aw100=awMonth;awMonth=function(){if(isLite2())return;return _aw100.apply(this,arguments)}}
 {const _rr100=researchReady;researchReady=function(){if(isLite2())return 0;return _rr100.apply(this,arguments)}}
 {const _pb100=popBig;popBig=function(a){if(isLite2()&&/引き継ぎポイント/.test(String(a||'')))return;return _pb100.apply(this,arguments)}}
+
+// ===== v3.6.1：軽量は現実ベース（数字は現実の統計に合わせる・未来の空想はなし・出来事は現実にありそうなものだけ） =====
+// 参考：給与＝国税庁「民間給与実態統計調査」（令和6年分：平均478万円）、生活費＝総務省「全国家計構造調査」（2024年：単身の消費支出 月約17.6万円）、
+//      家計調査（二人以上世帯 月約30万円）、広告収入＝UUUM決算（1再生 約0.29円）、平均寿命＝厚労省「令和6年簡易生命表」（男81.09歳・女87.13歳）
+// ----- 税金と社会保険：働いて得たお金の約2割 -----
+{const _inc101=inc;inc=function(cat,v){const r=_inc101.apply(this,arguments);try{if(isLite2()&&v>0&&age()>=18){const t=({job:.2,part:.12,sns:.2,fanclub:.2,tip:.2,deal:.2,biz:.25,side:.15})[cat];if(t)outc('tax',Math.round(v*t))}}catch(_){}return r}}
+// ----- 生活費：ひとり暮らし 月約17.6万円、夫婦 月約26万円、子ども1人あたり 月約3.5万円（22歳まで）。国の物価で変わる -----
+function lite2Living(){const kids=(S.kids||[]).filter(k=>k._gkOf==null&&(S.am-k.born)/12<22).length;let v=S.spouse?260000:176000;v+=kids*35000;if(age()>=65)v*=.85;return Math.round(v*Math.max(.15,S.cty.inc)*(S.priceIdx||1))}
+let L2CHG=0;{const _oc101=outc;outc=function(c,v){try{if(isLite2()&&!L2CHG&&v>0&&['home','phone','subs','date','shop','ev'].includes(c))S.l2home=(S.l2home||0)+v}catch(_){}return _oc101.apply(this,arguments)}}
+// 収入がふえると、暮らしも少しずつぜいたくになる（手取りのうち基本の生活費をこえた分の半分くらいを使う）
+{const _inc101c=inc;inc=function(cat,v){const r=_inc101c.apply(this,arguments);try{if(isLite2()&&v>0&&['job','part','sns','fanclub','tip','deal','biz','side','pension'].includes(cat))S.l2in=(S.l2in||0)+v}catch(_){}return r}}
+{const _mh101=monthHook11;monthHook11=function(){const r=_mh101.apply(this,arguments);try{if(isLite2()&&S.alive){const inm=S.l2in||0;S.l2in=0;if(age()>=18&&(S.home||1)!==0){const base=lite2Living();const net=inm*.8;let use=base;if(net>base)use=base+Math.pow(net-base,.92)*.5;const need=Math.round(use)-(S.l2home||0);if(need>0){L2CHG=1;try{outc('home',need)}finally{L2CHG=0}S.lvPaid=need}}S.l2home=0}}catch(e){console.error(e)}return r}}
+// ----- 広告収入：1再生 約0.2円（ショート動画は低め） -----
+{const _inc101b=inc;inc=function(cat,v){if(isLite2()&&cat==='sns'&&v>0)v=Math.round(v*1.6);return _inc101b.call(this,cat,v)}}
+// ----- フォロワー：登録者100万人以上は、ほんのひとにぎり -----
+LITE2_GROW=.08;
+// ----- 未来の空想はなし -----
+// 未来のSNS（立体映像の配信など）は出ない
+for(const k of Object.keys(SNS)){const s=SNS[k];if(!(s.era>2026))continue;const e0=s.era;Object.defineProperty(s,'era',{get(){return isLite2()?99999:e0},set(v){},configurable:true,enumerable:true})}
+// 未来の世の中の流れ（空飛ぶ車・火星の町など）は出ない
+for(const h of (typeof HIST!=='undefined'?HIST:[])){if(!/^【未来】/.test(h.t||''))continue;const s0=h.s;Object.defineProperty(h,'s',{get(){return isLite2()?'none':s0},set(v){},configurable:true,enumerable:true})}
+// 現実にない出来事は出ない
+const LITE2_FANTASY=/宇宙(旅行|ホテル|飛行士|ゴミ|の観光|からの|の発見)|火星|月面|空飛ぶ|テレポ|ホログラム|仮想の国|仮想旅行|人型ロボット|ロボットの店員|AIの友|自動運転|宇宙人|ホロステージ|立体映像/;
+function evFantasy(e){try{let tx='';try{tx=typeof e.text==='function'?e.text():(e.text||'')}catch(_){}return LITE2_FANTASY.test((e.t||'')+tx)}catch(_){return false}}
+{const _re101=rollEvent;rollEvent=function(){const e=_re101.apply(this,arguments);if(isLite2()&&e&&evFantasy(e))return null;return e}}
+// ----- はじめるときの選択：未来の時代・架空の大陸・事業の目標は出さない -----
+document.addEventListener('click',e=>{const b=e.target.closest('[data-sm="new"]');if(!b||LITE_PICK!==2)return;setTimeout(()=>{try{const m=$('#mcard');if(!m)return;
+ m.querySelectorAll('button,option').forEach(x=>{const t=(x.textContent||'').trim();if(/^(未来（|架空の大陸|市長になる|評価★4のお店|まちの発展度|自社ビル)/.test(t)&&!x.selected&&!x.classList.contains('on')&&x.getAttribute('aria-pressed')!=='true')x.remove()})}catch(_){}},60)});
+(function(){const g=GUIDE.find(x=>x[0]==='lite');if(g&&!/現実の統計/.test(g[2]))g[2]=g[2].replace('数字は現実くらいの大きさです。','数字は現実の統計をもとにしています（給料・生活費・税金・広告収入・寿命など）。未来の空想の出来事は起きません。')})();
 </script>

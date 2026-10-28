@@ -3065,6 +3065,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v3.5.1','2026年10月28日',['メンタルが下がりすぎないように、回復しやすくしました。']],
   ['v3.5','2026年10月28日',['予定の行動・交流・事業で、失敗することがあるようになりました。工夫しだいで、失敗しにくくできます。','予定の画面に「うまくいく見こみ」を追加しました。','「昔の版で遊ぶ」に v3.4 を追加しました。']],
   ['v3.4.3','2026年10月27日',['軽量モードでも、予定の決め方を「枠で決める」と「バランスよく全部」から選べるようにしました（はじめは「枠で決める」です）。']],
   ['v3.4.2','2026年10月26日',['「遊び方」と「さがす」を、いまの版に合わせて書きなおしました。']],
@@ -10848,4 +10849,14 @@ function failHtml(){if(!S||age()<6||!S.plan)return '';const ks=[...new Set(S.pla
  const l=GUIDE.find(x=>x[0]==='lite');if(l&&!/失敗/.test(l[2]))l[2]=l[2].replace('・出来事は少なめです。','・出来事と失敗は少なめです。')})();
 // 昔の版で遊ぶ：v3.4 を追加
 try{if(!OLD_VERS.some(v=>v[1]==='versions/v3.4/'))OLD_VERS.unshift(['v3.4','versions/v3.4/','軽量モードが入った版'])}catch(_){}
+
+// ===== v3.5.1：メンタルを保ちやすく =====
+// 1) 毎月の小さな疲れ（投稿・勉強・仕事・練習など）を少しやわらげる
+{const _ad98=ad;ad=function(k,v,cat){if(k==='mental'&&v<0&&v>-1)v*=.65;return _ad98.call(this,k,v,cat)}}
+// 2) 自然に回復：下がっているほど、毎月少しずつ戻る（55まで）／支えてくれる人がいると、少し回復
+{const _mh98=monthHook11;monthHook11=function(){const r=_mh98.apply(this,arguments);try{if(S&&S.alive&&age()>=6&&S.p){const m=S.p.mental;
+ let g=0;if(m<55)g+=(55-m)*.05;
+ const L=lover();if(L&&L.rel>=60)g+=.4;const fr=(S.friends||[]).filter(n=>n.rel>=60).length;g+=Math.min(.6,fr*.15);if(parents().some(p=>p.rel>=70))g+=.2;if((S.pet||0))g+=.3;
+ if(g>0)S.p.mental=clamp(m+g)}}catch(e){console.error(e)}return r}}
+(function(){const g=GUIDE.find(x=>x[0]==='act');if(g&&!/メンタルは/.test(g[2]))g[2]+='\n・メンタルは、休む・趣味・交流で回復します。下がっているときは毎月少しずつ自然に戻り、仲のよい人がいると回復しやすくなります。'})();
 </script>

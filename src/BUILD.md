@@ -1,7 +1,7 @@
 # ビルド手順（Buzz人生シミュレーター）
-ソースは p1.html（画面とCSS）＋ p2〜p63 p64 p65 p66 p67 p68 p69 p70 p71 p72 p73 p74 p75 p76 p77 p78 p79 p80 p81 p82 p83 p84 p85 p86 p87 p88 p89 p90 p91 p92 p93 p94 p95 p96 p97 p98 p99 p100 p101.js（p37 はなし）（スクリプト）。この順でつなげて1枚のHTMLにする。
+ソースは p1.html（画面とCSS）＋ p2〜p63 p64 p65 p66 p67 p68 p69 p70 p71 p72 p73 p74 p75 p76 p77 p78 p79 p80 p81 p82 p83 p84 p85 p86 p87 p88 p89 p90 p91 p92 p93 p94 p95 p96 p97 p98 p99 p100 p101 p102.js（p37 はなし）（スクリプト）。この順でつなげて1枚のHTMLにする。
 
-    { cat p1.html; echo '<script>'; cat p2.js p4.js p6.js p3.js p7.js p8.js p9.js p10.js p11.js p12.js p13.js p14.js p15.js p16.js p17.js p18.js p19.js p20.js p21.js p22.js p23.js p24.js p25.js p26.js p27.js p28.js p29.js p30.js p31.js p32.js p33.js p34.js p35.js p36.js p38.js p39.js p40.js p41.js p42.js p43.js p44.js p45.js p46.js p47.js p48.js p49.js p50.js p51.js p52.js p53.js p54.js p55.js p56.js p57.js p58.js p59.js p60.js p61.js p62.js p63 p64 p65 p66 p67 p68 p69 p70 p71 p72 p73 p74 p75 p76 p77 p78 p79 p80 p81 p82 p83 p84 p85 p86 p87 p88 p89 p90 p91 p92 p93 p94 p95 p96 p97 p98 p99 p100 p101.js; echo '</script>'; } > nipporia.html
+    { cat p1.html; echo '<script>'; cat p2.js p4.js p6.js p3.js p7.js p8.js p9.js p10.js p11.js p12.js p13.js p14.js p15.js p16.js p17.js p18.js p19.js p20.js p21.js p22.js p23.js p24.js p25.js p26.js p27.js p28.js p29.js p30.js p31.js p32.js p33.js p34.js p35.js p36.js p38.js p39.js p40.js p41.js p42.js p43.js p44.js p45.js p46.js p47.js p48.js p49.js p50.js p51.js p52.js p53.js p54.js p55.js p56.js p57.js p58.js p59.js p60.js p61.js p62.js p63 p64 p65 p66 p67 p68 p69 p70 p71 p72 p73 p74 p75 p76 p77 p78 p79 p80 p81 p82 p83 p84 p85 p86 p87 p88 p89 p90 p91 p92 p93 p94 p95 p96 p97 p98 p99 p100 p101 p102.js; echo '</script>'; } > nipporia.html
 
 - 後のファイルほど優先（同じ名前の function は後のものが使われる）
 - p2：データ・基本の出来事 / p4：国・難易度・研究・まち・実績・BGM / p6：出来事（v0.2） / p3：エンジン・画面（v0.1） / p7：v0.2の差し替え / p8：v0.3（行動の中身・請求書・経営・5タブ） / p9：設定・削除・アップデート情報（CHANGELOG） / p10：セーブ保管・過去バージョン / p11：出来事（v0.4） / p12：子ども時代（v0.5） / p13：v0.6（人生の選択・目標・ファン層・アルバムほか） / p14：v0.7（時代・実際の出来事・会社・新しいまち・遊び方） / p15：v0.8（研究追加・スキルツリー2種・感想フォーム・舞台説明） / p16：v0.9（推定プレイ時間・感想フォーム改・バージョン画面）。感想の送り先は p16.js の FB_URL（feedback/feedback_sheet.gs をスプレッドシートに置いてウェブアプリとして公開したURL）
@@ -54,5 +54,5 @@
 - p61：v2.9.4 引き継ぎポイントを人生の途中でも（毎月 lpOfLife＋この人生で解除した実績数 − S.lpPaid を支払う。終わりは残りだけ）、g1 は20歳で解放、「人生」→「スキル」に入口
 - 【重要】p22.js は p22a〜p22e をつなげて作る（cat p22a.js p22b.js p22c.js p22d.js p22e.js > p22.js）。p22e は v1.1.1〜v1.1.2 の修正（fixMain・audGate・子どもの出費の上限）。v2.1〜v2.9.4 では抜けていた
 - p62：v2.9.5 実績の引き継ぎポイントを全人生で1回ずつ（META.leg.achPaid、これまでの分も）、プレイ時間の記録をコンパクトに、昔の版 v2.1〜v2.8 を追加
-- p63 p64 p65 p66 p67 p68 p69 p70 p71 p72 p73 p74 p75 p76 p77 p78 p79 p80 p81 p82 p83 p84 p85 p86 p87 p88 p89 p90 p91 p92 p93 p94 p95 p96 p97 p98 p99 p100 p101：v2.9.6 引き継ぎスキルの解放条件を1回の人生で届くものに（LEG_COND・META.rec.c_gN）、店長の給料×SHOP_MUL、出来事の大きな出費は所持金の8割（最低50万×物価）まで、同じまちのお店9軒目から客の取り合い
+- p63 p64 p65 p66 p67 p68 p69 p70 p71 p72 p73 p74 p75 p76 p77 p78 p79 p80 p81 p82 p83 p84 p85 p86 p87 p88 p89 p90 p91 p92 p93 p94 p95 p96 p97 p98 p99 p100 p101 p102：v2.9.6 引き継ぎスキルの解放条件を1回の人生で届くものに（LEG_COND・META.rec.c_gN）、店長の給料×SHOP_MUL、出来事の大きな出費は所持金の8割（最低50万×物価）まで、同じまちのお店9軒目から客の取り合い
 - p1x.css：p1.html のあとに <style> で追加する（v3.0.4〜）

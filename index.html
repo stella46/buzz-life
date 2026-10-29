@@ -3066,6 +3066,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v3.6.2','2026年10月29日',['投稿の記録の「ふえたフォロワー」が、実際にふえた数と合うようにしました。','軽量モードで、投稿しているのに「投稿が入っていない」と表示されることがあったのを直しました。']],
   ['v3.6.1','2026年10月29日',['軽量モードを現実ベースにしました。給料・生活費・税金・広告収入などを、現実の統計に合わせています。','軽量モードでは、未来の空想の出来事が起きないようにしました。']],
   ['v3.6','2026年10月29日',['新しい「軽量」モードを追加しました。人生を見守りながら、分かれ道で選ぶモードです。数字は現実くらいの大きさです。','前の軽量モードは「旧軽量」として遊べます（いまのセーブもそのまま続けられます）。','人生が終わると「人生の振り返り」が見られるようになりました。','「昔の版で遊ぶ」に v3.5 を追加しました。']],
   ['v3.5.3','2026年10月28日',['サブチャンネルや同時投稿をすると、メインもいっしょに伸びるようにしました。','同時投稿したSNSが、メインに合わせて伸びるようにしました。']],
@@ -11059,4 +11060,18 @@ function evFantasy(e){try{let tx='';try{tx=typeof e.text==='function'?e.text():(
 document.addEventListener('click',e=>{const b=e.target.closest('[data-sm="new"]');if(!b||LITE_PICK!==2)return;setTimeout(()=>{try{const m=$('#mcard');if(!m)return;
  m.querySelectorAll('button,option').forEach(x=>{const t=(x.textContent||'').trim();if(/^(未来（|架空の大陸|市長になる|評価★4のお店|まちの発展度|自社ビル)/.test(t)&&!x.selected&&!x.classList.contains('on')&&x.getAttribute('aria-pressed')!=='true')x.remove()})}catch(_){}},60)});
 (function(){const g=GUIDE.find(x=>x[0]==='lite');if(g&&!/現実の統計/.test(g[2]))g[2]=g[2].replace('数字は現実くらいの大きさです。','数字は現実の統計をもとにしています（給料・生活費・税金・広告収入・寿命など）。未来の空想の出来事は起きません。')})();
+
+// ===== v3.6.2：投稿の記録の「ふえたフォロワー」を、実際にふえた数に合わせる／軽量の「投稿が入っていない」表示を直す =====
+// 投稿の記録は、誘導・アカウントの調子・軽量の伸び方などをすべて反映したあとの数にする
+{const _pa102=postAll;postAll=function(k){const mk=S&&S.main,f0=S&&S.f?(S.f[mk]||0):0,am=S&&S.am;const r=_pa102.apply(this,arguments);
+ try{const d=Math.round((S.f[mk]||0)-f0);const fix=arr=>{if(!arr)return;for(const p of arr)if(p.am===am&&(!p.sns||p.sns===mk))p.nf=d};fix(S.plog);fix(S.pbest);const last=(S.posts||[])[S.posts.length-1];if(last&&last.am===am)last.nf=d}catch(e){console.error(e)}return r}}
+// 軽量：すごし方で「発信する」を選んでいれば、「投稿が入っていない」とは言わない
+function l2PostOn(){return isLite2()&&S.r4&&(S.r4.post||0)>0}
+{const _sp102=snsPlanHtml;snsPlanHtml=function(){if(!isLite2())return _sp102.apply(this,arguments);const keep=S.plan;try{if(l2PostOn())S.plan=(keep||[]).concat(['post']);let h=_sp102.apply(this,arguments);
+ if(!l2PostOn())h=h.replace(/いまの予定に「投稿する」が入っていない[^<]*/,'「予定」のすごし方で、「📱 発信する」が「しない」になっています。「少し」以上にすると投稿します。');return h}finally{S.plan=keep}}}
+(function(){try{for(const st of ROAD)for(const it of st[2])if(it[0]==='予定に「投稿」を入れる'){const f=it[1];it[1]=()=>l2PostOn()&&S.snsOpen?true:f()}}catch(_){}})();
+// 秘書のひとこと：軽量では、すごし方で判断する。事業・研究・スキル・世界進出の話はしない
+{const _st102=secTip;secTip=function(){if(!isLite2())return _st102.apply(this,arguments);const keep=S.plan;try{if(l2PostOn())S.plan=(keep||[]).concat(['post']);let t=_st102.apply(this,arguments);
+ if(t&&t[0]&&/予定に「投稿」が入っていません/.test(t[0]))t=['「予定」のすごし方で「📱 発信する」を「少し」以上にすると、投稿してフォロワーがふえます','act:'];
+ if(t&&t[1]&&/^biz|skill/.test(String(t[1])))t=null;if(t&&t[0]&&/進出|研究|スキルポイント|大計画|まち/.test(t[0]))t=null;return t}finally{S.plan=keep}}}
 </script>

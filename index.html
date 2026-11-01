@@ -3067,6 +3067,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v3.6.5','2026年11月1日',['とても大きなお金を持ったあとの、ふえ方を落ち着かせました。']],
   ['v3.6.4','2026年11月1日',['「先月の結果」のフォロワー増減を、実際にふえた人数にしました（新しく来た人・離れた人も見られます）。','フォロワーが上限に近づいても、止まらずにゆっくり伸びるようにしました。']],
   ['v3.6.3','2026年10月29日',['投稿の一覧で、サブチャンネルや同時投稿したSNSの投稿も見られるようにしました。']],
   ['v3.6.2','2026年10月29日',['投稿の記録の「ふえたフォロワー」が、実際にふえた数と合うようにしました。','軽量モードで、投稿しているのに「投稿が入っていない」と表示されることがあったのを直しました。']],
@@ -11122,4 +11123,8 @@ for(const k of Object.keys(SNS)){const o=SNS[k];const d=Object.getOwnPropertyDes
  if(typeof xpostList==='function'&&!xpostList().length)return ['メインはほとんどの人に届いています。「📡 同時に投稿」で、ほかのSNSも伸ばしましょう','sns:'];
  if((S.subch||[]).length<3&&chance(.3))return ['サブチャンネルを作ると、メインのファンが見に来てくれます','sns:']}}catch(_){}return _st104.apply(this,arguments)}}
 (function(){const g=GUIDE.find(x=>x[0]==='sns');if(g&&!/止まりません/.test(g[2]))g[2]+='\n・フォロワーには上限がありますが、近づくとゆっくりになるだけで、止まりません（年が進むと、ネットを使う人もふえます）。'})();
+
+// ===== v3.6.5：お金の桁を落ち着かせる（通常）。1000兆円をこえたら、ふえ方が少しずつゆるやかに（大計画はそろえられる） =====
+const MONEY_SOFT=1e15,MONEY_P=.6;
+{const _inc105=inc;inc=function(cat,v){try{if(S&&!isLite2()&&v>0&&S.money>MONEY_SOFT&&!['inherit','loan','debt','refund'].includes(cat))v=Math.round(v*Math.pow(MONEY_SOFT/S.money,MONEY_P))}catch(_){}return _inc105.call(this,cat,v)}}
 </script>

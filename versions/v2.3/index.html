@@ -8600,3 +8600,14 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-endm]');if
 const _se47=showEnding;showEnding=function(){const r=_se47.apply(this,arguments);try{if(S&&!S.endless&&(S.kids||[]).length){const el=$('#scrEnd'),hd=el&&el.querySelector('.head');if(hd&&!el.querySelector('.endheir')){const d=document.createElement('div');d.className='card endheir';d.innerHTML=`<h3>家系をつなぐ</h3><p class="hint">いまは「亡くなったら終わり」になっていますが、子どもとして人生を続けることもできます。お金・事務所・まち・研究も引き継がれます。</p><div class="row"><button class="b pri" type="button" data-endheir="1">エンドレスにして、子どもに引き継ぐ</button></div>`;hd.after(d)}}}catch(e){console.error(e)}return r};
 document.addEventListener('click',e=>{const b=e.target.closest('[data-endheir]');if(!b||!S)return;S.endless=1;if(!S.lineage)S.lineage=[];showEnding()});
 </script>
+<!-- 感想・不具合の受付終了（2026-11-01）：昔の版でも送れないようにする -->
+<style>[data-act="fb"],[data-act="grpEtc"],[data-act="fbHub"],[data-act="fbMine"],[data-guide="fb"],.fbtitle{display:none!important}</style>
+<script>(function(){var BAD=/docs\.google\.com\/forms|script\.google\.com/;
+try{var f0=window.fetch;if(f0)window.fetch=function(u){try{if(BAD.test(String(u&&u.url||u)))return Promise.reject(new Error('closed'))}catch(_){}return f0.apply(this,arguments)}}catch(_){}
+try{var o0=XMLHttpRequest.prototype.open;XMLHttpRequest.prototype.open=function(m,u){this._nofb=BAD.test(String(u));return o0.apply(this,arguments)};var s0=XMLHttpRequest.prototype.send;XMLHttpRequest.prototype.send=function(){if(this._nofb)return;return s0.apply(this,arguments)}}catch(_){}
+try{var b0=navigator.sendBeacon&&navigator.sendBeacon.bind(navigator);if(b0)navigator.sendBeacon=function(u,d){if(BAD.test(String(u)))return false;return b0(u,d)}}catch(_){}
+try{for(var i=localStorage.length-1;i>=0;i--){var k=localStorage.key(i);if(/feedback|fb-?q|fbpend|fbqueue/i.test(k||''))localStorage.removeItem(k)}}catch(_){}
+var RE=/感想|不具合/;function sweep(){try{document.querySelectorAll('button,a,.mtile').forEach(function(b){if(b.dataset&&b.dataset.nofb)return;var t=b.textContent||'';if(RE.test(t)&&!/アップデート|更新/.test(t)){b.style.display='none';b.dataset.nofb='1'}})}catch(_){}
+ try{if(typeof GUIDE!=='undefined'&&GUIDE.length){for(var j=GUIDE.length-1;j>=0;j--)if(GUIDE[j][0]==='fb')GUIDE.splice(j,1)}}catch(_){}}
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-act="fb"],[data-act="grpEtc"],[data-act="fbHub"],[data-act="fbMine"]');if(b){e.stopImmediatePropagation();e.preventDefault()}},true);
+try{new MutationObserver(sweep).observe(document.documentElement,{childList:true,subtree:true})}catch(_){}sweep();setTimeout(sweep,500)})();</script>

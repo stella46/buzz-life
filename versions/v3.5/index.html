@@ -10893,3 +10893,14 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-xpost]');i
 (function(){const g=GUIDE.find(x=>x[0]==='sns');if(g&&!/同時に投稿/.test(g[2]))g[2]=g[2].replace('・サブチャンネルを作ると、','・「📡 同時に投稿」で、ほかのSNSにも同じ内容を投稿できます。\n・サブチャンネルを作ると、');
  if(typeof FIND!=='undefined'&&!FIND.some(f=>f[0]==='同時に投稿'))FIND.push(['同時に投稿','発信','sns:','ほかのSNSにも同じ内容を投稿する','マルチ 転載 ほかのSNS'])})();
 </script>
+<!-- 感想・不具合の受付終了（2026-11-01）：昔の版でも送れないようにする -->
+<style>[data-act="fb"],[data-act="grpEtc"],[data-act="fbHub"],[data-act="fbMine"],[data-guide="fb"],.fbtitle{display:none!important}</style>
+<script>(function(){var BAD=/docs\.google\.com\/forms|script\.google\.com/;
+try{var f0=window.fetch;if(f0)window.fetch=function(u){try{if(BAD.test(String(u&&u.url||u)))return Promise.reject(new Error('closed'))}catch(_){}return f0.apply(this,arguments)}}catch(_){}
+try{var o0=XMLHttpRequest.prototype.open;XMLHttpRequest.prototype.open=function(m,u){this._nofb=BAD.test(String(u));return o0.apply(this,arguments)};var s0=XMLHttpRequest.prototype.send;XMLHttpRequest.prototype.send=function(){if(this._nofb)return;return s0.apply(this,arguments)}}catch(_){}
+try{var b0=navigator.sendBeacon&&navigator.sendBeacon.bind(navigator);if(b0)navigator.sendBeacon=function(u,d){if(BAD.test(String(u)))return false;return b0(u,d)}}catch(_){}
+try{for(var i=localStorage.length-1;i>=0;i--){var k=localStorage.key(i);if(/feedback|fb-?q|fbpend|fbqueue/i.test(k||''))localStorage.removeItem(k)}}catch(_){}
+var RE=/感想|不具合/;function sweep(){try{document.querySelectorAll('button,a,.mtile').forEach(function(b){if(b.dataset&&b.dataset.nofb)return;var t=b.textContent||'';if(RE.test(t)&&!/アップデート|更新/.test(t)){b.style.display='none';b.dataset.nofb='1'}})}catch(_){}
+ try{if(typeof GUIDE!=='undefined'&&GUIDE.length){for(var j=GUIDE.length-1;j>=0;j--)if(GUIDE[j][0]==='fb')GUIDE.splice(j,1)}}catch(_){}}
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-act="fb"],[data-act="grpEtc"],[data-act="fbHub"],[data-act="fbMine"]');if(b){e.stopImmediatePropagation();e.preventDefault()}},true);
+try{new MutationObserver(sweep).observe(document.documentElement,{childList:true,subtree:true})}catch(_){}sweep();setTimeout(sweep,500)})();</script>

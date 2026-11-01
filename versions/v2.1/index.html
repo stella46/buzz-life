@@ -8508,3 +8508,14 @@ const _pl45=panelLife;panelLife=function(){const s=SUB.life;try{if(s==='world')r
 for(const [id,ok,msg] of [['l_pdeath',()=>!!S.deadP,'静かな時間が流れた。'],['l_propose_r',()=>!!S.partner,'その話は、いつの間にか立ち消えになった。']]){const e=EV[id];if(!e||!e.ch)continue;const ch0=e.ch;e.ch=function(){const l=typeof ch0==='function'?ch0():ch0;return l.map(([lab,fn,...r])=>[lab,function(){if(!ok())return msg;return fn.apply(this,arguments)},...r])}}
 OLD_VERS.unshift(['v2.0','versions/v2.0/','賞・大計画・超大企業が入ったころ（v2.0）']);
 </script>
+<!-- 感想・不具合の受付終了（2026-11-01）：昔の版でも送れないようにする -->
+<style>[data-act="fb"],[data-act="grpEtc"],[data-act="fbHub"],[data-act="fbMine"],[data-guide="fb"],.fbtitle{display:none!important}</style>
+<script>(function(){var BAD=/docs\.google\.com\/forms|script\.google\.com/;
+try{var f0=window.fetch;if(f0)window.fetch=function(u){try{if(BAD.test(String(u&&u.url||u)))return Promise.reject(new Error('closed'))}catch(_){}return f0.apply(this,arguments)}}catch(_){}
+try{var o0=XMLHttpRequest.prototype.open;XMLHttpRequest.prototype.open=function(m,u){this._nofb=BAD.test(String(u));return o0.apply(this,arguments)};var s0=XMLHttpRequest.prototype.send;XMLHttpRequest.prototype.send=function(){if(this._nofb)return;return s0.apply(this,arguments)}}catch(_){}
+try{var b0=navigator.sendBeacon&&navigator.sendBeacon.bind(navigator);if(b0)navigator.sendBeacon=function(u,d){if(BAD.test(String(u)))return false;return b0(u,d)}}catch(_){}
+try{for(var i=localStorage.length-1;i>=0;i--){var k=localStorage.key(i);if(/feedback|fb-?q|fbpend|fbqueue/i.test(k||''))localStorage.removeItem(k)}}catch(_){}
+var RE=/感想|不具合/;function sweep(){try{document.querySelectorAll('button,a,.mtile').forEach(function(b){if(b.dataset&&b.dataset.nofb)return;var t=b.textContent||'';if(RE.test(t)&&!/アップデート|更新/.test(t)){b.style.display='none';b.dataset.nofb='1'}})}catch(_){}
+ try{if(typeof GUIDE!=='undefined'&&GUIDE.length){for(var j=GUIDE.length-1;j>=0;j--)if(GUIDE[j][0]==='fb')GUIDE.splice(j,1)}}catch(_){}}
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-act="fb"],[data-act="grpEtc"],[data-act="fbHub"],[data-act="fbMine"]');if(b){e.stopImmediatePropagation();e.preventDefault()}},true);
+try{new MutationObserver(sweep).observe(document.documentElement,{childList:true,subtree:true})}catch(_){}sweep();setTimeout(sweep,500)})();</script>

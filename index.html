@@ -3067,6 +3067,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v3.7.1','2026年11月1日',['「旧軽量」モードを、はじめからの選択肢から外しました（旧軽量で始めた人生は、そのまま続けられます）。']],
   ['v3.7','2026年11月1日',['完成版です。これまで遊んでくださった皆さん、感想や不具合を送ってくださった皆さん、ありがとうございました。','軽量モードの寿命と暮らしのお金を、より現実に近づけました。','感想・不具合の受付を終了しました。','「昔の版で遊ぶ」に v3.6 を追加しました。']],
   ['v3.6.5','2026年11月1日',['とても大きなお金を持ったあとの、ふえ方を落ち着かせました。']],
   ['v3.6.4','2026年11月1日',['「先月の結果」のフォロワー増減を、実際にふえた人数にしました（新しく来た人・離れた人も見られます）。','フォロワーが上限に近づいても、止まらずにゆっくり伸びるようにしました。']],
@@ -11140,4 +11141,9 @@ L2SPEND=.72;
  try{if(typeof FIND!=='undefined')for(let i=FIND.length-1;i>=0;i--)if(/感想・不具合/.test(FIND[i][0]))FIND.splice(i,1)}catch(_){}})();
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act="fb"],[data-act="grpEtc"],[data-act="fbHub"]');if(b){e.stopImmediatePropagation();e.preventDefault()}},true);
 try{if(!OLD_VERS.some(v=>v[1]==='versions/v3.6/'))OLD_VERS.unshift(['v3.6','versions/v3.6/','新しい軽量モードが入った版'])}catch(_){}
+
+// ===== v3.7.1：旧軽量をなくす（はじめからで選べるのは「軽量」と「通常」。旧軽量のセーブはそのまま続けられる） =====
+{const _ss107=showSlots;showSlots=function(mode){if(LITE_PICK===1)LITE_PICK=2;const r=_ss107.apply(this,arguments);try{if(mode==='new')document.querySelectorAll('#verPick details').forEach(d=>{if(d.querySelector('[data-vp3="1"]'))d.remove()})}catch(_){}return r}}
+(function(){const g=GUIDE.find(x=>x[0]==='lite');if(g)g[2]=g[2].replace(/■ 旧軽量\n[^\n]*\n/,'').replace('※ どのモードでも','※ 前の版の「旧軽量」で始めた人生は、そのまま続けられます。\n※ どのモードでも');
+ const b=GUIDE.find(x=>x[0]==='basic');if(b)b[2]=b[2].replace('「軽量」「通常」「旧軽量」を選べます','「軽量」か「通常」を選べます')})();
 </script>

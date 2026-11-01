@@ -6,10 +6,10 @@
 {const _inc101=inc;inc=function(cat,v){const r=_inc101.apply(this,arguments);try{if(isLite2()&&v>0&&age()>=18){const t=({job:.2,part:.12,sns:.2,fanclub:.2,tip:.2,deal:.2,biz:.25,side:.15})[cat];if(t)outc('tax',Math.round(v*t))}}catch(_){}return r}}
 // ----- 生活費：ひとり暮らし 月約17.6万円、夫婦 月約26万円、子ども1人あたり 月約3.5万円（22歳まで）。国の物価で変わる -----
 function lite2Living(){const kids=(S.kids||[]).filter(k=>k._gkOf==null&&(S.am-k.born)/12<22).length;let v=S.spouse?260000:176000;v+=kids*35000;if(age()>=65)v*=.85;return Math.round(v*Math.max(.15,S.cty.inc)*(S.priceIdx||1))}
-let L2CHG=0;{const _oc101=outc;outc=function(c,v){try{if(isLite2()&&!L2CHG&&v>0&&['home','phone','subs','date','shop','ev'].includes(c))S.l2home=(S.l2home||0)+v}catch(_){}return _oc101.apply(this,arguments)}}
+let L2CHG=0,L2SPEND=.5;{const _oc101=outc;outc=function(c,v){try{if(isLite2()&&!L2CHG&&v>0&&['home','phone','subs','date','shop','ev'].includes(c))S.l2home=(S.l2home||0)+v}catch(_){}return _oc101.apply(this,arguments)}}
 // 収入がふえると、暮らしも少しずつぜいたくになる（手取りのうち基本の生活費をこえた分の半分くらいを使う）
 {const _inc101c=inc;inc=function(cat,v){const r=_inc101c.apply(this,arguments);try{if(isLite2()&&v>0&&['job','part','sns','fanclub','tip','deal','biz','side','pension'].includes(cat))S.l2in=(S.l2in||0)+v}catch(_){}return r}}
-{const _mh101=monthHook11;monthHook11=function(){const r=_mh101.apply(this,arguments);try{if(isLite2()&&S.alive){const inm=S.l2in||0;S.l2in=0;if(age()>=18&&(S.home||1)!==0){const base=lite2Living();const net=inm*.8;let use=base;if(net>base)use=base+Math.pow(net-base,.92)*.5;const need=Math.round(use)-(S.l2home||0);if(need>0){L2CHG=1;try{outc('home',need)}finally{L2CHG=0}S.lvPaid=need}}S.l2home=0}}catch(e){console.error(e)}return r}}
+{const _mh101=monthHook11;monthHook11=function(){const r=_mh101.apply(this,arguments);try{if(isLite2()&&S.alive){const inm=S.l2in||0;S.l2in=0;if(age()>=18&&(S.home||1)!==0){const base=lite2Living();const net=inm*.8;let use=base;if(net>base)use=base+Math.pow(net-base,.92)*L2SPEND;const need=Math.round(use)-(S.l2home||0);if(need>0){L2CHG=1;try{outc('home',need)}finally{L2CHG=0}S.lvPaid=need}}S.l2home=0}}catch(e){console.error(e)}return r}}
 // ----- 広告収入：1再生 約0.2円（ショート動画は低め） -----
 {const _inc101b=inc;inc=function(cat,v){if(isLite2()&&cat==='sns'&&v>0)v=Math.round(v*1.6);return _inc101b.call(this,cat,v)}}
 // ----- フォロワー：登録者100万人以上は、ほんのひとにぎり -----

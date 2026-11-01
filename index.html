@@ -3067,6 +3067,7 @@ document.addEventListener('click',e=>{
 });
 // ===== v0.3.3：アップデート情報 =====
 const CHANGELOG=[
+  ['v3.7','2026年11月1日',['完成版です。これまで遊んでくださった皆さん、感想や不具合を送ってくださった皆さん、ありがとうございました。','軽量モードの寿命と暮らしのお金を、より現実に近づけました。','感想・不具合の受付を終了しました。','「昔の版で遊ぶ」に v3.6 を追加しました。']],
   ['v3.6.5','2026年11月1日',['とても大きなお金を持ったあとの、ふえ方を落ち着かせました。']],
   ['v3.6.4','2026年11月1日',['「先月の結果」のフォロワー増減を、実際にふえた人数にしました（新しく来た人・離れた人も見られます）。','フォロワーが上限に近づいても、止まらずにゆっくり伸びるようにしました。']],
   ['v3.6.3','2026年10月29日',['投稿の一覧で、サブチャンネルや同時投稿したSNSの投稿も見られるようにしました。']],
@@ -11043,10 +11044,10 @@ let LITE2_GROW=.15;
 {const _inc101=inc;inc=function(cat,v){const r=_inc101.apply(this,arguments);try{if(isLite2()&&v>0&&age()>=18){const t=({job:.2,part:.12,sns:.2,fanclub:.2,tip:.2,deal:.2,biz:.25,side:.15})[cat];if(t)outc('tax',Math.round(v*t))}}catch(_){}return r}}
 // ----- 生活費：ひとり暮らし 月約17.6万円、夫婦 月約26万円、子ども1人あたり 月約3.5万円（22歳まで）。国の物価で変わる -----
 function lite2Living(){const kids=(S.kids||[]).filter(k=>k._gkOf==null&&(S.am-k.born)/12<22).length;let v=S.spouse?260000:176000;v+=kids*35000;if(age()>=65)v*=.85;return Math.round(v*Math.max(.15,S.cty.inc)*(S.priceIdx||1))}
-let L2CHG=0;{const _oc101=outc;outc=function(c,v){try{if(isLite2()&&!L2CHG&&v>0&&['home','phone','subs','date','shop','ev'].includes(c))S.l2home=(S.l2home||0)+v}catch(_){}return _oc101.apply(this,arguments)}}
+let L2CHG=0,L2SPEND=.5;{const _oc101=outc;outc=function(c,v){try{if(isLite2()&&!L2CHG&&v>0&&['home','phone','subs','date','shop','ev'].includes(c))S.l2home=(S.l2home||0)+v}catch(_){}return _oc101.apply(this,arguments)}}
 // 収入がふえると、暮らしも少しずつぜいたくになる（手取りのうち基本の生活費をこえた分の半分くらいを使う）
 {const _inc101c=inc;inc=function(cat,v){const r=_inc101c.apply(this,arguments);try{if(isLite2()&&v>0&&['job','part','sns','fanclub','tip','deal','biz','side','pension'].includes(cat))S.l2in=(S.l2in||0)+v}catch(_){}return r}}
-{const _mh101=monthHook11;monthHook11=function(){const r=_mh101.apply(this,arguments);try{if(isLite2()&&S.alive){const inm=S.l2in||0;S.l2in=0;if(age()>=18&&(S.home||1)!==0){const base=lite2Living();const net=inm*.8;let use=base;if(net>base)use=base+Math.pow(net-base,.92)*.5;const need=Math.round(use)-(S.l2home||0);if(need>0){L2CHG=1;try{outc('home',need)}finally{L2CHG=0}S.lvPaid=need}}S.l2home=0}}catch(e){console.error(e)}return r}}
+{const _mh101=monthHook11;monthHook11=function(){const r=_mh101.apply(this,arguments);try{if(isLite2()&&S.alive){const inm=S.l2in||0;S.l2in=0;if(age()>=18&&(S.home||1)!==0){const base=lite2Living();const net=inm*.8;let use=base;if(net>base)use=base+Math.pow(net-base,.92)*L2SPEND;const need=Math.round(use)-(S.l2home||0);if(need>0){L2CHG=1;try{outc('home',need)}finally{L2CHG=0}S.lvPaid=need}}S.l2home=0}}catch(e){console.error(e)}return r}}
 // ----- 広告収入：1再生 約0.2円（ショート動画は低め） -----
 {const _inc101b=inc;inc=function(cat,v){if(isLite2()&&cat==='sns'&&v>0)v=Math.round(v*1.6);return _inc101b.call(this,cat,v)}}
 // ----- フォロワー：登録者100万人以上は、ほんのひとにぎり -----
@@ -11127,4 +11128,16 @@ for(const k of Object.keys(SNS)){const o=SNS[k];const d=Object.getOwnPropertyDes
 // ===== v3.6.5：お金の桁を落ち着かせる（通常）。1000兆円をこえたら、ふえ方が少しずつゆるやかに（大計画はそろえられる） =====
 const MONEY_SOFT=1e15,MONEY_P=.6;
 {const _inc105=inc;inc=function(cat,v){try{if(S&&!isLite2()&&v>0&&S.money>MONEY_SOFT&&!['inherit','loan','debt','refund'].includes(cat))v=Math.round(v*Math.pow(MONEY_SOFT/S.money,MONEY_P))}catch(_){}return _inc105.call(this,cat,v)}}
+
+// ===== v3.7：完成版 =====
+// ----- 軽量：寿命を現実に近く（40歳から、健康なときの長生きボーナスを弱める） -----
+{const _dc106=deathCheck;deathCheck=function(){const r=_dc106.apply(this,arguments);if(r)return r;try{if(isLite2()){const a=S.am/12;if(a>=40){const cm=S.cty.life||1;return chance(Math.min(.9,qx(a,S.g)*cm*.5)/12)}}}catch(_){}return false}}
+// ----- 軽量：収入がふえたぶん、暮らしにも使う（若いうちに貯まりすぎないように） -----
+L2SPEND=.72;
+// ----- 感想・不具合の送信はおしまい（ボタンを出さない） -----
+(function(){try{const st=document.createElement('style');st.textContent='[data-act="fb"],[data-act="grpEtc"],[data-act="fbHub"],[data-guide="fb"],.fbtitle{display:none!important}';document.head.appendChild(st)}catch(_){}
+ try{const i=GUIDE.findIndex(x=>x[0]==='fb');if(i>=0)GUIDE.splice(i,1)}catch(_){}
+ try{if(typeof FIND!=='undefined')for(let i=FIND.length-1;i>=0;i--)if(/感想・不具合/.test(FIND[i][0]))FIND.splice(i,1)}catch(_){}})();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-act="fb"],[data-act="grpEtc"],[data-act="fbHub"]');if(b){e.stopImmediatePropagation();e.preventDefault()}},true);
+try{if(!OLD_VERS.some(v=>v[1]==='versions/v3.6/'))OLD_VERS.unshift(['v3.6','versions/v3.6/','新しい軽量モードが入った版'])}catch(_){}
 </script>
